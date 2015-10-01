@@ -12,20 +12,20 @@ public:
 
 	void update(float time)
 	{
-		switch (dir)//реализуем поведение в зависимости от направления. (каждая цифра соответствует направлению)
+		switch (dir)
 		{
 		case 0: dx = speed;
 			dy = 0;
-			break;//по иксу задаем положительную скорость, по игреку зануляем. получаем, что персонаж идет только вправо
+			break;
 		case 1: dx = -speed;
 			dy = 0;
-			break;//по иксу задаем отрицательную скорость, по игреку зануляем. получается, что персонаж идет только влево
+			break;
 		case 2: dx = 0;
 			dy = speed;
-			break;//по иксу задаем нулевое значение, по игреку положительное. получается, что персонаж идет только вниз
+			break;
 		case 3: dx = 0;
 			dy = -speed;
-			break;//по иксу задаем нулевое значение, по игреку отрицательное. получается, что персонаж идет только вверх
+			break;
 		}
 		xPos += dx * time;
 		yPos += dy * time;
@@ -63,10 +63,9 @@ public:
 		this->xPos = x;
 		this->yPos = y;
 		image.loadFromFile("images/" + this->file);
-		image.createMaskFromColor(Color(41, 33, 59));
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
-		sprite.setTextureRect(IntRect(0, 0, weight, height));
+		sprite.setTextureRect(IntRect(0, 0, 60, 90));
 
 		
 	}
@@ -84,11 +83,11 @@ private:
 
 int main()
 {
-	RenderWindow window(VideoMode(1024, 768), "Lesson 1. kychka-pc.ru");
+	RenderWindow window(VideoMode(800, 600), "Lesson 1. kychka-pc.ru");
 	Clock clock;
 	float currentFrame = 0;
-	Player hero(96.0, 96.0, 250, 250, "hero.png");
-	view.reset(FloatRect(0, 0, 640, 480));
+	Player hero(96.0, 96.0, 90, (MAP_HEIGHT - 1) * 30 - 90, "hero.png");
+	view.reset(FloatRect(0, 0, 800, 600));
 
 	Image map_image;
 	map_image.loadFromFile("images/map.png");
@@ -107,64 +106,41 @@ int main()
 			if (event.type == Event::Closed)
 				window.close();
 		}
-
-		if (Keyboard::isKeyPressed(Keyboard::W))
-		{
-			hero.set_dir(3);
-			hero.set_speed(0.1);
-			currentFrame += 0.005 * time;
-			if (currentFrame > 3)
-			{
-				currentFrame -= 3;
-			}
-			hero.sprite.setTextureRect(IntRect(96 * int(currentFrame), 288, 96, 96));
-		}
-		if (Keyboard::isKeyPressed(Keyboard::S))
-		{
-			hero.set_dir(2);
-			hero.set_speed(0.1);
-			currentFrame += time * 0.005;
-			if (currentFrame > 3)
-			{
-				currentFrame -= 3;
-			}
-			hero.sprite.setTextureRect(IntRect(96 * int(currentFrame), 0, 96, 96));
-		}
 		if (Keyboard::isKeyPressed(Keyboard::A))
 		{
 			hero.set_dir(1);
-			hero.set_speed(0.1);
+			hero.set_speed(0.14);
 			currentFrame += time * 0.005;
 			if (currentFrame > 3)
 			{
 				currentFrame -= 3;
 			}
-			hero.sprite.setTextureRect(IntRect(96 * int(currentFrame), 96, 96, 96));
+			//hero.sprite.setTextureRect(IntRect(96 * int(currentFrame), 96, 96, 96));
 		}
 		if (Keyboard::isKeyPressed(Keyboard::D))
 		{
 			hero.set_dir(0);
-			hero.set_speed(0.1);
+			hero.set_speed(0.14);
 			currentFrame += time * 0.005;
 			if (currentFrame > 3)
 			{
 				currentFrame -= 3;
 			}
-			hero.sprite.setTextureRect(IntRect(96 * int(currentFrame), 192, 96, 96));
+			//hero.sprite.setTextureRect(IntRect(96 * int(currentFrame), 192, 96, 96));
 		}
-		getPlayerCoordinateForView(hero.x_pos(), hero.y_pos());
+		getPlayerCoordinateForView(hero.x_pos() + 30, hero.y_pos() + 45);
 		hero.update(time);
 		window.setView(view);
 		window.clear();
 		for (int i = 0; i < MAP_HEIGHT; i++)
 			for (int j = 0; j < MAP_WIDTH; j++)
 			{
-				if (TileMap[i][j] == ' ') s_map.setTextureRect(IntRect(0, 0, 32, 32));
-				if (TileMap[i][j] == 's') s_map.setTextureRect(IntRect(32, 0, 32, 32));
-				if ((TileMap[i][j] == '0')) s_map.setTextureRect(IntRect(64, 0, 32, 32));
+				if (TileMap[i][j] == ' ') s_map.setTextureRect(IntRect(0, 0, 30, 30));
+				if (TileMap[i][j] == 'b') s_map.setTextureRect(IntRect(31, 0, 30, 30));
+				if ((TileMap[i][j] == 'p')) s_map.setTextureRect(IntRect(62, 0, 30, 30));
 
 
-				s_map.setPosition(j * 32, i * 32);
+				s_map.setPosition(j * 30, i * 30);
 
 				window.draw(s_map);
 			}
