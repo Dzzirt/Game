@@ -39,16 +39,16 @@ int main() {
 			if ((character >= 192) && (character <= 223)) {
 				state = BEFORE_DOT;
 			}
-			else if ((character >= 224) && (character <= 255)) {
+			else if ((character >= 224) && (character <= 255) || (character >= 97) && (character <= 122)) {
 				character -= 32;
 				state = BEFORE_DOT;
 			}
 		}
 		else if (state == AFTER_DOT) {
-			if ((character >= 192) && (character <= 223)) {
+			if ((character >= 192) && (character <= 223) || (character >= 65) && (character <= 90)) {
 				state = BEFORE_DOT;
 			}
-			else if ((character >= 224) && (character <= 255)) {
+			else if ((character >= 224) && (character <= 255) || (character >= 97) && (character <= 122)) {
 				character -= 32;
 				state = BEFORE_DOT;
 			}
