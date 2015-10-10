@@ -1,17 +1,20 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-enum Direction {
-	JUMP,
-	DOWN,
+enum State {
 	LEFT,
 	RIGHT,
+	JUMP,
 	NONE
 };
 
 struct Player {
 	float x_pos, y_pos, step = 200.f;
-	Direction dir;
+	State state;
+	bool on_ground = true;
+	bool jump = false;
+	bool on_block = false;
+	float jump_height_counter = 0.f;
 	sf::String file;
 	sf::Image image;
 	sf::Texture texture;

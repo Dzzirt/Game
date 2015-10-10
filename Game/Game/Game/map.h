@@ -26,21 +26,22 @@ const sf::String TileMap[MapHeight] = {
 	"b                                                                                                  b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
-	"b                                                                                                  b",
+	"b                                        pp                                                        b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
 	"b                                  pppppppppppp                                                    b",
-	"b                              pppp            pppp                                                b",
-	"b                          pppp                    pppp                                            b",
-	"b                      pppp                            pppp                                        b",
-	"b                  pppp                                    pppp                                    b",
+	"b        pp                    pppp            pppp                                                b",
+	"b                      pp                          pppp                                            b",
+	"b                    pp                                pppp                                        b",
+	"b                  pp                                      pppp                                    b",
 	"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 
 };
 	
 struct Cell {
 	CellType type;
+	bool with_player = false;
 	sf::Sprite sprite;
 };
 

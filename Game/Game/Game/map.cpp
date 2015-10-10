@@ -11,7 +11,7 @@ void MapInit(Map& map) {
 	map.width = MapWidth;
 	map.height = MapHeight;
 	
-	// Смысл в том что создаем массив указателе	й Cell для того чтобы в завис от того что в карте рисовать и перемещать эти ячейки
+	// Смысл в том что создаем массив указателе	й Cell для того чтобы в завис от того что в карте, рисовать и перемещать эти ячейки
 
 	Cell* & cells = map.cells;
 	cells = new Cell[map.height * map.width];
