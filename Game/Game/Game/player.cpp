@@ -5,21 +5,24 @@
 using namespace sf;
 
 void PlayerUpdate(Player& player, const Time& deltaTime) {
+	float step = player.step * deltaTime.asSeconds();
 	Vector2f movement = player.sprite.getPosition();
 	switch (player.state) {
 	case LEFT:
-		movement.x -= player.step * deltaTime.asSeconds();
+		movement.x -= step;
 		break;
 	case RIGHT:
-		movement.x += player.step * deltaTime.asSeconds();
+		movement.x += step;
 		break;
 	}
 
 	// Jump
 
-	if (player.jump && player.jump_height_counter < 60.f) {
-		movement.y -= player.step * deltaTime.asSeconds() * 2;
-		player.jump_height_counter += player.step * deltaTime.asSeconds();
+	if (player.jump && player.jump_height_counter < player.max_jump) {
+		float move = step * JumpingSpeedCoef;
+		movement.y -= move;
+		player.jump_height_counter += move;
+
 	}
 	else {
 		player.jump = false;
@@ -28,14 +31,13 @@ void PlayerUpdate(Player& player, const Time& deltaTime) {
 
 	// Gravity
 
-	if (movement.y < (MapHeight - 1) * MapTextureSize - 90) { // не на земле
-		movement.y += player.step * deltaTime.asSeconds();
-		std::cout << int(movement.y) << "     " << (MapHeight - 1) * MapTextureSize - 90 << '\n';
+	if (movement.y < GroundY && !player.jump) {
+		movement.y += step * FallingSpeedCoef;
 	}
-	if (movement.y > (MapHeight - 1) * MapTextureSize - 90) { // если перебор с гравитацией)
-		movement.y = (MapHeight - 1) * MapTextureSize - 90;
+	if (movement.y > GroundY) {
+		movement.y = GroundY;
 	}
-	
+
 	player.sprite.setPosition(movement);
 	player.x_pos = player.sprite.getPosition().x;
 	player.y_pos = player.sprite.getPosition().y;
@@ -47,8 +49,9 @@ void PlayerInit(Player& player, float x, float y) {
 	player.image.loadFromFile("images/hero.png");
 	player.texture.loadFromImage(player.image);
 	player.sprite.setTexture(player.texture);
-	player.sprite.setTextureRect(IntRect(0, 0, 60, 90));
+	player.sprite.setTextureRect(IntRect(0, 0, XPlayerSize, YPlayerSize));
 	player.sprite.setPosition(x, y);
+	player.max_jump = player.sprite.getGlobalBounds().height / 2;
 }
 
 void GetPlayerCoordinateForView(sf::View& view, float x, float y) {
@@ -56,8 +59,18 @@ void GetPlayerCoordinateForView(sf::View& view, float x, float y) {
 	float up_down_border = view.getSize().y / 2;
 	float tempX = x;
 	float tempY = y;
+
+	// Left border collision
 	if (x < left_right_border) tempX = left_right_border;
+
+	// Down border collision
 	if (y > MapHeight * MapTextureSize - up_down_border) tempY = MapHeight * MapTextureSize - up_down_border;
+
+	// Right border collision
 	if (x > MapWidth * MapTextureSize - left_right_border) tempX = MapWidth * MapTextureSize - left_right_border;
+
+	// Up border collision
+	if (y < up_down_border) tempY = up_down_border;
+
 	view.setCenter(tempX, tempY);
 }

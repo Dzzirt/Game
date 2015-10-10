@@ -17,6 +17,7 @@ int main() {
 
 	Clock clock;
 	Time time_since_last_update = Time::Zero;
+
 	while (window.isOpen()) {
 		ProcessEvents(window, *game->player, *view);
 		time_since_last_update += clock.restart();

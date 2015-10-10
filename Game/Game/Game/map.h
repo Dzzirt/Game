@@ -3,6 +3,9 @@
 const int MapHeight = 25;
 const int MapWidth = 100;
 const int MapTextureSize = 30;
+const float GroundY = (MapHeight - 1) * MapTextureSize - 90;
+const float FallingSpeedCoef = 1.6f;
+const float JumpingSpeedCoef = 1.3f;
 
 typedef enum {
 	BLOCK,
@@ -11,27 +14,27 @@ typedef enum {
 } CellType;
 
 const sf::String TileMap[MapHeight] = {
-	"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
+	"bpppp                                                         pp                                   b",
+	"b                                                              pp                                  b",
+	"b                                                                pp                                b",
+	"b                                                                  pp                              b",
+	"b                                                                    pp                            b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                        pp                                                        b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                  pppppppppppp                                                    b",
-	"b        pp                    pppp            pppp                                                b",
+	"b                                         ppppppppppppppppppppppppppppppp                          b",
+	"b                                       pp                                                         b",
+	"b                                     pp                                                           b",
+	"b                                   pp     pp                                                      b",
+	"b                                 pp                                                               b",
+	"b                               pp                                                                 b",
+	"b                             pp                                                                   b",
+	"b        pp                 pp       pppppppppppp                                                  b",
+	"b                         pp     pppp            pppp                                              b",
 	"b                      pp                          pppp                                            b",
 	"b                    pp                                pppp                                        b",
 	"b                  pp                                      pppp                                    b",

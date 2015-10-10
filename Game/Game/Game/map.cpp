@@ -17,10 +17,12 @@ void MapInit(Map& map) {
 	cells = new Cell[map.height * map.width];
 	for (size_t i = 0; i < map.height; i++) {
 		for (size_t j = 0; j < map.width; j++) {
+
 			const size_t index = i * map.width + j;
 			Sprite& sprite = cells[index].sprite;
 			sprite.setPosition(MapTextureSize * j, MapTextureSize * i);
 			sprite.setTexture(map.texture);
+
 			if (TileMap[i][j] == platform) {
 				cells[index].type = BLOCK;
 				sprite.setTextureRect(IntRect(62, 0, MapTextureSize, MapTextureSize));
