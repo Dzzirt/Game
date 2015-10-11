@@ -18,26 +18,26 @@ const sf::String TileMap[MapHeight] = {
 	"b                                                                                                  b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
-	"bpppp                                                         pp                                   b",
-	"b                                                              pp                                  b",
-	"b                                                                pp                                b",
-	"b                                                                  pp                              b",
-	"b                                                                    pp                            b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
-	"b                                         ppppppppppppppppppppppppppppppp                          b",
-	"b                                       pp                                                         b",
-	"b                                     pp                                                           b",
-	"b                                   pp     pp                                                      b",
-	"b                                 pp                                                               b",
-	"b                               pp                                                                 b",
-	"b                             pp                                                                   b",
-	"b        pp                 pp       pppppppppppp                                                  b",
-	"b                         pp     pppp            pppp                                              b",
-	"b                      pp                          pppp                                            b",
-	"b                    pp                                pppp                                        b",
-	"b                  pp                                      pppp                                    b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
+	"b                                                                                                  b",
 	"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 
 };
@@ -57,7 +57,7 @@ struct Map {
 	Cell * cells;
 };
 
-void MapInit(Map & map);
+void MapInit(Map *& map);
 
 void MapDraw(sf::RenderWindow &window, Map & map);
 

@@ -7,7 +7,6 @@ const int YPlayerSize = 90;
 enum State {
 	LEFT,
 	RIGHT,
-	JUMP,
 	NONE
 };
 
@@ -23,8 +22,7 @@ struct Player {
 	float max_jump;
 };
 
-void PlayerUpdate(Player& player, const sf::Time& deltaTime);
 
-void PlayerInit(Player& player, float x, float y);
 
-void GetPlayerCoordinateForView(sf::View & view, float x, float y);
+void PlayerInit(Player *& player, float x, float y);
+ 
