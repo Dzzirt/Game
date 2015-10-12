@@ -54,25 +54,25 @@ void CheckCollisions(Game& game, char axis) {
 		//sf::FloatRect & map_bounds = game.player->obj[i].rect;
 		sf::FloatRect player_bounds = player->sprite.getGlobalBounds();
 		//std::cout << game.lvl.GetObject("player").rect.left;
-		//проходимся по объектам
+		//проходимся по объектамs
 		if (player_bounds.intersects(game.player->obj[i].rect))//проверяем пересечение игрока с объектом
 		{
 			if (game.player->obj[i].name == "solid")//если встретили препятствие
 			{
-				if (player->state == LEFT && axis == 'x' ) {
+				if (player->x_accel < 0 && axis == 'x' ) {
 					player->x_pos = game.player->obj[i].rect.left + game.player->obj[i].rect.width;
-					player->state = NONE;
 				}
-				if (player->state == RIGHT && axis == 'x') {
+				if (player->x_accel > 0 && axis == 'x') {
 					player->x_pos = game.player->obj[i].rect.left - player_bounds.width;
-					player->state = NONE;
 				}
-				if (player->jump && axis == 'y') {
+				if (player->y_accel < 0 && axis == 'y') {
 					player->y_pos = game.player->obj[i].rect.top + game.player->obj[i].rect.height;
+					player->y_accel = 0;
 				}
-				if (!player->jump && axis == 'y') {
+				if (player->y_accel > 0 && axis == 'y') {
 					player->y_pos = game.player->obj[i].rect.top - player_bounds.height;
-					std::cout << player->y_pos;
+					//std::cout << player->y_pos;
+					player->y_accel = 0;
 				}
 			}
 		}
@@ -107,24 +107,24 @@ void Update(Game& game, const sf::Time& deltaTime) {
 	float step = player->step * deltaTime.asSeconds();
 	switch (player->state) {
 	case LEFT:
-		player->x_pos -= step;
+		player->x_accel = -step;
 		break;
 	case RIGHT:
-		player->x_pos += step;
+		player->x_accel = step;
 		break;
 	case NONE:
 		break;
 	}
+
+	player->x_pos += player->x_accel;
 	CheckCollisions(game, 'x');
 
 	// Jumps
 
 	if (player->jump && player->jump_height_counter < player->max_jump) {
 		float move = step * JumpingSpeedCoef;
-		player->y_pos -= move;
+		player->y_accel = -move;
 		player->jump_height_counter += move;
-		CheckCollisions(game, 'y');
-
 	}
 	else {
 		player->jump = false;
@@ -135,9 +135,11 @@ void Update(Game& game, const sf::Time& deltaTime) {
 	// Gravity
 
 	if (!player->jump) {
-		player->y_pos += step * FallingSpeedCoef;
-		CheckCollisions(game, 'y');
+	player->y_accel = step * FallingSpeedCoef;
 	}
+
+	player->y_pos += player->y_accel;
+	CheckCollisions(game, 'y');
 
 
 	player->sprite.setPosition(player->x_pos, player->y_pos);
@@ -150,7 +152,7 @@ void Render(sf::RenderWindow & window, Game & game) {
 	game.lvl.Draw(window);
 	window.setView(*game.view);
 	window.draw(game.player->sprite);
-	window.setVerticalSyncEnabled(true);
+	//window.setVerticalSyncEnabled(true);
 	window.display();
 }
 

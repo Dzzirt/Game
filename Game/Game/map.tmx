@@ -1611,9 +1611,9 @@
   <object id="8" name="solid" x="1170" y="0" width="26" height="1198"/>
   <object id="11" name="solid" x="420" y="1140" width="62" height="30"/>
   <object id="12" name="solid" x="480" y="1110" width="60" height="57"/>
-  <object id="18" name="player" x="72.833" y="1053.09" width="60" height="90"/>
+  <object id="18" name="player" x="156.833" y="992.09" width="60" height="90"/>
   <object id="23" name="solid" x="21" y="0" width="9" height="1171.69"/>
-  <object id="33" x="540" y="1080.5" width="269.5" height="89.5"/>
+  <object id="33" name="solid" x="540" y="1080.5" width="269.5" height="89.5"/>
   <object id="34" name="solid" x="8" y="1170" width="1164" height="20"/>
  </objectgroup>
 </map>

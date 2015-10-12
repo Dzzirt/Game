@@ -6,6 +6,8 @@ void PlayerInit(Player *& player, float x, float y, Level & level) {
 	player = new Player();
 	player->x_pos = x;
 	player->y_pos = y;
+	player->x_accel = 0;
+	player->y_accel = 0;
 	player->image.loadFromFile("hero.png");
 	player->texture.loadFromImage(player->image);
 	player->sprite.setTexture(player->texture);

@@ -14,6 +14,7 @@ enum State {
 
 struct Player {
 	float x_pos, y_pos, step = 200.f;
+	float x_accel, y_accel;
 	State state;
 	bool jump = false;
 	float jump_height_counter = 0.f;
