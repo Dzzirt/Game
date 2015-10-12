@@ -31,13 +31,13 @@ const sf::String TileMap[MapHeight] = {
 	"b                                                                                                  b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
+	"b                                               pp                                                 b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
 	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
-	"b                                                                                                  b",
+	"b                                    pppppp   ppppp                                                b",
+	"b                               ppppp               pppp                                           b",
+	"b                          ppppp                                                                   b",
 	"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 
 };
