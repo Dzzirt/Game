@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "level.hpp"
+
 
 const int XPlayerSize = 60;
 const int YPlayerSize = 90;
@@ -20,9 +22,10 @@ struct Player {
 	sf::Texture texture;
 	sf::Sprite sprite;
 	float max_jump;
+	std::vector<Object> obj;
 };
 
 
 
-void PlayerInit(Player *& player, float x, float y);
+void PlayerInit(Player *& player, float x, float y, Level & level);
  

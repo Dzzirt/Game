@@ -1,31 +1,31 @@
+
+#include "map.h"
 #include "game.h"
-#include <iostream>
 
-using namespace sf;
 
-void ProcessEvents(RenderWindow& window, Game & game) {
+void ProcessEvents(sf::RenderWindow& window, Game & game) {
 	Player & player = *game.player;
-	View & view = *game.view;
-	Event event;
+	sf::View & view = *game.view;
+	sf::Event event;
 
 	while (window.pollEvent(event)) {
-		if (Keyboard::isKeyPressed(Keyboard::Space)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 			player.jump = true;
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::A)) {
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			player.state = LEFT;
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::D)) {
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 			player.state = RIGHT;
 		}
 		else {
 			player.state = NONE;
 		}
-		if (event.type == Event::Closed) {
+		if (event.type == sf::Event::Closed) {
 			window.close();
 		}
-		else if (event.type == Event::Resized) {
-			view.setSize(event.size.width, event.size.height);
+		else if (event.type == sf::Event::Resized) {
+			view.setSize(float(event.size.width), float(event.size.height));
 			view.zoom(ViewWidth / event.size.width);
 
 		}
@@ -33,75 +33,55 @@ void ProcessEvents(RenderWindow& window, Game & game) {
 }
 
 void GameInit(Game& game) {
-	PlayerInit(game.player, 45, 0);
-	MapInit(game.map);
+	LevelInit(game.lvl);
+	Object player = game.lvl.GetObject("player");
+	PlayerInit(game.player, player.rect.left, player.rect.top, game.lvl);
 	ViewInit(game.view);
 }
 
-void ViewInit(View *& view) {
-	view = new View();
-	view->reset(FloatRect(0, 0, ViewWidth, ViewHeight));
+void ViewInit(sf::View *& view) {
+	view = new sf::View();
+	view->reset(sf::FloatRect(0, 0, ViewWidth, ViewHeight));
 }
 
-void CheckCollisions(Game& game) {
-	Cell* cell = game.map->cells;
-	Player* player = game.player;
-	FloatRect player_bounds = game.player->sprite.getGlobalBounds();
-
-	for (size_t i = 0; i < MapHeight * MapWidth; i++) {
-		FloatRect map_bounds = cell[i].sprite.getGlobalBounds();
-
-		if (cell[i].type == FREE_SPACE) {
-			continue;
-		}
-
-		if (player_bounds.intersects(map_bounds)) {
-			Vector2f position = player->sprite.getPosition();
-			if (cell[i].type == BORDER) {
-				if (player->state == LEFT) {
-					position.x += map_bounds.left + map_bounds.width - player_bounds.left;
+void LevelInit(Level & level) {
+	//level = new Level();
+	level.LoadFromFile("map.tmx");
+}
+void CheckCollisions(Game& game, char axis) {
+	for (int i = 0; i < game.player->obj.size(); i++) {
+		Player *& player = game.player;
+		//sf::FloatRect & map_bounds = game.player->obj[i].rect;
+		sf::FloatRect player_bounds = player->sprite.getGlobalBounds();
+		//std::cout << game.lvl.GetObject("player").rect.left;
+		//проходимся по объектам
+		if (player_bounds.intersects(game.player->obj[i].rect))//проверяем пересечение игрока с объектом
+		{
+			if (game.player->obj[i].name == "solid")//если встретили препятствие
+			{
+				if (player->state == LEFT && axis == 'x' ) {
+					player->x_pos = game.player->obj[i].rect.left + game.player->obj[i].rect.width;
 					player->state = NONE;
 				}
-				else if (player->state == RIGHT) {
-					position.x -= player_bounds.left + player_bounds.width - map_bounds.left;
+				if (player->state == RIGHT && axis == 'x') {
+					player->x_pos = game.player->obj[i].rect.left - player_bounds.width;
 					player->state = NONE;
 				}
-
-			}
-
-			if (cell[i].type == BLOCK) {
-				float upper_collision_size = player_bounds.top + player_bounds.height - map_bounds.top;
-				float bottom_collision_size = map_bounds.top + map_bounds.height - player_bounds.top;
-				bool upper_collision = false;
-				bool bottom_collision = false;
-
-				if (upper_collision_size < map_bounds.height / 4.f) { // Always check upper collision 
-					position.y = map_bounds.top - player_bounds.height;
-					upper_collision = true;
+				if (player->jump && axis == 'y') {
+					player->y_pos = game.player->obj[i].rect.top + game.player->obj[i].rect.height;
 				}
-				else if (bottom_collision_size < map_bounds.height / 4.f) { // Always check bottom collision 
-					bottom_collision = true;
-					position.y = map_bounds.top + map_bounds.height;
-					player->jump = false;
-				}
-				if (player->state == LEFT && !upper_collision && !bottom_collision) { // Check collision with left side 
-					position.x += map_bounds.left + map_bounds.width - player_bounds.left;
-					player->state = NONE;
-				}
-				else if (player->state == RIGHT && !upper_collision && !bottom_collision) { // Check collision with right side
-					position.x -= player_bounds.left + player_bounds.width - map_bounds.left;
-					player->state = NONE;
+				if (!player->jump && axis == 'y') {
+					player->y_pos = game.player->obj[i].rect.top - player_bounds.height;
+					std::cout << player->y_pos;
 				}
 			}
-			player->sprite.setPosition(position);
-			player->x_pos = player->sprite.getPosition().x;
-			player->y_pos = player->sprite.getPosition().y;
 		}
+		
 	}
 }
 
 
-void GetPlayerCoordinateForView(View& view, float x, float y) {
+void GetPlayerCoordinateForView(sf::View& view, float x, float y) {
 	float left_right_border = view.getSize().x / 2;
 	float up_down_border = view.getSize().y / 2;
 	float tempX = x;
@@ -122,54 +102,59 @@ void GetPlayerCoordinateForView(View& view, float x, float y) {
 	view.setCenter(tempX, tempY);
 }
 
-void Update(Game& game, const Time& deltaTime) {
+void Update(Game& game, const sf::Time& deltaTime) {
 	Player* & player = game.player;
 	float step = player->step * deltaTime.asSeconds();
-	Vector2f movement = player->sprite.getPosition();
 	switch (player->state) {
 	case LEFT:
-		movement.x -= step;
+		player->x_pos -= step;
 		break;
 	case RIGHT:
-		movement.x += step;
+		player->x_pos += step;
 		break;
 	case NONE:
 		break;
 	}
+	CheckCollisions(game, 'x');
 
-	// Jump
+	// Jumps
 
 	if (player->jump && player->jump_height_counter < player->max_jump) {
 		float move = step * JumpingSpeedCoef;
-		movement.y -= move;
+		player->y_pos -= move;
 		player->jump_height_counter += move;
+		CheckCollisions(game, 'y');
 
 	}
 	else {
 		player->jump = false;
 		player->jump_height_counter = 0.f;
+		
 	}
-
+	
 	// Gravity
 
-	if (movement.y < GroundY && !player->jump) {
-		movement.y += step * FallingSpeedCoef;
-	}
-	if (movement.y > GroundY) {
-		movement.y = GroundY;
+	if (!player->jump) {
+		player->y_pos += step * FallingSpeedCoef;
+		CheckCollisions(game, 'y');
 	}
 
-	player->sprite.setPosition(movement);
-	player->x_pos = player->sprite.getPosition().x;
-	player->y_pos = player->sprite.getPosition().y;
-	CheckCollisions(game);
+
+	player->sprite.setPosition(player->x_pos, player->y_pos);
+
+
 	GetPlayerCoordinateForView(*game.view, game.player->x_pos + 30, game.player->y_pos + 45);
 }
 
-void Render(RenderWindow & window, Game & game) {
-	MapDraw(window, *game.map);
+void Render(sf::RenderWindow & window, Game & game) {
+	game.lvl.Draw(window);
 	window.setView(*game.view);
 	window.draw(game.player->sprite);
 	window.setVerticalSyncEnabled(true);
 	window.display();
 }
+
+
+
+
+
