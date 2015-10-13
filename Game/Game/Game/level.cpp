@@ -5,7 +5,7 @@ int Object::GetPropertyInt(std::string name) {
 }
 
 float Object::GetPropertyFloat(std::string name) {
-	return strtod(properties[name].c_str(), NULL);
+	return float(strtod(properties[name].c_str(), NULL));
 }
 
 std::string Object::GetPropertyString(std::string name) {
@@ -82,8 +82,8 @@ bool Level::LoadFromFile(std::string filename) {
 
 		// Если присутствует opacity, то задаем прозрачность слоя, иначе он полностью непрозрачен
 		if (layerElement->Attribute("opacity") != NULL) {
-			float opacity = strtod(layerElement->Attribute("opacity"), NULL);
-			layer.opacity = 255 * opacity;
+			float opacity = float(strtod(layerElement->Attribute("opacity"), NULL));
+			layer.opacity = 255 * int(opacity);
 		}
 		else {
 			layer.opacity = 255;
@@ -118,7 +118,7 @@ bool Level::LoadFromFile(std::string filename) {
 				sf::Sprite sprite;
 				sprite.setTexture(tilesetImage);
 				sprite.setTextureRect(subRects[subRectToUse]);
-				sprite.setPosition(x * tileWidth, y * tileHeight);
+				sprite.setPosition(float(x * tileWidth), float(y * tileHeight));
 				sprite.setColor(sf::Color(255, 255, 255, layer.opacity));
 
 				layer.tiles.push_back(sprite);
@@ -169,7 +169,7 @@ bool Level::LoadFromFile(std::string filename) {
 				sf::Sprite sprite;
 				sprite.setTexture(tilesetImage);
 				sprite.setTextureRect(sf::Rect<int>(0, 0, 0, 0));
-				sprite.setPosition(x, y);
+				sprite.setPosition(float(x), float(y));
 
 				if (objectElement->Attribute("width") != NULL) {
 					width = atoi(objectElement->Attribute("width"));
@@ -188,10 +188,10 @@ bool Level::LoadFromFile(std::string filename) {
 				object.sprite = sprite;
 
 				sf::Rect <float> objectRect;
-				objectRect.top = y;
-				objectRect.left = x;
-				objectRect.height = height;
-				objectRect.width = width;
+				objectRect.top = float(y);
+				objectRect.left = float(x);
+				objectRect.height = float(height);
+				objectRect.width = float(width);
 				object.rect = objectRect;
 
 				// "Переменные" объекта
@@ -229,15 +229,16 @@ bool Level::LoadFromFile(std::string filename) {
 
 Object Level::GetObject(std::string name) {
 	// Только первый объект с заданным именем
-	for (int i = 0; i < objects.size(); i++)
+	for (size_t i = 0; i < objects.size(); i++)
 		if (objects[i].name == name)
 			return objects[i];
+	return {};
 }
 
 std::vector<Object> Level::GetObjects(std::string name) {
 	// Все объекты с заданным именем
 	std::vector<Object> vec;
-	for (int i = 0; i < objects.size(); i++)
+	for (size_t i = 0; i < objects.size(); i++)
 		if (objects[i].name == name)
 			vec.push_back(objects[i]);
 
@@ -256,7 +257,7 @@ sf::Vector2i Level::GetTileSize() {
 
 void Level::Draw(sf::RenderWindow &window) {
 	// Рисуем все тайлы (объекты НЕ рисуем!)
-	for (int layer = 0; layer < layers.size(); layer++)
-		for (int tile = 0; tile < layers[layer].tiles.size(); tile++)
+	for (size_t layer = 0; layer < layers.size(); layer++)
+		for (size_t tile = 0; tile < layers[layer].tiles.size(); tile++)
 			window.draw(layers[layer].tiles[tile]);
 }

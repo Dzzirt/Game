@@ -1,11 +1,11 @@
-
-#include "map.h"
 #include "game.h"
+#include <sstream>
 
+using namespace std;
 
-void ProcessEvents(sf::RenderWindow& window, Game & game) {
-	Player & player = *game.player;
-	sf::View & view = *game.view;
+void ProcessEvents(sf::RenderWindow& window, Game& game) {
+	Player& player = *game.player;
+	sf::View& view = *game.player->view;
 	sf::Event event;
 
 	while (window.pollEvent(event)) {
@@ -34,129 +34,60 @@ void ProcessEvents(sf::RenderWindow& window, Game & game) {
 
 void GameInit(Game& game) {
 	LevelInit(game.lvl);
-	Object player = game.lvl.GetObject("player");
-	PlayerInit(game.player, player.rect.left, player.rect.top, game.lvl);
-	ViewInit(game.view);
-}
-
-void ViewInit(sf::View *& view) {
-	view = new sf::View();
-	view->reset(sf::FloatRect(0, 0, ViewWidth, ViewHeight));
-}
-
-void LevelInit(Level & level) {
-	//level = new Level();
-	level.LoadFromFile("map.tmx");
-}
-void CheckCollisions(Game& game, char axis) {
-	for (int i = 0; i < game.player->obj.size(); i++) {
-		Player *& player = game.player;
-		//sf::FloatRect & map_bounds = game.player->obj[i].rect;
-		sf::FloatRect player_bounds = player->sprite.getGlobalBounds();
-		//std::cout << game.lvl.GetObject("player").rect.left;
-		//проходимся по объектамs
-		if (player_bounds.intersects(game.player->obj[i].rect))//проверяем пересечение игрока с объектом
-		{
-			if (game.player->obj[i].name == "solid")//если встретили препятствие
-			{
-				if (player->x_accel < 0 && axis == 'x' ) {
-					player->x_pos = game.player->obj[i].rect.left + game.player->obj[i].rect.width;
-				}
-				if (player->x_accel > 0 && axis == 'x') {
-					player->x_pos = game.player->obj[i].rect.left - player_bounds.width;
-				}
-				if (player->y_accel < 0 && axis == 'y') {
-					player->y_pos = game.player->obj[i].rect.top + game.player->obj[i].rect.height;
-					player->y_accel = 0;
-				}
-				if (player->y_accel > 0 && axis == 'y') {
-					player->y_pos = game.player->obj[i].rect.top - player_bounds.height;
-					//std::cout << player->y_pos;
-					player->y_accel = 0;
-				}
-			}
-		}
-		
+	sf::Rect<float> player_rect = game.lvl->GetObject("player").rect;
+	PlayerInit(game.player, player_rect.left, player_rect.top, *game.lvl);
+	ViewInit(game.player->view);
+	EnemyListInit(game.enemy_list);
+	for (int i = 0; i < 2; i++) {
+		EnemyAdd(game);
 	}
 }
 
+void LevelInit(Level *& level) {
+	level = new Level();
+	level->LoadFromFile("map.tmx");
+}
 
-void GetPlayerCoordinateForView(sf::View& view, float x, float y) {
-	float left_right_border = view.getSize().x / 2;
-	float up_down_border = view.getSize().y / 2;
-	float tempX = x;
-	float tempY = y;
+void EnemyAdd(Game & game) {
+	Enemy * enemy = new Enemy();
+	stringstream number;
+	number << game.enemy_list->size();
+	sf::Rect<float> enemy_rect = game.lvl->GetObject("enemy" + number.str()).rect;
+	enemy->state = NONE;
+	enemy->x_pos = enemy_rect.left;
+	enemy->y_pos = enemy_rect.top;
+	enemy->x_accel = 0;
+	enemy->y_accel = 0;
+	enemy->image.loadFromFile("enemy.png");
+	enemy->texture.loadFromImage(enemy->image);
+	enemy->sprite.setTexture(enemy->texture);
+	enemy->sprite.setTextureRect(sf::IntRect(0, 0, XEnemySize, YEnemySize));
+	enemy->sprite.setPosition(enemy->x_pos, enemy->y_pos);
+	enemy->max_jump = enemy->sprite.getGlobalBounds().height / 2;
+	enemy->obj = game.lvl->GetAllObjects();
+	game.enemy_list->push_back(enemy);
+	
+}
 
-	// Left border collision
-	if (x < left_right_border) tempX = left_right_border;
-
-	// Down border collision
-	if (y > MapHeight * MapTextureSize - up_down_border) tempY = MapHeight * MapTextureSize - up_down_border;
-
-	// Right border collision
-	if (x > MapWidth * MapTextureSize - left_right_border) tempX = MapWidth * MapTextureSize - left_right_border;
-
-	// Up border collision
-	if (y < up_down_border) tempY = up_down_border;
-
-	view.setCenter(tempX, tempY);
+void EnemyListInit(std::list<Enemy*> *& enemy_list) {
+	enemy_list = new list<Enemy*>();
 }
 
 void Update(Game& game, const sf::Time& deltaTime) {
-	Player* & player = game.player;
-	float step = player->step * deltaTime.asSeconds();
-	switch (player->state) {
-	case LEFT:
-		player->x_accel = -step;
-		break;
-	case RIGHT:
-		player->x_accel = step;
-		break;
-	case NONE:
-		break;
+	PlayerUpdate(*game.player, deltaTime);
+	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
+		Enemy * enemy = *iter;
+		EnemyUpdate(*enemy, deltaTime);
 	}
-
-	player->x_pos += player->x_accel;
-	CheckCollisions(game, 'x');
-
-	// Jumps
-
-	if (player->jump && player->jump_height_counter < player->max_jump) {
-		float move = step * JumpingSpeedCoef;
-		player->y_accel = -move;
-		player->jump_height_counter += move;
-	}
-	else {
-		player->jump = false;
-		player->jump_height_counter = 0.f;
-		
-	}
-	
-	// Gravity
-
-	if (!player->jump) {
-	player->y_accel = step * FallingSpeedCoef;
-	}
-
-	player->y_pos += player->y_accel;
-	CheckCollisions(game, 'y');
-
-
-	player->sprite.setPosition(player->x_pos, player->y_pos);
-
-
-	GetPlayerCoordinateForView(*game.view, game.player->x_pos + 30, game.player->y_pos + 45);
 }
 
-void Render(sf::RenderWindow & window, Game & game) {
-	game.lvl.Draw(window);
-	window.setView(*game.view);
+void Render(sf::RenderWindow& window, Game& game) {
+	game.lvl->Draw(window);
+	window.setView(*game.player->view);
 	window.draw(game.player->sprite);
-	//window.setVerticalSyncEnabled(true);
+	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
+		Enemy * enemy = *iter;
+		window.draw(enemy->sprite);
+	}
 	window.display();
 }
-
-
-
-
-
