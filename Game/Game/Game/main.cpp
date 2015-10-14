@@ -1,19 +1,14 @@
 #include <vld.h>
 #include "game.h"
 
-
 using namespace sf;
 
 const Time TimePerFrame = seconds(1.f / 60.f);
-const float STEP = 200.f;
-
-
 
 int main() {
 	RenderWindow window(VideoMode(800, 600), "From the Shadow of Underdark");
 	Game* game = new Game();
 	GameInit(*game);
-
 	Clock clock;
 	Time time_since_last_update = Time::Zero;
 
@@ -26,7 +21,10 @@ int main() {
 			Update(*game, TimePerFrame);
 		}
 		Render(window, *game);
-		
+
 	}
 	return 0;
 }
+
+
+
