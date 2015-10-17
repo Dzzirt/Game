@@ -1,4 +1,3 @@
-#include <vld.h>
 #include "game.h"
 
 using namespace sf;
@@ -11,7 +10,6 @@ int main() {
 	GameInit(*game);
 	Clock clock;
 	Time time_since_last_update = Time::Zero;
-
 	while (window.isOpen()) {
 		ProcessEvents(window, *game);
 		time_since_last_update += clock.restart();

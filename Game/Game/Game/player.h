@@ -14,11 +14,13 @@ enum State {
 };
 
 struct Player {
+	bool is_attack = false;
 	sf::View* view;
 	float x_pos, y_pos, step = 200.f;
 	float x_accel, y_accel;
 	State state;
 	bool jump = false;
+	float displacement = 0;
 	float jump_height_counter = 0.f;
 	sf::String file;
 	sf::Image image;
@@ -26,18 +28,14 @@ struct Player {
 	sf::Sprite sprite;
 	float max_jump;
 	bool on_ground = false;
-	std::vector<Object> obj;
 	sf::Rect<float> box;
+	char obj_number;
 };
 
 
 
-void PlayerInit(Player *& player, Level & level);
  
 void ViewInit(sf::View *& view);
 
 void GetPlayerCoordinateForView(sf::View& view, float x, float y);
 
-void CheckPlayerCollisions(Player & player);
-
-void PlayerUpdate(Player & player, const sf::Time& deltaTime);

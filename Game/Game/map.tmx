@@ -1619,7 +1619,6 @@
   <object id="53" name="solid" x="1170" y="0" width="30" height="1200"/>
   <object id="54" name="solid" x="0" y="0" width="30" height="1200"/>
   <object id="57" name="player" x="170.667" y="1086" width="48" height="84"/>
-  <object id="60" name="enemy0" x="570" y="1020" width="30" height="60"/>
-  <object id="61" name="enemy1" x="720" y="1020" width="30" height="60"/>
+  <object id="60" name="enemy0" x="175.333" y="878.663" width="30" height="60"/>
  </objectgroup>
 </map>

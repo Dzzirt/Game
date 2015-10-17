@@ -1,26 +1,7 @@
-#include "player.h"
 #include "map.h"
+#include "player.h"
 
 using namespace sf;
-
-void PlayerInit(Player*& player, Level& level) {
-	player = new Player();
-	player->box = level.GetObject("player").rect;
-	player->box.width = 48;
-	player->box.height = 84;
-	player->x_pos = player->box.left;
-	player->y_pos = player->box.top;
-	player->x_accel = 0;
-	player->y_accel = 0;
-	player->image.loadFromFile("hero_spritesheet.png");
-	player->texture.loadFromImage(player->image);
-	player->sprite.setTexture(player->texture);
-	player->sprite.setTextureRect(IntRect(78, 0, 48, 84));
-	player->sprite.setPosition(player->x_pos, player->y_pos);
-	player->max_jump = player->sprite.getGlobalBounds().height / 2;
-	player->obj = level.GetAllObjects();
-}
-
 
 void ViewInit(sf::View*& view) {
 	view = new sf::View();
@@ -48,84 +29,6 @@ void GetPlayerCoordinateForView(sf::View& view, float x, float y) {
 	view.setCenter(tempX, tempY);
 }
 
-void CheckPlayerCollisions(Player& player) {
-	for (size_t i = 0; i < player.obj.size(); i++) {
-		sf::FloatRect& map_bounds = player.obj[i].rect;
-		sf::FloatRect& player_bounds = player.box;
 
-		if (player_bounds.intersects(player.obj[i].rect))
-		{
-			if (player.obj[i].name == "solid") {
-				bool upper_collision = false;
-				bool bottom_collision = false;
-				bool player_higher_than_object = player_bounds.top + player_bounds.height - 10 < map_bounds.top;
-				bool player_less_than_object = player_bounds.top + 10 > map_bounds.top + map_bounds.height;
 
-				if (player.y_accel > 0 && player_higher_than_object) { // Check upper collision 
-					player_bounds.top = map_bounds.top - player_bounds.height;
-					upper_collision = true;
-				}
-				else if (player.y_accel < 0 && player_less_than_object) { // Check bottom collision 
-					player_bounds.top = map_bounds.top + map_bounds.height;
-					bottom_collision = true;
-					player.jump = false;
-				}
 
-				if (player.x_accel < 0 && !upper_collision && !bottom_collision) { // Check collision with left side 
-					player_bounds.left = map_bounds.left + map_bounds.width;
-				}
-				else if (player.x_accel > 0 && !upper_collision && !bottom_collision) { // Check collision with right side
-					player_bounds.left -= player_bounds.left + player_bounds.width - map_bounds.left;
-				}
-			}
-		}
-	}
-	player.x_accel = 0;
-	player.y_accel = 0;
-}
-
-void PlayerUpdate(Player& player, const sf::Time& deltaTime) {
-	switch (player.state) {
-	case LEFT:
-		player.x_accel = -player.step;
-		player.sprite.setTextureRect(IntRect(126, 0, -48, 84));
-		break;
-	case RIGHT:
-		player.x_accel = player.step;
-		player.sprite.setTextureRect(IntRect(78, 0, 48, 84));
-		break;
-	case NONE:
-		break;
-	}
-		
-	// Jump
-
-	if (player.jump && player.jump_height_counter < player.max_jump) {
-		player.jump_height_counter += player.step * deltaTime.asSeconds() * JumpingSpeedCoef;
-		player.y_accel = -player.step;
-	}
-	else {
-		player.jump = false;
-		player.jump_height_counter = 0.f;
-	}
-
-	// Gravity
-
-	if (!player.on_ground && !player.jump) {
-		player.y_accel = player.step;
-	}
-	float delta_x = player.x_accel * deltaTime.asSeconds();
-	float delta_y = player.y_accel * deltaTime.asSeconds();
-	
-	player.box.left += delta_x;
-	player.box.top += delta_y;
-	CheckPlayerCollisions(player);
-	player.x_pos = player.box.left;
-	player.y_pos = player.box.top;
-	player.sprite.setPosition(player.x_pos, player.y_pos);
-	
-		
-	
-	
-	GetPlayerCoordinateForView(*player.view, player.x_pos + 30, player.y_pos + 45);
-}
