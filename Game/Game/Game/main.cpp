@@ -1,3 +1,4 @@
+#include "vld.h"
 #include "game.h"
 
 using namespace sf;
@@ -17,6 +18,7 @@ int main() {
 			time_since_last_update -= TimePerFrame;
 			ProcessEvents(window, *game);
 			Update(*game, TimePerFrame);
+			
 		}
 		Render(window, *game);
 

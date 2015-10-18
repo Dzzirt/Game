@@ -9,16 +9,21 @@ struct Game {
 	Level *lvl;
 	std::list<Enemy*> * enemy_list;
 	std::vector<Object> * obj;
+	float current_frame = 0;
 
 };
-
-void ProcessEvents(sf::RenderWindow& window, Game & game);
 
 void GameInit(Game& game);
 
 void LevelInit(Level *& level);
 
-void ObjectsInit(std::vector<Object> & obj, Level & level);
+void ProcessEvents(sf::RenderWindow& window, Game & game);
+
+void ProcessEnemiesEvents(Game & game);
+
+void ProcessPlayerEvents(sf::RenderWindow& window, Game& game);
+
+void ObjectsInit(std::vector<Object> *& obj, Level * level);
 
 void Update(Game& game, const sf::Time& deltaTime);
 

@@ -15,6 +15,9 @@ enum State {
 
 struct Player {
 	bool is_attack = false;
+	bool is_jump = false;
+	bool left_attack = false;
+	bool right_attack = false;
 	sf::View* view;
 	float x_pos, y_pos, step = 200.f;
 	float x_accel, y_accel;
@@ -28,7 +31,6 @@ struct Player {
 	sf::Sprite sprite;
 	float max_jump;
 	bool on_ground = false;
-	sf::Rect<float> box;
 	char obj_number;
 };
 
