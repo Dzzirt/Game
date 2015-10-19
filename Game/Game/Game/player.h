@@ -21,6 +21,7 @@ struct Player {
 	sf::View* view;
 	float x_pos, y_pos, step = 200.f;
 	float x_accel, y_accel;
+	float current_frame = 0.f;
 	State state;
 	bool jump = false;
 	float displacement = 0;

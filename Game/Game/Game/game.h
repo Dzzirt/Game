@@ -9,8 +9,6 @@ struct Game {
 	Level *lvl;
 	std::list<Enemy*> * enemy_list;
 	std::vector<Object> * obj;
-	float current_frame = 0;
-
 };
 
 void GameInit(Game& game);
