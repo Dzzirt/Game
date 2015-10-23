@@ -15,15 +15,21 @@ enum State {
 
 struct Player {
 	bool is_attack = false;
-	bool is_jump = false;
 	bool left_attack = false;
 	bool right_attack = false;
 	sf::View* view;
-	float x_pos, y_pos, step = 200.f;
+	float x_pos, y_pos, step = 150.f;
 	float x_accel, y_accel;
-	float current_frame = 0.f;
+	bool jump_animation = false;
+	float current_attack_frame = 0.f;
+	float current_move_frame = 0.f;
+	float current_jump_frame = 0.f;
+	float current_stay_frame = 0.f;
+	float anim_speed = 0.07;
 	State state;
-	bool jump = false;
+	State prev_state;
+	bool in_jump = false;
+	bool start_jumping = false;
 	float displacement = 0;
 	float jump_height_counter = 0.f;
 	sf::String file;

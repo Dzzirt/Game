@@ -7,22 +7,38 @@ using namespace std;
 void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, Game& game) {
 	switch (enemy.state) {
 	case LEFT:
+		enemy.prev_state = LEFT;
 		enemy.x_accel = -enemy.step;
-		enemy.step = 200.f;
 		if (!enemy.left_attack && !enemy.right_attack) {
-			enemy.sprite.setTextureRect(IntRect(126, 0, -48, 84));
+			enemy.current_move_frame += float(0.05 * enemy.step * deltaTime.asSeconds());
+			enemy.sprite.setTextureRect(IntRect(32 * int(enemy.current_move_frame), 46, 32, 48));
+			if (enemy.current_move_frame > 7) {
+				enemy.current_move_frame = 0;
+			}
 			enemy.displacement = 0;
 		}
 		break;
 	case RIGHT:
+		enemy.prev_state = RIGHT;
 		enemy.x_accel = enemy.step;
-		enemy.step = 200.f;
 		if (!enemy.left_attack && !enemy.right_attack) {
-			enemy.sprite.setTextureRect(IntRect(78, 0, 48, 84));
+			enemy.current_move_frame += float(0.05 * enemy.step * deltaTime.asSeconds());
+			enemy.sprite.setTextureRect(IntRect(32 * int(enemy.current_move_frame) + 32, 46, -32, 48));
+			if (enemy.current_move_frame > 7) {
+				enemy.current_move_frame = 0;
+			}
 			enemy.displacement = 0;
 		}
 		break;
 	case NONE:
+		if (enemy.prev_state == LEFT) {
+			enemy.sprite.setTextureRect(IntRect(224, 46, 32, 48));
+		}
+		else {
+			enemy.sprite.setTextureRect(IntRect(224 + 32, 46, -32, 48));
+		}
+
+
 		break;
 	}
 	// Jump
@@ -46,29 +62,23 @@ void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, Game& game) {
 
 	if (enemy.left_attack) {
 		enemy.right_attack = false;
-		enemy.current_frame += float(0.05 * enemy.step * deltaTime.asSeconds());
-
-		enemy.sprite.setTextureRect(sf::IntRect(78, 0, -78, 84));
-		enemy.displacement = 30;
-			enemy.step = 100.f;
-		if (enemy.current_frame > 3) {
+		enemy.current_attack_frame += float(0.05 * enemy.step * deltaTime.asSeconds() * 2);
+		enemy.sprite.setTextureRect(IntRect(64 * int(enemy.current_attack_frame), 0, 64, 46));
+		enemy.displacement = -20;
+		if (enemy.current_attack_frame > 7) {
 			enemy.left_attack = false;
-			enemy.sprite.setTextureRect(IntRect(126, 0, -48, 84));
-			enemy.displacement = 0;
-			enemy.current_frame -= 3;
+			enemy.current_attack_frame = 0;
 		}
 	}
 
 	if (enemy.right_attack) {
 		enemy.left_attack = false;
-		enemy.current_frame += float(0.05 * enemy.step * deltaTime.asSeconds());
-
-		enemy.sprite.setTextureRect(sf::IntRect(0, 0, 78, 84));
-		enemy.step = 100.f;
-		if (enemy.current_frame > 3) {
+		enemy.current_attack_frame += float(0.05 * enemy.step * deltaTime.asSeconds() * 2);
+		enemy.sprite.setTextureRect(IntRect(64 * int(enemy.current_attack_frame) + 64, 0, -64, 46));
+		enemy.displacement = -20;
+		if (enemy.current_attack_frame > 7) {
 			enemy.right_attack = false;
-			enemy.sprite.setTextureRect(IntRect(78, 0, 48, 84));
-			enemy.current_frame -= 3;
+			enemy.current_attack_frame = 0;
 		}
 	}
 
@@ -79,7 +89,7 @@ void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, Game& game) {
 	game.obj[0][enemy.obj_number].rect.left += delta_x;
 	game.obj[0][enemy.obj_number].rect.top += delta_y;
 	CheckEnemyCollisions(enemy, game);
-	enemy.x_pos = game.obj[0][enemy.obj_number].rect.left - enemy.displacement;
+	enemy.x_pos = game.obj[0][enemy.obj_number].rect.left + enemy.displacement;
 	enemy.y_pos = game.obj[0][enemy.obj_number].rect.top;
 	enemy.sprite.setPosition(enemy.x_pos, enemy.y_pos);
 }
@@ -130,7 +140,6 @@ void CheckEnemyCollisions(Enemy& enemy, Game& game) {
 		if (enemy_sprite.intersects(map_bounds)) {
 
 			if (game.obj[0][i].name == "player") {
-
 				// Доделать
 			}
 		}
@@ -140,75 +149,205 @@ void CheckEnemyCollisions(Enemy& enemy, Game& game) {
 }
 
 void PlayerUpdate(Player& player, const sf::Time& deltaTime, Game& game) {
+	float game_step = player.step * deltaTime.asSeconds();
 	switch (player.state) {
 	case LEFT:
+		player.prev_state = LEFT;
 		player.x_accel = -player.step;
-		player.step = 200.f;
 		if (!player.left_attack && !player.right_attack) {
-			player.sprite.setTextureRect(IntRect(126, 0, -48, 84));
-			player.displacement = 0;
+			player.current_move_frame += float(player.anim_speed * game_step);
+			switch (int(player.current_move_frame)) {
+			case 0:
+				player.sprite.setTextureRect(IntRect(22, 0, -22, 42));
+				break;
+			case 1:
+				player.sprite.setTextureRect(IntRect(23 + 32, 0, -32, 42));
+				break;
+			case 2:
+				player.sprite.setTextureRect(IntRect(55 + 26, 0, -26, 42));
+				break;
+			case 3:
+				player.sprite.setTextureRect(IntRect(81+ 20, 0, -20, 42));
+				break;
+			case 4:
+				player.sprite.setTextureRect(IntRect(101 +23, 0, -23, 42));
+				break;
+			case 5:
+				player.sprite.setTextureRect(IntRect(124+32, 0, -32, 42));
+				break;
+			case 6:
+				player.sprite.setTextureRect(IntRect(156+27, 0, -27, 42));
+				break;
+			case 7:
+				player.sprite.setTextureRect(IntRect(183+22, 0, -22, 42));
+				break;
+			default:
+				player.current_move_frame = 0.f;
+				break;
+			}
 		}
 
 		break;
 	case RIGHT:
+		player.prev_state = RIGHT;
 		player.x_accel = player.step;
-		player.step = 200.f;
 		if (!player.left_attack && !player.right_attack) {
-			player.sprite.setTextureRect(IntRect(78, 0, 48, 84));
-			player.displacement = 0;
+			player.current_move_frame += float(player.anim_speed * game_step);
+			cout << int(player.current_move_frame) << endl;
+			switch (int(player.current_move_frame)) {
+			case 0:
+				player.sprite.setTextureRect(IntRect(0, 0, 22, 42));
+				break;
+			case 1:
+				player.sprite.setTextureRect(IntRect(23, 0, 32, 42));
+				break;
+			case 2:
+				player.sprite.setTextureRect(IntRect(55, 0, 26, 42));
+				break;
+			case 3:
+				player.sprite.setTextureRect(IntRect(81, 0, 20, 42));
+				break;
+			case 4:
+				player.sprite.setTextureRect(IntRect(101, 0, 23, 42));
+				break;
+			case 5:
+				player.sprite.setTextureRect(IntRect(124, 0, 32, 42));
+				break;
+			case 6:
+				player.sprite.setTextureRect(IntRect(156, 0, 27, 42));
+				break;
+			case 7:
+				player.sprite.setTextureRect(IntRect(183, 0, 22, 42));
+				break;
+			default:
+				player.current_move_frame = 0.f;
+				break;
+			}
 		}
 		break;
 	case NONE:
+		player.current_stay_frame += float(player.anim_speed * game_step / 5);
+		if (player.current_stay_frame > 2) {
+			player.current_stay_frame = 0.f;
+		}
+		
+		if (player.prev_state == RIGHT) {
+			player.sprite.setTextureRect(IntRect(34 * int(player.current_stay_frame), 132, 34, 41));
+		}
+		else {
+			player.sprite.setTextureRect(IntRect(34 * int(player.current_stay_frame) + 34, 132, -34, 41));
+		}
+		
 		break;
 	}
 
 	// Jump
-	if (player.is_jump && player.on_ground) {
-		player.jump = true;
-		player.is_jump = false;
+	if (player.start_jumping && player.on_ground) {
+		player.in_jump = true;
+		player.start_jumping = false;
 	}
-	if (player.jump && player.jump_height_counter < player.max_jump) {
-		player.jump_height_counter += player.step * deltaTime.asSeconds() * JumpingSpeedCoef;
+	if (player.jump_animation) {
+		player.sprite.setTextureRect(IntRect(117, 87, 39, 45));
+	}
+	if (player.in_jump && player.jump_height_counter < player.max_jump) {
+		player.jump_animation = true;
+		player.jump_height_counter += game_step * JumpingSpeedCoef;
 		player.y_accel = -player.step;
+		player.current_jump_frame += float(0.07 * game_step);
+		switch (int(player.current_jump_frame)) {
+		case 0:
+			player.sprite.setTextureRect(IntRect(0, 87, 39, 44));
+			break;
+		case 1:
+			player.sprite.setTextureRect(IntRect(39, 87, 39, 44));
+			break;
+		case 2:
+			player.sprite.setTextureRect(IntRect(78, 87, 39, 45));
+			break;
+		case 3:
+			player.sprite.setTextureRect(IntRect(117, 87, 39, 45));
+			break;
+		default:
+			break;
+		}
 	}
 	else {
-		player.jump = false;
+		player.in_jump = false;
+		player.current_jump_frame = 0.f;
 		player.jump_height_counter = 0;
 	}
 
 	// Gravity
 
-	if (!player.on_ground && !player.jump) {
+	if (!player.on_ground && !player.in_jump) {
 		player.y_accel = 200.f;
 	}
-	 
+
 	// Attack Animation 
 
 	if (player.left_attack) {
+		player.displacement = 0;
 		player.right_attack = false;
-		player.current_frame += float(0.05 * player.step * deltaTime.asSeconds());
-
-		player.sprite.setTextureRect(sf::IntRect(78, 0, -78, 84));
-		player.displacement = 30;
-		player.step = 100.f;
-		if (player.current_frame > 3) {
+		player.current_attack_frame += float(0.1 * game_step);
+		switch (int(player.current_attack_frame)) {
+		case 0:
+			player.sprite.setTextureRect(IntRect(0 + 30, 44, -30, 44));
+			break;
+		case 1:
+			player.sprite.setTextureRect(IntRect(30 + 24, 44, -24, 44));
+			break;
+		case 2:
+			player.sprite.setTextureRect(IntRect(54 + 27, 44, -27, 44));
+			break;
+		case 3:
+			player.displacement = -20;
+			player.sprite.setTextureRect(IntRect(81 + 49, 44, -49, 44));
+			break;
+		case 4:
+			player.displacement = -20;
+			player.sprite.setTextureRect(IntRect(130 + 68, 44, -68, 44));
+			break;
+		case 5:
+			player.sprite.setTextureRect(IntRect(198 + 44, 44, -44, 44));
+			break;
+		default:
 			player.left_attack = false;
-			player.sprite.setTextureRect(IntRect(126, 0, -48, 84));
-			player.displacement = 0;
-			player.current_frame -= 3;
+			player.current_attack_frame = 0.f;
+			player.sprite.setTextureRect(IntRect(22, 0, -22, 42));
+			break;
 		}
 	}
 
 	if (player.right_attack) {
+		player.displacement = 0;
 		player.left_attack = false;
-		player.current_frame += float(0.05 * player.step * deltaTime.asSeconds());
-
-		player.sprite.setTextureRect(sf::IntRect(0, 0, 78, 84));
-		player.step = 100.f;
-		if (player.current_frame > 3) {
+		player.current_attack_frame += float(0.1 * game_step);
+		switch (int(player.current_attack_frame)) {
+		case 0:
+			player.sprite.setTextureRect(IntRect(0, 44, 30, 44));
+			break;
+		case 1:
+			player.sprite.setTextureRect(IntRect(30, 44, 24, 44));
+			break;
+		case 2:
+			player.sprite.setTextureRect(IntRect(54, 44, 27, 44));
+			break;
+		case 3:
+			player.sprite.setTextureRect(IntRect(81, 44, 49, 44));
+			break;
+		case 4:
+			player.displacement = -20;
+			player.sprite.setTextureRect(IntRect(130, 44, 68, 44));
+			break;
+		case 5:
+			player.displacement = -20;
+			player.sprite.setTextureRect(IntRect(198, 44, 44, 44));
+			break;
+		default:
 			player.right_attack = false;
-			player.sprite.setTextureRect(IntRect(78, 0, 48, 84));
-			player.current_frame -= 3;
+			player.current_attack_frame = 0.f;
+			player.sprite.setTextureRect(IntRect(0, 0, 22, 42));
+			break;
 		}
 	}
 
@@ -221,11 +360,11 @@ void PlayerUpdate(Player& player, const sf::Time& deltaTime, Game& game) {
 	game.obj[0][player.obj_number].rect.top += delta_y;
 
 	CheckPlayerCollisions(player, game);
-	player.x_pos = game.obj[0][player.obj_number].rect.left - player.displacement;
-	player.y_pos = game.obj[0][player.obj_number].rect.top;
-
+	player.x_pos = game.obj[0][player.obj_number].rect.left + player.displacement;
+	player.y_pos = game.obj[0][player.obj_number].rect.top + game.obj[0][player.obj_number].rect.height;
+	player.sprite.setOrigin(0, 42);
 	player.sprite.setPosition(player.x_pos, player.y_pos);
-	GetPlayerCoordinateForView(*player.view, player.x_pos + 24 + player.displacement, player.y_pos + 42);
+	GetPlayerCoordinateForView(*player.view, player.x_pos - player.displacement, player.y_pos);
 }
 
 void CheckPlayerCollisions(Player& player, Game& game) {
@@ -242,7 +381,8 @@ void CheckPlayerCollisions(Player& player, Game& game) {
 				bool player_higher_than_object = player_box.top + player_box.height - 10 < map_bounds.top;
 				bool player_less_than_object = player_box.top + 10 > map_bounds.top + map_bounds.height;
 
-				if (player.y_accel > 0 && player_higher_than_object) { // Check upper collision 
+				if (player.y_accel > 0 && player_higher_than_object) {// Check upper collision 
+					player.jump_animation = false;
 					player.on_ground = true;
 					player_box.top = map_bounds.top - player_box.height;
 					upper_collision = true;
@@ -251,7 +391,7 @@ void CheckPlayerCollisions(Player& player, Game& game) {
 				else if (player.y_accel < 0 && player_less_than_object) { // Check bottom collision 
 					player_box.top = map_bounds.top + map_bounds.height;
 					bottom_collision = true;
-					player.jump = false;
+					player.in_jump = false;
 				}
 				if (player.x_accel < 0 && !upper_collision && !bottom_collision) { // Check collision with left side 
 					player_box.left = map_bounds.left + map_bounds.width;
@@ -262,13 +402,11 @@ void CheckPlayerCollisions(Player& player, Game& game) {
 			}
 
 		}
-		if (player_sprite.intersects(map_bounds) && (player.left_attack || player.right_attack)) {
+		if (player_sprite.intersects(map_bounds) && (player.left_attack || player.right_attack) && int(player.current_attack_frame) == 3) {
 			if (game.obj[0][i].name.substr(0, 5) == "enemy") {
 				for (std::list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 					Enemy* enemy = *iter;
 					if (enemy->name == game.obj[0][i].name) {
-						player.left_attack = false;
-						player.right_attack = false;
 						delete *iter;
 						game.enemy_list->remove(*iter);
 						game.obj[0].erase(game.obj[0].begin() + i);
@@ -280,7 +418,7 @@ void CheckPlayerCollisions(Player& player, Game& game) {
 					if (enemy->obj_number > i) {
 						enemy->obj_number--;
 					}
-					
+
 				}
 			}
 		}
@@ -308,8 +446,7 @@ void EnemyAdd(Game& game) { // Будет несколько вариков мобов
 	enemy->state = NONE;
 	enemy->x_accel = 0;
 	enemy->y_accel = 0;
-	enemy->image.loadFromFile("enemy_spritesheet.png");
-	enemy->image.createMaskFromColor(Color(255, 255, 255));
+	enemy->image.loadFromFile("BIGknight_enemy.png");
 	enemy->texture.loadFromImage(enemy->image);
 	enemy->sprite.setTexture(enemy->texture);
 	enemy->sprite.setTextureRect(sf::IntRect(78, 0, XEnemySize, YEnemySize));
@@ -327,11 +464,12 @@ void PlayerInit(Game& game) {
 	game.player->obj_number = obj_number;
 	game.player->x_accel = 0;
 	game.player->y_accel = 0;
-	game.player->image.loadFromFile("hero_spritesheet.png");
+	game.player->image.loadFromFile("hero.png");
+	//game.player->image.createMaskFromColor(Color(255, 255, 255));
 	game.player->texture.loadFromImage(game.player->image);
 	game.player->sprite.setTexture(game.player->texture);
-	game.player->sprite.setTextureRect(IntRect(78, 0, 48, 84));
-	game.player->max_jump = 100.f;
+	game.player->sprite.setTextureRect(IntRect(0, 0, 22, 42));
+	game.player->max_jump = 150.f;
 }
 
 void EnemyListInit(list<Enemy*>*& enemy_list) {
@@ -366,9 +504,9 @@ void ProcessEnemiesEvents(Game& game) {
 		float enemy_box_right = enemy_box.left + enemy_box.width;
 		bool right_detect = player_box.left - enemy->field_of_view <= enemy_box_right && player_box.left >= enemy_box.left;
 		bool left_detect = player_box_right + enemy->field_of_view >= enemy_box.left && player_box.left <= enemy_box.left;
-		bool up_keep_detection = player_box.top + player_box.height >= enemy_box.top - player_box.height;
+		bool not_too_higher = player_box.top + player_box.height >= enemy_box.top - player_box.height;
 		if (enemy->enemy_state == NOT_DETECT) {
-			if (left_detect || right_detect && up_keep_detection) {
+			if (left_detect || right_detect && not_too_higher) {
 				enemy->enemy_state = DETECT;
 			}
 		}
@@ -380,13 +518,16 @@ void ProcessEnemiesEvents(Game& game) {
 				enemy->state = RIGHT;
 			}
 			else enemy->state = NONE;
-			bool close_from_left = enemy_box_right > player_box.left - 20 && enemy_box_right < player_box_right;
-			bool close_from_right = enemy_box.left < player_box_right + 20 && enemy_box.left > player_box.left;
+			bool close_from_left = enemy_box_right > player_box.left && enemy_box_right < player_box_right;
+			bool close_from_right = enemy_box.left < player_box_right && enemy_box.left > player_box.left;
 			if (close_from_left) {
 				enemy->right_attack = true;
+				enemy->left_attack = false;
 				enemy->state = NONE;
-			}else if (close_from_right) {
+			}
+			else if (close_from_right) {
 				enemy->left_attack = true;
+				enemy->right_attack = false;
 				enemy->state = NONE;
 			}
 		}
@@ -406,7 +547,7 @@ void ProcessPlayerEvents(sf::RenderWindow& window, Game& game) {
 
 	while (window.pollEvent(event)) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-			player.is_jump = true;
+			player.start_jumping = true;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			player.state = LEFT;
