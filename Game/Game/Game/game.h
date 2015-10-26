@@ -2,14 +2,22 @@
 
 #include <list>
 #include "enemy.h"
+#include "player.h"
+#include "level.hpp"
 
+const float WindowWidth = 800.f;
+const float WindowHeight = 600.f;
+const float ForceOfGravity = 200.f;
 
 struct Game {
 	Player* player;
 	Level *lvl;
+	sf::RenderWindow * window;
 	std::list<Enemy*> * enemy_list;
 	std::vector<Object> * obj;
 };
+
+void ViewInit(Game & game);
 
 void GameInit(Game& game);
 
