@@ -1,6 +1,9 @@
 #include <sstream>
 #include "../Headers/enemy.h"
 
+using namespace sf;
+using namespace std;
+
 void EnemyInit(Enemy & enemy, Type type, sf::FloatRect & rect) {
 	enemy.visual = new Visual();
 	enemy.logic = new Logic();
@@ -18,9 +21,9 @@ sf::FloatRect GetEnemyRectFromLvl(Level & lvl, Type type, int number) {
 int GetEnemiesCount(Level& lvl, Type type) {
 	switch (type) {
 	case SPEARMAN:
-		return lvl.GetMatchObjects(0, 8, "spearman").size();
+		return lvl.GetMatchObjects(0, 8, "SPEARMAN").size();
 	case SWORDSMAN:
-		return lvl.GetMatchObjects(0, 9, "swordsman").size();
+		return lvl.GetMatchObjects(0, 9, "SWORDMAN").size();
 	default:
 		break;
 	}
@@ -28,23 +31,24 @@ int GetEnemiesCount(Level& lvl, Type type) {
 }
 
 
-void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime) {
+void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level & level) {
 	Movement & movement = *enemy.logic->movement;
 	Animation & animation = *enemy.visual->animation;
 	sf::FloatRect & enemy_rect = *enemy.visual->rect;
 	CheckMovementLogic(movement);
-	// Box & Sprite steps
-
 	AnimationsUpdate(enemy);
 
-	enemy.visual->rect->left += movement.delta_x;
-	enemy.visual->rect->top += movement.delta_y;
+	enemy.visual->rect->left += movement.delta_x  * deltaTime.asSeconds();
+	enemy.visual->rect->top += movement.delta_y  * deltaTime.asSeconds();
 
-	movement.x_pos = enemy_rect.left;// +enemy.displacement;
+	CheckEnemyAndLevelCollision(enemy, level);
+
+	movement.x_pos = enemy_rect.left;
 	movement.y_pos = enemy_rect.top + enemy_rect.height;
 
 	animation.frame->sprite.setOrigin(0, animation.frame->sprite.getGlobalBounds().height);
 	animation.frame->sprite.setPosition(movement.x_pos, movement.y_pos);
+
 	sf::FloatRect enemy_bound = enemy.visual->animation->frame->sprite.getGlobalBounds();
 	HpBarUpdate(*enemy.logic->fight, enemy_bound, SPEARMAN);
 }
@@ -57,7 +61,8 @@ void AnimationsUpdate(Enemy& enemy) {
 	AttackAnimation(animation, game_step);
 }
 
-void EnemyLevelCollision(Enemy& enemy, const Object & map_object) {
+void ProcessCollision(Enemy& enemy, const Object & map_object) {
+	Frame & frame = *enemy.visual->animation->frame;
 	sf::FloatRect& enemy_rect = *enemy.visual->rect;
 	Movement & movement = *enemy.logic->movement;
 	if (enemy_rect.intersects(map_object.rect)) {
@@ -82,5 +87,12 @@ void EnemyLevelCollision(Enemy& enemy, const Object & map_object) {
 				enemy_rect.left -= enemy_rect.left + enemy_rect.width - map_object.rect.left;
 			}
 		}
+	}
+}
+
+void CheckEnemyAndLevelCollision(Enemy & enemy, const Level & level) {
+	vector<Object> map_objects = level.GetAllObjects();
+	for (int i = 0; i < map_objects.size(); i++) {
+		ProcessCollision(enemy, map_objects[i]);
 	}
 }

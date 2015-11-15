@@ -5,7 +5,7 @@ void MovementInit(Movement & movement, Type type) {
 	movement.y_pos = 0;
 	movement.delta_x = 0;
 	movement.delta_y = 0;
-	movement.state = RIGHT;
+	movement.state = NONE;
 	movement.prev_state = NONE;
 
 	switch (type) {

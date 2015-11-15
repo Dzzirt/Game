@@ -3,7 +3,7 @@
     "HP_BAR": {
       "x": 0,
       "y": 0,
-      "width": 244,
+      "width": 193,
       "height": 28
     },
     "HP_STRIP": {
@@ -22,7 +22,7 @@
     },
     "HP_STRIP": {
       "x": 0,
-      "y": 1,
+      "y": 4,
       "width": 28,
       "height": 1
     }

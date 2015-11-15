@@ -8,6 +8,7 @@ struct HpBar {
 	sf::Sprite bar_sprite;
 	sf::Sprite strip_sprite;
 	sf::IntRect strip_rect;
+	sf::IntRect bar_rect;
 };
 
 void HpBarInit(HpBar & hp, Type type);

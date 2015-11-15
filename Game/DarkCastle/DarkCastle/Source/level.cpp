@@ -255,7 +255,7 @@ std::vector<Object> Level::GetObjects(std::string name) {
 }
 
 
-std::vector<Object> Level::GetAllObjects() {
+std::vector<Object> Level::GetAllObjects()const {
 	return objects;
 };
 

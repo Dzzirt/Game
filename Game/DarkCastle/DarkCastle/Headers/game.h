@@ -27,7 +27,7 @@ void Update(Game& game, const sf::Time& deltaTime);
 
 void Render(sf::RenderWindow & window, Game & game);
 
-void CheckCollisions(Game & game);
+void CheckPlayerAndEnemyCollision(Game& game);
 
 void PlayerEnemyCollision(const Player & player, Enemy & enemy);
 

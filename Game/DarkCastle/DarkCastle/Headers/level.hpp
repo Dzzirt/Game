@@ -7,7 +7,7 @@
 #include <map>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "../TinyXML/tinyxml.h"
+#include "../Libs/TinyXML/tinyxml.h"
 
 struct Object
 {
@@ -41,7 +41,7 @@ public:
 	std::vector<Object> Level::GetMatchObjects(int from, int to, std::string name);
     Object GetObject(std::string name);
     std::vector<Object> GetObjects(std::string name);
-	std::vector<Object> GetAllObjects();
+	std::vector<Object> GetAllObjects()const;
     void Draw(sf::RenderWindow &window);
 	sf::Vector2i GetTileSize();
 

@@ -48,6 +48,13 @@ sf::FloatRect GetPlayerRectFromLvl(Level& lvl) {
 	return lvl.GetObject("player").rect;
 }
 
+void CheckPlayerAndLevelCollision(Player & player, const Level & level) {
+	vector<Object> map_objects = level.GetAllObjects();
+	for (int i = 0; i < map_objects.size(); i++) {
+		PlayerLevelCollision(player, map_objects[i]);
+	}
+}
+
 void PlayerLevelCollision(Player& player, const Object & map_object) {
 	FloatRect& player_rect = *player.visual->rect;
 	Movement & movement = *player.logic->movement;
@@ -78,6 +85,7 @@ void PlayerLevelCollision(Player& player, const Object & map_object) {
 				player_rect.left -= player_rect.left + player_rect.width - map_object.rect.left;
 			}
 		}
+		
 	}
 }
 
@@ -92,8 +100,9 @@ void PlayerInit(Player & player, sf::FloatRect & rect) {
 	JumpingInit(*player.jumping, PLAYER);
 }
 
-void PlayerUpdate(Player & player, const sf::Time& deltaTime) {
+void PlayerUpdate(Player & player, const Level & level, const sf::Time& deltaTime) {
 	Movement & movement = *player.logic->movement;
+	Frame & player_frame = *player.visual->animation->frame;
 	Jump & jump = *player.jumping;
 	Animation & animation = *player.visual->animation;
 	FloatRect & player_rect = *player.visual->rect;
@@ -105,13 +114,15 @@ void PlayerUpdate(Player & player, const sf::Time& deltaTime) {
 	player_rect.left += movement.delta_x * deltaTime.asSeconds();
 	player_rect.top += movement.delta_y * deltaTime.asSeconds();
 
-	movement.x_pos = player_rect.left + animation.frame->displacement;
+	CheckPlayerAndLevelCollision(player, level);
+
+	movement.x_pos = player_rect.left + player_frame.displacement;
 	movement.y_pos = player_rect.top + player_rect.height;
 
-	animation.frame->sprite.setOrigin(0, animation.frame->sprite.getGlobalBounds().height);
-	animation.frame->sprite.setPosition(movement.x_pos, movement.y_pos);
+	player_frame.sprite.setOrigin(0, player_frame.sprite.getGlobalBounds().height);
+	player_frame.sprite.setPosition(movement.x_pos, movement.y_pos);
 
-	PlayerHpBarUpdate(*player.logic->fight, *player.view);
+
 }
 
 void AnimationsUpdate(Player& player) {

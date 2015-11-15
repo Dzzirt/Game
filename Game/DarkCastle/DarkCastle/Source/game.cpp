@@ -45,20 +45,19 @@ void ProcessEvents(RenderWindow& window, Game& game) {
 }
 
 void Update(Game& game, const Time& deltaTime) {
-	PlayerUpdate(*game.player, deltaTime);
+	PlayerUpdate(*game.player, *game.lvl, deltaTime);
 	ViewUpdate(*game.player->view, *game.window, *game.player->logic->movement, *game.lvl, game.player->visual->animation->frame->displacement);
+	PlayerHpBarUpdate(*game.player->logic->fight, *game.player->view);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
-		EnemyUpdate(*enemy, deltaTime);
+		EnemyUpdate(*enemy, deltaTime, *game.lvl);
 	}
-	CheckCollisions(game);
+	CheckPlayerAndEnemyCollision(game);
 }
 
 void Render(RenderWindow& window, Game& game) {
 	HpBar& player_hp = *game.player->logic->fight->hp_bar;
-	HpBar enemy_hp;
 	Sprite& player_sprite = game.player->visual->animation->frame->sprite;
-	Sprite enemy_sprite;
 	game.lvl->Draw(window);
 	window.setView(*game.player->view);
 	window.draw(player_sprite);
@@ -66,8 +65,8 @@ void Render(RenderWindow& window, Game& game) {
 	window.draw(player_hp.strip_sprite);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
-		enemy_hp = *enemy->logic->fight->hp_bar;
-		enemy_sprite = enemy->visual->animation->frame->sprite;
+		HpBar enemy_hp = *enemy->logic->fight->hp_bar;
+		Sprite enemy_sprite = enemy->visual->animation->frame->sprite;
 		window.draw(enemy_sprite);
 		window.draw(enemy_hp.bar_sprite);
 		window.draw(enemy_hp.strip_sprite);
@@ -75,16 +74,16 @@ void Render(RenderWindow& window, Game& game) {
 	window.display();
 }
 
-void CheckCollisions(Game& game) {
+void CheckPlayerAndEnemyCollision(Game& game) {
 	Player& player = *game.player;
 	vector<Object> map_objects = game.lvl->GetAllObjects();
 	list<Enemy*>::iterator list_begin = game.enemy_list->begin();
 	list<Enemy*>::iterator list_end = game.enemy_list->end();
 	for (int i = 0; i < map_objects.size(); i++) {
-		PlayerLevelCollision(player, map_objects[i]);
+		list_begin = game.enemy_list->begin();
+		list_end = game.enemy_list->end();
 		for (list<Enemy*>::iterator iter = list_begin; iter != list_end; ++iter) {
 			Enemy* enemy = *iter;
-			EnemyLevelCollision(*enemy, map_objects[i]);
 			PlayerEnemyCollision(player, *enemy);
 			EnemyPlayerCollision(*enemy, player);
 			if (player.logic->fight->is_dead) {
@@ -96,7 +95,6 @@ void CheckCollisions(Game& game) {
 				break;
 			}
 		}
-
 	}
 }
 
@@ -105,9 +103,8 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 	FightLogic& enemy_fight = *enemy.logic->fight;
 	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& enemy_rect = *enemy.visual->rect;
-	const float& player_damage = player.logic->fight->damage;
-	bool is_hit = player_anim.current_attack_frame == 3;
-
+	float& player_damage = player.logic->fight->damage;
+	bool is_hit = int(player_anim.current_attack_frame) == 3;
 	if (player_sprite.intersects(enemy_rect) && is_hit) {
 		if (enemy_fight.health_points <= 0) {
 			enemy_fight.is_dead = true;
@@ -115,6 +112,10 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 		else {
 			enemy_fight.health_points -= player_damage;
 		}
+		player_damage = 0;
+	}
+	else {
+		player_damage = CPlayerDamage;
 	}
 }
 

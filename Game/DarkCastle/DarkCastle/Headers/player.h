@@ -19,7 +19,7 @@ struct Player {
 
 void PlayerInit(Player & player, sf::FloatRect & rect);
 
-void PlayerUpdate(Player & player, const sf::Time& deltaTime);
+void PlayerUpdate(Player & player, const Level & level, const sf::Time& deltaTime);
 
 void CheckGravityLogic(Jump & jump, Movement & movement, const sf::Time& deltaTime);
 
@@ -32,3 +32,5 @@ void AnimationsUpdate(Player& player);
 void ViewUpdate(sf::View& view, sf::RenderWindow & window, const Movement & movement, const Level & level, float displacement);
 
 void ProcessPlayerEvents(sf::RenderWindow& window, Player & player);
+
+void CheckPlayerAndLevelCollision(Player & player, Level & level);

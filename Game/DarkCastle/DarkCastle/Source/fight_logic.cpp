@@ -21,31 +21,27 @@ void FightLogicInit(FightLogic& fight, Type type) {
 		case SWORDSMAN:
 			break;
 		default: break;
-
-
 	}
-
 }
 
 void HpBarUpdate(FightLogic & fight, sf::FloatRect rect_for_place, Type type) {
 	HpBar& hp = *fight.hp_bar;
 	sf::IntRect & hp_strip = hp.strip_rect;
 	switch (type) {
-	case PLAYER:
-		hp.bar_sprite.setPosition(rect_for_place.left, rect_for_place.top);		
-		break;
-	default:
+	case SPEARMAN:
 		hp.bar_sprite.setPosition(rect_for_place.left + (rect_for_place.width / 2.f), rect_for_place.top - 10.f);
 		hp.bar_sprite.setOrigin(hp.bar_texture.getSize().x / 2.f, 0);
+		break;
+	default:
 		break;
 	}
 	float health_in_percent = fight.health_points / fight.max_health_points;
 	sf::FloatRect bar_bounds = hp.bar_sprite.getGlobalBounds();
 	sf::FloatRect strip_bounds = hp.strip_sprite.getGlobalBounds();
-	float border_left = (bar_bounds.width - strip_bounds.width) / 2.f;
-	float border_right = (bar_bounds.width - strip_bounds.width) / 2.f;
-	hp.strip_sprite.setPosition(bar_bounds.left + border_left, bar_bounds.top + border_right);
-	hp.strip_sprite.setTextureRect(sf::IntRect(0, hp_strip.top, hp_strip.width * health_in_percent, hp_strip.height));
+	float border_width = (bar_bounds.width - strip_bounds.width) / 2.f;
+	float border_height = (bar_bounds.height - strip_bounds.height) / 2.f;
+	hp.strip_sprite.setPosition(bar_bounds.left + border_width, bar_bounds.top + border_height);
+	hp.strip_sprite.setTextureRect(sf::IntRect(hp_strip.left, hp_strip.top, hp_strip.width * health_in_percent, hp_strip.height));
 }
 
 void PlayerHpBarUpdate(FightLogic & fight, sf::View & view) {
@@ -59,7 +55,7 @@ void PlayerHpBarUpdate(FightLogic & fight, sf::View & view) {
 	sf::FloatRect bar_bounds = hp.bar_sprite.getGlobalBounds();
 	sf::FloatRect strip_bounds = hp.strip_sprite.getGlobalBounds();
 	float border_left = (bar_bounds.width - strip_bounds.width) / 2.f;
-	float border_right = (bar_bounds.width - strip_bounds.width) / 2.f;
-	hp.strip_sprite.setPosition(bar_bounds.left + border_left, bar_bounds.top + border_right);
-	
+	float border_top = (bar_bounds.height - strip_bounds.height) / 2.f;
+	hp.strip_sprite.setPosition(bar_bounds.left + border_left, bar_bounds.top + border_top + 100);
+	hp.strip_sprite.setTextureRect(sf::IntRect(0, hp_strip.top, hp_strip.width * health_in_percent, hp_strip.height));
 }

@@ -10,6 +10,7 @@ void FrameInit(Frame & frame, Type type) {
 		frame.image.loadFromFile("Resourses/Hero/hero.png");
 		frame.texture.loadFromImage(frame.image);
 		frame.sprite.setTexture(frame.texture);
+
 		break;
 	case SPEARMAN:
 		frame.image.loadFromFile("Resourses/Enemy/spearman.png");
