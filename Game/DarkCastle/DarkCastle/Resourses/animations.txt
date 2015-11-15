@@ -1,0 +1,54 @@
+{
+  "PLAYER": {
+    "MOVE": {
+      "x": 34,
+      "y": 0,
+      "width": 34,
+      "height": 41
+    },
+    "STAY": {
+      "x": 34,
+      "y": 132,
+      "width": 34,
+      "height": 41
+    },
+    "ATTACK": {
+      "x": 68,
+      "y": 41,
+      "width": 68,
+      "height": 44
+    },
+    "JUMP": {
+      "x": 39,
+      "y": 85,
+      "width": 39,
+      "height": 45
+    },
+    "GRAVITY": {
+      "x": 117,
+      "y": 85,
+      "width": 39,
+      "height": 45
+    }
+  },
+  "SPEARMAN": {
+    "MOVE": {
+      "x": 18,
+      "y": 37,
+      "width": 18,
+      "height": 37
+    },
+    "STAY": {
+      "x": 18,
+      "y": 74,
+      "width": 18,
+      "height": 37
+    },
+    "ATTACK": {
+      "x": 35,
+      "y": 0,
+      "width": 35,
+      "height": 37
+    }
+  }
+}
