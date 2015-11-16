@@ -19,13 +19,13 @@ void GameInit(Game& game);
 
 void LevelInit(Level & level);
 
-void ProcessEvents(sf::RenderWindow& window, Game & game);
+void ProcessEvents(Game & game);
 
 void ProcessEnemiesEvents(Game & game);
 
 void Update(Game& game, const sf::Time& deltaTime);
 
-void Render(sf::RenderWindow & window, Game & game);
+void Render(Game & game);
 
 void CheckPlayerAndEnemyCollision(Game& game);
 

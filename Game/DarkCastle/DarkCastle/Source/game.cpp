@@ -36,7 +36,8 @@ void GameInit(Game& game) {
 
 void ProcessEnemiesEvents(Enemy& enemy, Type type) { }
 
-void ProcessEvents(RenderWindow& window, Game& game) {
+void ProcessEvents(Game& game) {
+	RenderWindow & window = *game.window;
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
 		ProcessEnemiesEvents(*enemy, SPEARMAN);
@@ -55,9 +56,10 @@ void Update(Game& game, const Time& deltaTime) {
 	CheckPlayerAndEnemyCollision(game);
 }
 
-void Render(RenderWindow& window, Game& game) {
+void Render(Game& game) {
 	HpBar& player_hp = *game.player->logic->fight->hp_bar;
 	Sprite& player_sprite = game.player->visual->animation->frame->sprite;
+	RenderWindow & window = *game.window;
 	game.lvl->Draw(window);
 	window.setView(*game.player->view);
 	window.draw(player_sprite);

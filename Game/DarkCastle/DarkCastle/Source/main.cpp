@@ -9,15 +9,15 @@ int main() {
 	Clock clock;
 	Time time_since_last_update = Time::Zero;
 	while (game->window->isOpen()) {
-		ProcessEvents(*game->window, *game);
+		ProcessEvents(*game);
 		time_since_last_update += clock.restart();
 		while (time_since_last_update > TimePerFrame) {
 			time_since_last_update -= TimePerFrame;
-			ProcessEvents(*game->window, *game);
+			ProcessEvents(*game);
 			Update(*game, TimePerFrame);
 			
 		}
-		Render(*game->window, *game);
+		Render(*game);
 	}
 	return 0;
 }
