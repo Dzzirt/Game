@@ -14,7 +14,6 @@ int main() {
 			time_since_last_update -= TimePerFrame;
 			ProcessEvents(*game);
 			Update(*game, TimePerFrame);
-			
 		}
 		Render(*game);
 	}

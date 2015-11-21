@@ -23,8 +23,4 @@ FightLogic* CreateFightLogic(Type type);
 
 void FightLogicInit(FightLogic& fight, Type type);
 
-void HpBarUpdate(FightLogic & fight, sf::FloatRect rect_for_place, Type type);
-
-void PlayerHpBarUpdate(FightLogic & fight, sf::View & view);
-
 void DestroyFightLogic(FightLogic *& fight);

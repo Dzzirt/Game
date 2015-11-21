@@ -86,7 +86,7 @@ void ProcessEvents(Game& game) {
 void Update(Game& game, const Time& deltaTime) {
 	PlayerUpdate(*game.player, *game.lvl, deltaTime);
 	ViewUpdate(*game.player->view, *game.window, *game.player->movement, *game.lvl, game.player->visual->animation->frame->displacement);
-	PlayerHpBarUpdate(*game.player->fight, *game.player->view);
+	HpBarUpdate(*game.player->fight->hp_bar, *game.player->view);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
 		EnemyUpdate(*enemy, deltaTime, *game.lvl);
@@ -95,7 +95,7 @@ void Update(Game& game, const Time& deltaTime) {
 }
 
 void Render(Game& game) {
-	HpBar& player_hp = *game.player->fight->hp_bar;
+	VisualHpBar& player_hp = *game.player->fight->hp_bar->visual_hp;
 	Sprite& player_sprite = game.player->visual->animation->frame->sprite;
 	RenderWindow& window = *game.window;
 	game.lvl->Draw(window);
@@ -105,7 +105,7 @@ void Render(Game& game) {
 	window.draw(player_hp.strip_sprite);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
-		HpBar enemy_hp = *enemy->fight->hp_bar;
+		VisualHpBar enemy_hp = *enemy->fight->hp_bar->visual_hp;
 		Sprite enemy_sprite = enemy->visual->animation->frame->sprite;
 		window.draw(enemy_sprite);
 		window.draw(enemy_hp.bar_sprite);
@@ -141,16 +141,17 @@ void CheckPlayerAndEnemyCollision(Game& game) {
 void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 	Animation& player_anim = *player.visual->animation;
 	FightLogic& enemy_fight = *enemy.fight;
+	LogicHpBar& enemy_hp = *enemy.fight->hp_bar->logic_hp;
 	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& enemy_rect = *enemy.visual->rect;
 	float& player_damage = player.fight->damage;
 	bool is_hit = int(player_anim.current_attack_frame) == 3;
 	if (player_sprite.intersects(enemy_rect) && is_hit) {
-		if (enemy_fight.health_points <= 0) {
+		if (enemy_hp.health_points <= 0) {
 			enemy_fight.is_dead = true;
 		}
 		else {
-			enemy_fight.health_points -= player_damage;
+			enemy_hp.health_points -= player_damage;
 		}
 		player_damage = 0;
 	}
@@ -162,17 +163,18 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	Animation& enemy_anim = *enemy.visual->animation;
 	FightLogic& player_fight = *player.fight;
+	LogicHpBar& player_hp = *player.fight->hp_bar->logic_hp;
 	FloatRect enemy_sprite = enemy.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& player_rect = *player.visual->rect;
 	const float& enemy_damage = enemy.fight->damage;
 	bool is_hit = enemy_anim.current_attack_frame == 4;
 
 	if (enemy_sprite.intersects(player_rect) && is_hit) {
-		if (player_fight.health_points <= 0) {
+		if (player_hp.health_points <= 0) {
 			player_fight.is_dead = true;
 		}
 		else {
-			player_fight.health_points -= enemy_damage;
+			player_hp.health_points -= enemy_damage;
 		}
 	}
 }

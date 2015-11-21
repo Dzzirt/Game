@@ -15,6 +15,7 @@ enum EnemyState {
 	NOT_DETECT,
 	DETECT
 };
+
 struct Enemy {
 	Movement * movement;
 	FightLogic * fight;
