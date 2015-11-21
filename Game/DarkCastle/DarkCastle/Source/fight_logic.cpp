@@ -56,6 +56,6 @@ void PlayerHpBarUpdate(FightLogic & fight, sf::View & view) {
 	sf::FloatRect strip_bounds = hp.strip_sprite.getGlobalBounds();
 	float border_left = (bar_bounds.width - strip_bounds.width) / 2.f;
 	float border_top = (bar_bounds.height - strip_bounds.height) / 2.f;
-	hp.strip_sprite.setPosition(bar_bounds.left + border_left, bar_bounds.top + border_top + 100);
+	hp.strip_sprite.setPosition(bar_bounds.left + border_left, bar_bounds.top + border_top);
 	hp.strip_sprite.setTextureRect(sf::IntRect(0, hp_strip.top, hp_strip.width * health_in_percent, hp_strip.height));
 }

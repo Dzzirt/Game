@@ -15,9 +15,17 @@ struct Game {
 
 };
 
+Level* CreateLevel();
+
+sf::RenderWindow* CreateRenderWindow();
+
+std::list<Enemy*>* CreateEnemyList();
+
 void GameInit(Game& game);
 
 void LevelInit(Level & level);
+
+void EnemyListInit(std::list<Enemy*> en_list, Level & level, Type type);
 
 void ProcessEvents(Game & game);
 
@@ -32,6 +40,4 @@ void CheckPlayerAndEnemyCollision(Game& game);
 void PlayerEnemyCollision(const Player & player, Enemy & enemy);
 
 void EnemyPlayerCollision(const Enemy& enemy, Player& player);
-
-void EnemyListInit(std::list<Enemy*> *& enemy_list);
 

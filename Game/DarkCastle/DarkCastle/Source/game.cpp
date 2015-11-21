@@ -1,28 +1,48 @@
 #include <sstream>
 #include "../Headers/game.h"
-#include <complex>
+
 
 
 using namespace sf;
 using namespace std;
 
+Level* CreateLevel()
+{
+	Level * level = new Level();
+	LevelInit(*level);
+	return level;
+}
+
 void LevelInit(Level& level) {
 	level.LoadFromFile("Resourses/map.tmx");
 }
 
-void EnemyListInit(list<Enemy*>*& enemy_list) {
-	enemy_list = new list<Enemy*>();
+RenderWindow* CreateRenderWindow()
+{
+	return new RenderWindow(VideoMode(WindowWidth, WindowHeight), "Dark Castle");
 }
 
+std::list<Enemy*>* CreateEnemyList()
+{
+	std::list<Enemy*>* list = new std::list<Enemy*>();
+	return list;
+}
+
+/*void EnemyListInit(list<Enemy*> en_list, Level & level, Type type)
+{
+	int enemies_count = GetEnemiesCount(level, type);
+	for (int i = 0; i < enemies_count; i++) {
+		Enemy* enemy = new Enemy();
+		FloatRect enemy_rect = GetEnemyRectFromLvl(level, type, i);
+		EnemyInit(*enemy, SPEARMAN, enemy_rect);
+		en_list.push_back(enemy);
+	}
+}*/
 void GameInit(Game& game) {
-	game.window = new RenderWindow(VideoMode(WindowWidth, WindowHeight), "Dark Castle");
-	game.lvl = new Level();
-	game.player = new Player();
-	LevelInit(*game.lvl);
-	EnemyListInit(game.enemy_list);
-	
-	FloatRect player_rect = GetPlayerRectFromLvl(*game.lvl);
-	PlayerInit(*game.player, player_rect);
+	game.window = CreateRenderWindow();
+	game.lvl = CreateLevel();
+	game.player = CreatePlayer(*game.lvl);
+	game.enemy_list = CreateEnemyList();
 
 	int spearmans_count = GetEnemiesCount(*game.lvl, SPEARMAN);
 
@@ -34,6 +54,7 @@ void GameInit(Game& game) {
 	}
 }
 
+void DestroyGame(Game & game) { }
 void ProcessEnemiesEvents(Enemy& enemy, Type type) { }
 
 void ProcessEvents(Game& game) {
@@ -42,7 +63,7 @@ void ProcessEvents(Game& game) {
 		Enemy* enemy = *iter;
 		ProcessEnemiesEvents(*enemy, SPEARMAN);
 	}
-	ProcessPlayerEvents(window, *game.player);
+	ProcessPlayerEvents(window, *game.player, *game.lvl);
 }
 
 void Update(Game& game, const Time& deltaTime) {

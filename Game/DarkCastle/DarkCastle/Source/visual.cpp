@@ -1,4 +1,5 @@
 #include "../Headers/visual.h"
+#include "../Headers/level.hpp"
 
 void VisualInit(Visual& visual, Type type, sf::FloatRect & rect) {
 	visual.animation = new Animation();

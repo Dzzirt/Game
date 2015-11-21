@@ -17,7 +17,9 @@ struct Player {
 
 // DeletePlayer(Player);
 
-void PlayerInit(Player & player, sf::FloatRect & rect);
+Player* CreatePlayer(Level & level);
+
+void PlayerInit(Player & player, Level & level);
 
 void PlayerUpdate(Player & player, const Level & level, const sf::Time& deltaTime);
 
@@ -31,6 +33,6 @@ void AnimationsUpdate(Player& player);
 
 void ViewUpdate(sf::View& view, sf::RenderWindow & window, const Movement & movement, const Level & level, float displacement);
 
-void ProcessPlayerEvents(sf::RenderWindow& window, Player & player);
+void ProcessPlayerEvents(sf::RenderWindow& window, Player & player, Level & level);
 
 void CheckPlayerAndLevelCollision(Player & player, Level & level);

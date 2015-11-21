@@ -5,8 +5,7 @@ using namespace std;
 
 
 void ViewUpdate(sf::View& view, RenderWindow & window, const Movement & movement, const Level & level, float displacement) {
-	unsigned int window_x = window.getSize().x;
-	unsigned int window_y = window.getSize().y;
+
 
 	float left_right_border = view.getSize().x / 2;
 	float up_down_border = view.getSize().y / 2;
@@ -31,16 +30,6 @@ void ViewUpdate(sf::View& view, RenderWindow & window, const Movement & movement
 		tempY = up_down_border;
 	}
 
-	if (map_height < map_width) {
-		if (unsigned int(map_height) < window_y) {
-			view.zoom(map_height / float(window_y));
-		}
-	}
-	else {
-		if (unsigned int(map_width) < window_x) {
-			view.zoom(map_width / window_x);
-		}
-	}
 	view.setCenter(tempX, tempY);
 }
 
@@ -89,12 +78,19 @@ void PlayerLevelCollision(Player& player, const Object & map_object) {
 	}
 }
 
-void PlayerInit(Player & player, sf::FloatRect & rect) {
+Player* CreatePlayer(Level & level)
+{
+	Player * player = new Player();
+	PlayerInit(*player, level);
+	return player;
+}
+void PlayerInit(Player & player, Level & level) {
 	player.logic = new Logic();
 	player.jumping = new Jump();
 	player.visual = new Visual();
 	player.view = new View();
 	player.view->reset(sf::FloatRect(0, 0, WindowWidth, WindowHeight));
+	FloatRect rect = GetPlayerRectFromLvl(level);
 	VisualInit(*player.visual, PLAYER, rect);
 	LogicInit(*player.logic, PLAYER);
 	JumpingInit(*player.jumping, PLAYER);
@@ -148,7 +144,7 @@ void CheckGravityLogic(Jump & jump, Movement & movement, const sf::Time& deltaTi
 	}
 }
 
-void ProcessPlayerEvents(RenderWindow& window, Player & player) {
+void ProcessPlayerEvents(RenderWindow& window, Player & player, Level & level) {
 	Jump & jump = *player.jumping;
 	View& view = *player.view;
 	Movement & movement = *player.logic->movement;
@@ -185,8 +181,20 @@ void ProcessPlayerEvents(RenderWindow& window, Player & player) {
 			window.close();
 		}
 		else if (event.type == Event::Resized) {
-			view.setSize(float(event.size.width), float(event.size.height));
-			view.zoom(WindowWidth / event.size.width);
+			view.setSize(event.size.width, event.size.height);
+			int map_height = level.height * level.tileHeight;
+			int map_width = level.width * level.tileWidth;
+			cout << map_height / float(event.size.height * event.size.height / WindowHeight) << endl;
+			if (map_height < map_width) {
+				if (unsigned int(map_height) < event.size.height) {
+					view.zoom(map_height / float(event.size.height));
+				}
+			}
+			else {
+				if (unsigned int(map_width) < event.size.width) {
+					view.zoom(map_width / event.size.width );
+				}
+			}
 
 		}
 	}
