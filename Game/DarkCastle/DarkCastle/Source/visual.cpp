@@ -1,11 +1,15 @@
 #include "../Headers/visual.h"
 #include "../Headers/level.hpp"
 
+Visual* CreateVisual(Type type, sf::FloatRect & rect) {
+	Visual * visual = new Visual();
+	VisualInit(*visual, type, rect);
+	return visual;
+}
 void VisualInit(Visual& visual, Type type, sf::FloatRect & rect) {
-	visual.animation = new Animation();
-	visual.rect = new sf::Rect<float>();
+	visual.animation = CreateAnimation(type);
+	visual.rect = new sf::Rect<float>;
 	*visual.rect = rect;
-	AnimationInit(*visual.animation, type);
 }
 
 void DestroyVisual(Visual*& visual){

@@ -1,5 +1,10 @@
 #include "../Headers/movement.h"
 
+Movement* CreateMovement(Type type) {
+	Movement* movement = new Movement();
+	MovementInit(*movement, type);
+	return movement;
+}
 void MovementInit(Movement & movement, Type type) {
 	movement.x_pos = 0;
 	movement.y_pos = 0;

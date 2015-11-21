@@ -2,10 +2,14 @@
 
 using namespace sf;
 
+Animation* CreateAnimation(Type type) {
+	Animation* animation = new Animation();
+	AnimationInit(*animation, type);
+	return animation;
+}
 
 void AnimationInit(Animation& animation, Type type) {
-	animation.frame = new Frame();
-	FrameInit(*animation.frame, type);
+	animation.frame = CreateFrame(type);
 	animation.left_attack = false;
 	animation.right_attack = false;
 	animation.current_attack_frame = 0.f;
@@ -14,15 +18,15 @@ void AnimationInit(Animation& animation, Type type) {
 	animation.current_stay_frame = 0.f;
 	switch (type) {
 		case PLAYER:
-			animation.anim_speed = 0.07;
-			animation.anim_stay_speed = 0.014;
+			animation.anim_speed = 0.07f;
+			animation.anim_stay_speed = 0.014f;
 			animation.max_attack_frame = 6.f;
 			animation.max_move_frame = 8.f;
 			animation.max_jump_frame = 4.f;
 			animation.max_stay_frame = 2.f;
 			break;
 		case SPEARMAN:
-			animation.anim_speed = 0.1;
+			animation.anim_speed = 0.1f;
 			animation.max_attack_frame = 7.f;
 			animation.max_move_frame = 8.f;
 			animation.max_jump_frame = 0.f;

@@ -10,6 +10,7 @@ struct FrameRects {
 	sf::IntRect gravity;
 };
 
+FrameRects* CreateFrameRects(Type type);
 
 void FrameRectInit(FrameRects&, Type);
 

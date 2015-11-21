@@ -16,14 +16,12 @@ void DestroyEnemy(Enemy *& enemy) {
 	DestroyVisual(enemy->visual);
 	delete enemy;
 }
+
 void EnemyInit(Enemy& enemy, Type type, Level & level, int number) {
-	enemy.fight = new FightLogic();
-	enemy.movement = new Movement();
-	enemy.visual = new Visual();
+	enemy.fight = CreateFightLogic(type);
+	enemy.movement = CreateMovement(type);
 	FloatRect rect = GetEnemyRectFromLvl(level, type, number);
-	VisualInit(*enemy.visual, type, rect);
-	FightLogicInit(*enemy.fight, type);
-	MovementInit(*enemy.movement, type);
+	enemy.visual = CreateVisual(type, rect);
 }
 
 FloatRect GetEnemyRectFromLvl(Level& lvl, Type type, int number) {
@@ -107,7 +105,7 @@ void ProcessCollision(Enemy& enemy, const Object& map_object) {
 
 void CheckEnemyAndLevelCollision(Enemy& enemy, const Level& level) {
 	vector<Object> map_objects = level.GetAllObjects();
-	for (int i = 0; i < map_objects.size(); i++) {
+	for (size_t i = 0; i < map_objects.size(); i++) {
 		ProcessCollision(enemy, map_objects[i]);
 	}
 }

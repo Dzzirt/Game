@@ -3,6 +3,11 @@
 using namespace sf;
 
 
+FrameRects* CreateFrameRects(Type type) {
+	FrameRects* frame_rects = new FrameRects();
+	FrameRectInit(*frame_rects, type);
+	return frame_rects;
+}
 
 void FrameRectInit(FrameRects & frame_rect, Type type) {
 	std::string entity_type = TypeToString(type);

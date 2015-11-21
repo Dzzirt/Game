@@ -1,7 +1,11 @@
 #include "../Headers/hp_bar.h"
 #include "../Headers/using_json.h"
 
-
+HpBar* CreateHpBar(Type type) {
+	HpBar * hp = new HpBar();
+	HpBarInit(*hp, type);
+	return hp;
+}
 void HpBarInit(HpBar & hp, Type type) {
 	switch (type) {
 	case PLAYER:

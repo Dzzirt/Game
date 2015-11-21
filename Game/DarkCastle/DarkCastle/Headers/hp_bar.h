@@ -11,6 +11,8 @@ struct HpBar {
 	sf::IntRect bar_rect;
 };
 
+HpBar* CreateHpBar(Type type);
+
 void HpBarInit(HpBar & hp, Type type);
 
 void DestroyHpBar(HpBar *& hp);

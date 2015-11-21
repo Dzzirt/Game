@@ -1,5 +1,10 @@
 #include "../Headers/jump.h"
 
+Jump* CreateJump(Type type) {
+	Jump * jump = new Jump();
+	JumpingInit(*jump, type);
+	return jump;
+}
 
 void JumpingInit(Jump & jump, Type type) {
 	jump.on_ground = false;

@@ -15,11 +15,9 @@ struct Player {
 	sf::View* view;
 };
 
-// Player* CreatePlayer();
-
-// DeletePlayer(Player);
-
 Player* CreatePlayer(Level & level);
+
+sf::View* CreateView();
 
 void DestroyPlayer(Player*& player);
 

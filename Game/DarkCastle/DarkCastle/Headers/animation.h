@@ -19,6 +19,8 @@ struct Animation {
 	Frame * frame;
 };
 
+Animation* CreateAnimation(Type type);
+
 void AnimationInit(Animation & animation, Type type);
 
 void DestroyAnimation(Animation *& animation);

@@ -1,10 +1,14 @@
 #include "../Headers/frame.h"
 
+Frame* CreateFrame(Type type) {
+	Frame * frame = new Frame();
+	FrameInit(*frame, type);
+	return frame;
+}
 
 void FrameInit(Frame & frame, Type type) {
+	frame.rect = CreateFrameRects(type);
 	frame.displacement = 0.f;
-	frame.rect = new FrameRects();
-	FrameRectInit(*frame.rect, type);
 	switch (type) {
 	case PLAYER:
 		frame.image.loadFromFile("Resourses/Hero/hero.png");

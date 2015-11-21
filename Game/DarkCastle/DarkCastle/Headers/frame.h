@@ -11,6 +11,8 @@ struct Frame {
 	FrameRects* rect;
 };
 
+Frame* CreateFrame(Type type);
+
 void FrameInit(Frame& frame, Type type);
 
 void DestroyFrame(Frame *& frame);

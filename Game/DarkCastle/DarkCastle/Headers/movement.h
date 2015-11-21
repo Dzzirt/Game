@@ -12,6 +12,8 @@ struct Movement {
 	State prev_state;
 };
 
+Movement* CreateMovement(Type type);
+
 void MovementInit(Movement & movement, Type type);
 
 void CheckMovementLogic(Movement & movement);

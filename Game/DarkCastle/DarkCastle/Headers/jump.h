@@ -10,6 +10,8 @@ struct Jump {
 	float jump_height_counter;
 };
 
+Jump* CreateJump(Type type);
+
 void JumpingInit(Jump & jump, Type type);
 
 void DestroyJump(Jump *& jump);

@@ -3,6 +3,11 @@
 using namespace sf;
 using namespace std;
 
+View* CreateView() {
+	View * view = new View();
+	view->reset(sf::FloatRect(0.f, 0.f, float(WindowWidth), float(WindowHeight)));
+	return view;
+}
 
 void ViewUpdate(sf::View& view, RenderWindow& window, const Movement& movement, const Level& level, float displacement) {
 
@@ -39,7 +44,7 @@ sf::FloatRect GetPlayerRectFromLvl(Level& lvl) {
 
 void CheckPlayerAndLevelCollision(Player& player, const Level& level) {
 	vector<Object> map_objects = level.GetAllObjects();
-	for (int i = 0; i < map_objects.size(); i++) {
+	for (size_t i = 0; i < map_objects.size(); i++) {
 		PlayerLevelCollision(player, map_objects[i]);
 	}
 }
@@ -85,17 +90,12 @@ Player* CreatePlayer(Level& level) {
 }
 
 void PlayerInit(Player& player, Level& level) {
-	player.fight = new FightLogic();
-	player.movement = new Movement();
-	player.jumping = new Jump();
-	player.visual = new Visual();
-	player.view = new View();
-	player.view->reset(sf::FloatRect(0, 0, WindowWidth, WindowHeight));
+	player.fight = CreateFightLogic(PLAYER);
+	player.movement = CreateMovement(PLAYER);
+	player.jumping = CreateJump(PLAYER);
 	FloatRect rect = GetPlayerRectFromLvl(level);
-	VisualInit(*player.visual, PLAYER, rect);
-	JumpingInit(*player.jumping, PLAYER);
-	FightLogicInit(*player.fight, PLAYER);
-	MovementInit(*player.movement, PLAYER);
+	player.visual = CreateVisual(PLAYER, rect);
+	player.view = CreateView();
 }
 
 void DestroyPlayer(Player*& player) {
@@ -192,7 +192,7 @@ void ProcessPlayerEvents(RenderWindow& window, Player& player, Level& level) {
 			window.close();
 		}
 		else if (event.type == Event::Resized) {
-			view.setSize(event.size.width, event.size.height);
+			view.setSize(float(event.size.width), float(event.size.height));
 			int map_height = level.height * level.tileHeight;
 			int map_width = level.width * level.tileWidth;
 			cout << map_height / float(event.size.height * event.size.height / WindowHeight) << endl;
@@ -203,7 +203,7 @@ void ProcessPlayerEvents(RenderWindow& window, Player& player, Level& level) {
 			}
 			else {
 				if (unsigned int(map_width) < event.size.width) {
-					view.zoom(map_width / event.size.width);
+					view.zoom(unsigned int(map_width) / float(event.size.width));
 				}
 			}
 

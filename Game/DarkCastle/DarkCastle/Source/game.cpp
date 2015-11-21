@@ -119,7 +119,7 @@ void CheckPlayerAndEnemyCollision(Game& game) {
 	vector<Object> map_objects = game.lvl->GetAllObjects();
 	list<Enemy*>::iterator list_begin = game.enemy_list->begin();
 	list<Enemy*>::iterator list_end = game.enemy_list->end();
-	for (int i = 0; i < map_objects.size(); i++) {
+	for (size_t i = 0; i < map_objects.size(); i++) {
 		list_begin = game.enemy_list->begin();
 		list_end = game.enemy_list->end();
 		for (list<Enemy*>::iterator iter = list_begin; iter != list_end; ++iter) {

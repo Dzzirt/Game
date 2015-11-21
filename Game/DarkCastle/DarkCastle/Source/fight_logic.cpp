@@ -1,9 +1,14 @@
 #include "../Headers/consts_and_enums.h"
-#include "../Headers/player.h"
+#include "../Headers/fight_logic.h"
+
+FightLogic* CreateFightLogic(Type type) {
+	FightLogic * fight = new FightLogic();
+	FightLogicInit(*fight, type);
+	return fight;
+}
 
 void FightLogicInit(FightLogic& fight, Type type) {
-	fight.hp_bar = new HpBar();
-	HpBarInit(*fight.hp_bar, type);
+	fight.hp_bar = CreateHpBar(type);
 	fight.attack_occured = false;
 	fight.is_dead = false;
 
@@ -47,7 +52,7 @@ void HpBarUpdate(FightLogic & fight, sf::FloatRect rect_for_place, Type type) {
 	float border_width = (bar_bounds.width - strip_bounds.width) / 2.f;
 	float border_height = (bar_bounds.height - strip_bounds.height) / 2.f;
 	hp.strip_sprite.setPosition(bar_bounds.left + border_width, bar_bounds.top + border_height);
-	hp.strip_sprite.setTextureRect(sf::IntRect(hp_strip.left, hp_strip.top, hp_strip.width * health_in_percent, hp_strip.height));
+	hp.strip_sprite.setTextureRect(sf::IntRect(hp_strip.left, hp_strip.top, int(hp_strip.width * health_in_percent), hp_strip.height));
 }
 
 void PlayerHpBarUpdate(FightLogic & fight, sf::View & view) {
@@ -63,5 +68,5 @@ void PlayerHpBarUpdate(FightLogic & fight, sf::View & view) {
 	float border_left = (bar_bounds.width - strip_bounds.width) / 2.f;
 	float border_top = (bar_bounds.height - strip_bounds.height) / 2.f;
 	hp.strip_sprite.setPosition(bar_bounds.left + border_left, bar_bounds.top + border_top);
-	hp.strip_sprite.setTextureRect(sf::IntRect(0, hp_strip.top, hp_strip.width * health_in_percent, hp_strip.height));
+	hp.strip_sprite.setTextureRect(sf::IntRect(0, hp_strip.top, int(hp_strip.width * health_in_percent), hp_strip.height));
 }
