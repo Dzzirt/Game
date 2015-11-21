@@ -22,3 +22,7 @@ void HpBarInit(HpBar & hp, Type type) {
 
 }
 
+void DestroyHpBar(HpBar *& hp)
+{
+	delete hp;
+}

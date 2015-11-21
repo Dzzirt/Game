@@ -24,3 +24,9 @@ void FrameInit(Frame & frame, Type type) {
 		break;
 	}
 }
+
+void DestroyFrame(Frame *& frame)
+{
+	DestroyFrameRects(frame->rect);
+	delete frame;
+}

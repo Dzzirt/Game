@@ -8,3 +8,9 @@ void VisualInit(Visual& visual, Type type, sf::FloatRect & rect) {
 	AnimationInit(*visual.animation, type);
 }
 
+void DestroyVisual(Visual*& visual){
+	DestroyAnimation(visual->animation);
+	delete visual->rect;
+	delete visual;
+}
+

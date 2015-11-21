@@ -12,3 +12,5 @@ struct Frame {
 };
 
 void FrameInit(Frame& frame, Type type);
+
+void DestroyFrame(Frame *& frame);

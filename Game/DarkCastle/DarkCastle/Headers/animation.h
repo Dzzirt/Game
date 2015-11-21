@@ -1,6 +1,8 @@
 #pragma once
 #include "consts_and_enums.h"
 #include "frame.h"
+
+
 struct Animation {
 	bool left_attack;
 	bool right_attack;
@@ -18,6 +20,8 @@ struct Animation {
 };
 
 void AnimationInit(Animation & animation, Type type);
+
+void DestroyAnimation(Animation *& animation);
 
 void GravityAnimation(Animation & animation);
 

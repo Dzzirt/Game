@@ -12,5 +12,7 @@ struct Jump {
 
 void JumpingInit(Jump & jump, Type type);
 
+void DestroyJump(Jump *& jump);
+
 void CheckJumpLogic(Jump & jump, Movement & movement, Animation & animation);
 

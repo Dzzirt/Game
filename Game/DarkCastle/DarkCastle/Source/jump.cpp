@@ -8,6 +8,10 @@ void JumpingInit(Jump & jump, Type type) {
 	jump.max_jump = 75.f;
 }
 
+void DestroyJump(Jump *& jump)
+{
+	delete jump;
+}
 void CheckJumpLogic(Jump& jump, Movement& movement, Animation& animation) {
 	if (jump.in_jump && jump.jump_height_counter < jump.max_jump) {
 		// Disable attack

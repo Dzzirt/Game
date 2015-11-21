@@ -3,10 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 #include "level.hpp"
+#include "movement.h"
+#include "fight_logic.h"
 #include "visual.h"
-#include "logic.h"
 #include <list>
 #include <vector>
+
 
 
 enum EnemyState {
@@ -14,11 +16,16 @@ enum EnemyState {
 	DETECT
 };
 struct Enemy {
-	Logic * logic;
+	Movement * movement;
+	FightLogic * fight;
 	Visual * visual;
 };
 
-void EnemyInit(Enemy & enemy, Type type, sf::FloatRect & rect);
+Enemy* CreateEnemy(Level & level, int number);
+
+void DestroyEnemy(Enemy *& enemy);
+
+void EnemyInit(Enemy& enemy, Type type, Level & level, int number);
 
 sf::FloatRect GetEnemyRectFromLvl(Level & lvl, Type type, int number);
 

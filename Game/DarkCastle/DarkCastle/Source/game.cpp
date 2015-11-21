@@ -2,13 +2,17 @@
 #include "../Headers/game.h"
 
 
-
 using namespace sf;
 using namespace std;
 
-Level* CreateLevel()
-{
-	Level * level = new Level();
+
+Game* CreateGame() {
+	Game * game = new Game();
+	GameInit(*game);
+	return game;
+}
+Level* CreateLevel() {
+	Level* level = new Level();
 	LevelInit(*level);
 	return level;
 }
@@ -17,48 +21,61 @@ void LevelInit(Level& level) {
 	level.LoadFromFile("Resourses/map.tmx");
 }
 
-RenderWindow* CreateRenderWindow()
-{
+void DestroyLevel(Level*& level) {
+	delete level;
+}
+
+void DestroyWindow(RenderWindow*& window) {
+	delete window;
+}
+
+RenderWindow* CreateRenderWindow() {
 	return new RenderWindow(VideoMode(WindowWidth, WindowHeight), "Dark Castle");
 }
 
-std::list<Enemy*>* CreateEnemyList()
-{
+std::list<Enemy*>* CreateEnemyList(Level& level) {
 	std::list<Enemy*>* list = new std::list<Enemy*>();
+	EnemyListInit(*list, level, SPEARMAN);
+	// и др. типы монстров
 	return list;
 }
 
-/*void EnemyListInit(list<Enemy*> en_list, Level & level, Type type)
-{
+void EnemyListInit(list<Enemy*>& enemy_list, Level& level, Type type) {
 	int enemies_count = GetEnemiesCount(level, type);
 	for (int i = 0; i < enemies_count; i++) {
-		Enemy* enemy = new Enemy();
-		FloatRect enemy_rect = GetEnemyRectFromLvl(level, type, i);
-		EnemyInit(*enemy, SPEARMAN, enemy_rect);
-		en_list.push_back(enemy);
+		Enemy* enemy = CreateEnemy(level, i);
+		enemy_list.push_back(enemy);
 	}
-}*/
+}
+
+void DestroyEnemyList(list<Enemy*>*& enemy_list) {
+	list<Enemy*>::iterator begin = enemy_list->begin();
+	list<Enemy*>::iterator end = enemy_list->end();
+	for (list<Enemy*>::iterator iter = begin; iter != end; ++iter) {
+		DestroyEnemy(*iter);
+	}
+	delete enemy_list;
+}
+
 void GameInit(Game& game) {
 	game.window = CreateRenderWindow();
 	game.lvl = CreateLevel();
 	game.player = CreatePlayer(*game.lvl);
-	game.enemy_list = CreateEnemyList();
-
-	int spearmans_count = GetEnemiesCount(*game.lvl, SPEARMAN);
-
-	for (int i = 0; i < spearmans_count; i++) {
-		Enemy* enemy = new Enemy();
-		FloatRect enemy_rect = GetEnemyRectFromLvl(*game.lvl, SPEARMAN, i);
-		EnemyInit(*enemy, SPEARMAN, enemy_rect);
-		game.enemy_list->push_back(enemy);
-	}
+	game.enemy_list = CreateEnemyList(*game.lvl);
 }
 
-void DestroyGame(Game & game) { }
+void DestroyGame(Game*& game) {
+	DestroyWindow(game->window);
+	DestroyLevel(game->lvl);
+	DestroyPlayer(game->player);
+	DestroyEnemyList(game->enemy_list);
+	delete game;
+}
+
 void ProcessEnemiesEvents(Enemy& enemy, Type type) { }
 
 void ProcessEvents(Game& game) {
-	RenderWindow & window = *game.window;
+	RenderWindow& window = *game.window;
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
 		ProcessEnemiesEvents(*enemy, SPEARMAN);
@@ -68,8 +85,8 @@ void ProcessEvents(Game& game) {
 
 void Update(Game& game, const Time& deltaTime) {
 	PlayerUpdate(*game.player, *game.lvl, deltaTime);
-	ViewUpdate(*game.player->view, *game.window, *game.player->logic->movement, *game.lvl, game.player->visual->animation->frame->displacement);
-	PlayerHpBarUpdate(*game.player->logic->fight, *game.player->view);
+	ViewUpdate(*game.player->view, *game.window, *game.player->movement, *game.lvl, game.player->visual->animation->frame->displacement);
+	PlayerHpBarUpdate(*game.player->fight, *game.player->view);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
 		EnemyUpdate(*enemy, deltaTime, *game.lvl);
@@ -78,9 +95,9 @@ void Update(Game& game, const Time& deltaTime) {
 }
 
 void Render(Game& game) {
-	HpBar& player_hp = *game.player->logic->fight->hp_bar;
+	HpBar& player_hp = *game.player->fight->hp_bar;
 	Sprite& player_sprite = game.player->visual->animation->frame->sprite;
-	RenderWindow & window = *game.window;
+	RenderWindow& window = *game.window;
 	game.lvl->Draw(window);
 	window.setView(*game.player->view);
 	window.draw(player_sprite);
@@ -88,7 +105,7 @@ void Render(Game& game) {
 	window.draw(player_hp.strip_sprite);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
-		HpBar enemy_hp = *enemy->logic->fight->hp_bar;
+		HpBar enemy_hp = *enemy->fight->hp_bar;
 		Sprite enemy_sprite = enemy->visual->animation->frame->sprite;
 		window.draw(enemy_sprite);
 		window.draw(enemy_hp.bar_sprite);
@@ -109,11 +126,11 @@ void CheckPlayerAndEnemyCollision(Game& game) {
 			Enemy* enemy = *iter;
 			PlayerEnemyCollision(player, *enemy);
 			EnemyPlayerCollision(*enemy, player);
-			if (player.logic->fight->is_dead) {
+			if (player.fight->is_dead) {
 				cout << "Player is dead!";
 				break;
 			}
-			if (enemy->logic->fight->is_dead) {
+			if (enemy->fight->is_dead) {
 				game.enemy_list->remove(*iter);
 				break;
 			}
@@ -123,10 +140,10 @@ void CheckPlayerAndEnemyCollision(Game& game) {
 
 void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 	Animation& player_anim = *player.visual->animation;
-	FightLogic& enemy_fight = *enemy.logic->fight;
+	FightLogic& enemy_fight = *enemy.fight;
 	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& enemy_rect = *enemy.visual->rect;
-	float& player_damage = player.logic->fight->damage;
+	float& player_damage = player.fight->damage;
 	bool is_hit = int(player_anim.current_attack_frame) == 3;
 	if (player_sprite.intersects(enemy_rect) && is_hit) {
 		if (enemy_fight.health_points <= 0) {
@@ -144,10 +161,10 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 
 void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	Animation& enemy_anim = *enemy.visual->animation;
-	FightLogic& player_fight = *player.logic->fight;
+	FightLogic& player_fight = *player.fight;
 	FloatRect enemy_sprite = enemy.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& player_rect = *player.visual->rect;
-	const float& enemy_damage = enemy.logic->fight->damage;
+	const float& enemy_damage = enemy.fight->damage;
 	bool is_hit = enemy_anim.current_attack_frame == 4;
 
 	if (enemy_sprite.intersects(player_rect) && is_hit) {

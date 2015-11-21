@@ -11,3 +11,4 @@ struct Visual {
 
 void VisualInit(Visual & visual, Type type, sf::FloatRect & rect);
 
+void DestroyVisual(Visual *& visual);

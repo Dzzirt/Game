@@ -4,7 +4,7 @@ using namespace sf;
 using namespace std;
 
 
-void ViewUpdate(sf::View& view, RenderWindow & window, const Movement & movement, const Level & level, float displacement) {
+void ViewUpdate(sf::View& view, RenderWindow& window, const Movement& movement, const Level& level, float displacement) {
 
 
 	float left_right_border = view.getSize().x / 2;
@@ -37,22 +37,22 @@ sf::FloatRect GetPlayerRectFromLvl(Level& lvl) {
 	return lvl.GetObject("player").rect;
 }
 
-void CheckPlayerAndLevelCollision(Player & player, const Level & level) {
+void CheckPlayerAndLevelCollision(Player& player, const Level& level) {
 	vector<Object> map_objects = level.GetAllObjects();
 	for (int i = 0; i < map_objects.size(); i++) {
 		PlayerLevelCollision(player, map_objects[i]);
 	}
 }
 
-void PlayerLevelCollision(Player& player, const Object & map_object) {
+void PlayerLevelCollision(Player& player, const Object& map_object) {
 	FloatRect& player_rect = *player.visual->rect;
-	Movement & movement = *player.logic->movement;
-	Jump & jump = *player.jumping;
+	Movement& movement = *player.movement;
+	Jump& jump = *player.jumping;
 	if (player_rect.intersects(map_object.rect)) {
 		if (map_object.name == "trap") {
 
 			jump.in_jump = true;
-			player.logic->fight->health_points -= 10.f;
+			player.fight->health_points -= 10.f;
 		}
 		else if (map_object.name == "solid") {
 			bool bottom_collision = player_rect.top + player_rect.height - 5 < map_object.rect.top;
@@ -74,34 +74,45 @@ void PlayerLevelCollision(Player& player, const Object & map_object) {
 				player_rect.left -= player_rect.left + player_rect.width - map_object.rect.left;
 			}
 		}
-		
+
 	}
 }
 
-Player* CreatePlayer(Level & level)
-{
-	Player * player = new Player();
+Player* CreatePlayer(Level& level) {
+	Player* player = new Player();
 	PlayerInit(*player, level);
 	return player;
 }
-void PlayerInit(Player & player, Level & level) {
-	player.logic = new Logic();
+
+void PlayerInit(Player& player, Level& level) {
+	player.fight = new FightLogic();
+	player.movement = new Movement();
 	player.jumping = new Jump();
 	player.visual = new Visual();
 	player.view = new View();
 	player.view->reset(sf::FloatRect(0, 0, WindowWidth, WindowHeight));
 	FloatRect rect = GetPlayerRectFromLvl(level);
 	VisualInit(*player.visual, PLAYER, rect);
-	LogicInit(*player.logic, PLAYER);
 	JumpingInit(*player.jumping, PLAYER);
+	FightLogicInit(*player.fight, PLAYER);
+	MovementInit(*player.movement, PLAYER);
 }
 
-void PlayerUpdate(Player & player, const Level & level, const sf::Time& deltaTime) {
-	Movement & movement = *player.logic->movement;
-	Frame & player_frame = *player.visual->animation->frame;
-	Jump & jump = *player.jumping;
-	Animation & animation = *player.visual->animation;
-	FloatRect & player_rect = *player.visual->rect;
+void DestroyPlayer(Player*& player) {
+	DestroyFightLogic(player->fight);
+	DestroyMovement(player->movement);
+	DestroyJump(player->jumping);
+	DestroyVisual(player->visual);
+	delete player->view;
+	delete player;
+}
+
+void PlayerUpdate(Player& player, const Level& level, const sf::Time& deltaTime) {
+	Movement& movement = *player.movement;
+	Frame& player_frame = *player.visual->animation->frame;
+	Jump& jump = *player.jumping;
+	Animation& animation = *player.visual->animation;
+	FloatRect& player_rect = *player.visual->rect;
 	CheckMovementLogic(movement);
 	CheckGravityLogic(jump, movement, deltaTime);
 	CheckJumpLogic(jump, movement, animation);
@@ -122,11 +133,11 @@ void PlayerUpdate(Player & player, const Level & level, const sf::Time& deltaTim
 }
 
 void AnimationsUpdate(Player& player) {
-	Animation & animation = *player.visual->animation;
-	bool & on_ground = player.jumping->on_ground;
-	bool & in_jump = player.jumping->in_jump;
-	State & state = player.logic->movement->state;
-	float game_step = player.logic->movement->step * TimePerFrame.asSeconds();
+	Animation& animation = *player.visual->animation;
+	bool& on_ground = player.jumping->on_ground;
+	bool& in_jump = player.jumping->in_jump;
+	State& state = player.movement->state;
+	float game_step = player.movement->step * TimePerFrame.asSeconds();
 	animation.frame->displacement = 0;
 	MoveAndStayAnimation(animation, state, game_step);
 	AttackAnimation(animation, game_step);
@@ -138,18 +149,18 @@ void AnimationsUpdate(Player& player) {
 	}
 }
 
-void CheckGravityLogic(Jump & jump, Movement & movement, const sf::Time& deltaTime) {
+void CheckGravityLogic(Jump& jump, Movement& movement, const sf::Time& deltaTime) {
 	if (!jump.in_jump) {
 		movement.delta_y = ForceOfGravity;
 	}
 }
 
-void ProcessPlayerEvents(RenderWindow& window, Player & player, Level & level) {
-	Jump & jump = *player.jumping;
+void ProcessPlayerEvents(RenderWindow& window, Player& player, Level& level) {
+	Jump& jump = *player.jumping;
 	View& view = *player.view;
-	Movement & movement = *player.logic->movement;
-	Animation & animation = *player.visual->animation;
-	FloatRect  sprite_bounds = animation.frame->sprite.getGlobalBounds();
+	Movement& movement = *player.movement;
+	Animation& animation = *player.visual->animation;
+	FloatRect sprite_bounds = animation.frame->sprite.getGlobalBounds();
 	Event event;
 
 	while (window.pollEvent(event)) {
@@ -192,13 +203,10 @@ void ProcessPlayerEvents(RenderWindow& window, Player & player, Level & level) {
 			}
 			else {
 				if (unsigned int(map_width) < event.size.width) {
-					view.zoom(map_width / event.size.width );
+					view.zoom(map_width / event.size.width);
 				}
 			}
 
 		}
 	}
 }
-
-
-

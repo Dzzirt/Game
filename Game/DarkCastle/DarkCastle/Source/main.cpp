@@ -4,8 +4,7 @@
 using namespace sf;
 
 int main() {
-	Game* game = new Game();
-	GameInit(*game);
+	Game* game = CreateGame();
 	Clock clock;
 	Time time_since_last_update = Time::Zero;
 	while (game->window->isOpen()) {
@@ -19,6 +18,7 @@ int main() {
 		}
 		Render(*game);
 	}
+	DestroyGame(game);
 	return 0;
 }
 

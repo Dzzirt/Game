@@ -12,3 +12,5 @@ struct FrameRects {
 
 
 void FrameRectInit(FrameRects&, Type);
+
+void DestroyFrameRects(FrameRects *& frame_rects);

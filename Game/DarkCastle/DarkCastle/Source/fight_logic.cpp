@@ -24,6 +24,12 @@ void FightLogicInit(FightLogic& fight, Type type) {
 	}
 }
 
+void DestroyFightLogic(FightLogic *& fight)
+{
+	DestroyHpBar(fight->hp_bar);
+	delete fight;
+}
+
 void HpBarUpdate(FightLogic & fight, sf::FloatRect rect_for_place, Type type) {
 	HpBar& hp = *fight.hp_bar;
 	sf::IntRect & hp_strip = hp.strip_rect;

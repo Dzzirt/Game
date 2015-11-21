@@ -12,3 +12,5 @@ struct HpBar {
 };
 
 void HpBarInit(HpBar & hp, Type type);
+
+void DestroyHpBar(HpBar *& hp);

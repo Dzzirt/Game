@@ -12,3 +12,8 @@ void FrameRectInit(FrameRects & frame_rect, Type type) {
 	frame_rect.stay = GetIntRect(entity_type, "STAY", "animations.txt");
 	frame_rect.gravity = GetIntRect(entity_type, "GRAVITY", "animations.txt");
 }
+
+void DestroyFrameRects(FrameRects *& frame_rects)
+{
+	delete frame_rects;
+}

@@ -36,6 +36,12 @@ void AnimationInit(Animation& animation, Type type) {
 	}
 }
 
+void DestroyAnimation(Animation *& animation)
+{
+	DestroyFrame(animation->frame);
+	delete animation;
+}
+
 void GravityAnimation(Animation& animation) {
 	Frame& frame = *animation.frame;
 	IntRect& rect = animation.frame->rect->gravity;

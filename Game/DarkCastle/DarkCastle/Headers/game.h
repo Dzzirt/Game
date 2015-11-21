@@ -12,20 +12,28 @@ struct Game {
 	Level *lvl;
 	std::list<Enemy*> * enemy_list;
 	sf::RenderWindow * window;
-
 };
+
+
+Game* CreateGame();
 
 Level* CreateLevel();
 
 sf::RenderWindow* CreateRenderWindow();
 
-std::list<Enemy*>* CreateEnemyList();
+std::list<Enemy*>* CreateEnemyList(Level & level);
+
+void DestroyGame(Game*& game);
+
+void DestroyLevel(Level*& level);
+
+void DestroyWindow(sf::RenderWindow*& window);
 
 void GameInit(Game& game);
 
 void LevelInit(Level & level);
 
-void EnemyListInit(std::list<Enemy*> en_list, Level & level, Type type);
+void EnemyListInit(std::list<Enemy*> & en_list, Level & level, Type type);
 
 void ProcessEvents(Game & game);
 

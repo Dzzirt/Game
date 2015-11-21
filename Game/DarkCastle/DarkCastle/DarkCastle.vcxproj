@@ -167,7 +167,6 @@
     <ClCompile Include="Source\hp_bar.cpp" />
     <ClCompile Include="Source\jump.cpp" />
     <ClCompile Include="Source\level.cpp" />
-    <ClCompile Include="Source\logic.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\movement.cpp" />
     <ClCompile Include="Source\player.cpp" />
@@ -185,7 +184,6 @@
     <ClInclude Include="Headers\hp_bar.h" />
     <ClInclude Include="Headers\jump.h" />
     <ClInclude Include="Headers\level.hpp" />
-    <ClInclude Include="Headers\logic.h" />
     <ClInclude Include="Headers\movement.h" />
     <ClInclude Include="Headers\player.h" />
     <ClInclude Include="Headers\using_json.h" />

@@ -22,6 +22,11 @@ void MovementInit(Movement & movement, Type type) {
 	}
 }
 
+void DestroyMovement(Movement *& movement)
+{
+	delete movement;
+}
+
 void CheckMovementLogic(Movement & movement) {
 	switch (movement.state) {
 	case LEFT:

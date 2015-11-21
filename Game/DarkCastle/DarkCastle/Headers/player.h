@@ -2,12 +2,14 @@
 #include "consts_and_enums.h"
 #include "visual.h"
 #include "jump.h"
-#include "logic.h"
+#include "fight_logic.h"
 #include "level.hpp"
 
 
+
 struct Player {
-	Logic * logic;
+	Movement * movement;
+	FightLogic * fight;
 	Visual * visual;
 	Jump* jumping;
 	sf::View* view;
@@ -18,6 +20,8 @@ struct Player {
 // DeletePlayer(Player);
 
 Player* CreatePlayer(Level & level);
+
+void DestroyPlayer(Player*& player);
 
 void PlayerInit(Player & player, Level & level);
 
