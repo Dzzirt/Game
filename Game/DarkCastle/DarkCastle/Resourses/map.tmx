@@ -4010,7 +4010,7 @@
  <objectgroup name="Слой объектов 1">
   <object id="4" name="solid" x="256" y="143.333" width="32" height="240.667"/>
   <object id="5" name="player" x="357" y="325.333" width="34" height="41"/>
-  <object id="6" name="SPEARMAN0" x="701" y="362" width="16" height="23"/>
+  <object id="6" name="SPEARMAN0" x="678.545" y="347.727" width="14" height="36"/>
   <object id="7" name="solid" x="288" y="385" width="478" height="63"/>
   <object id="8" name="solid" x="752" y="368" width="16" height="16"/>
   <object id="9" name="solid" x="768" y="352" width="16" height="16"/>

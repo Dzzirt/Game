@@ -10,12 +10,12 @@ FrameRects* CreateFrameRects(Type type) {
 }
 
 void FrameRectInit(FrameRects & frame_rect, Type type) {
-	std::string entity_type = TypeToString(type);
-	frame_rect.move = GetIntRect(entity_type, "MOVE", "animations.txt");
-	frame_rect.jump = GetIntRect(entity_type, "JUMP", "animations.txt");
-	frame_rect.attack = GetIntRect(entity_type, "ATTACK", "animations.txt");
-	frame_rect.stay = GetIntRect(entity_type, "STAY", "animations.txt");
-	frame_rect.gravity = GetIntRect(entity_type, "GRAVITY", "animations.txt");
+	std::string entity = TypeToString(type);
+	frame_rect.move = GetIntRect(entity, "MOVE", "frames.txt");
+	frame_rect.jump = GetIntRect(entity, "JUMP", "frames.txt");
+	frame_rect.attack = GetIntRect(entity, "ATTACK", "frames.txt");
+	frame_rect.stay = GetIntRect(entity, "STAY", "frames.txt");
+	frame_rect.gravity = GetIntRect(entity, "GRAVITY", "frames.txt");
 }
 
 void DestroyFrameRects(FrameRects *& frame_rects)

@@ -17,7 +17,7 @@ struct Player {
 
 Player* CreatePlayer(Level & level);
 
-sf::View* CreateView();
+sf::View* CreateView(); // колхоз
 
 void DestroyPlayer(Player*& player);
 

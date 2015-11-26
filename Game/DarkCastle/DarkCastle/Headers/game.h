@@ -3,14 +3,14 @@
 #include <list>
 #include "player.h"
 #include "enemy.h"
-
-
+#include "bonus.h"
 
 
 struct Game {
 	Player* player;
 	Level *lvl;
 	std::list<Enemy*> * enemy_list;
+	std::list<Bonus*> * bonus_list;
 	sf::RenderWindow * window;
 };
 
@@ -23,6 +23,8 @@ sf::RenderWindow* CreateRenderWindow();
 
 std::list<Enemy*>* CreateEnemyList(Level & level);
 
+std::list<Bonus*>* CreateBonusList(Level& level);
+
 void DestroyGame(Game*& game);
 
 void DestroyLevel(Level*& level);
@@ -33,11 +35,13 @@ void GameInit(Game& game);
 
 void LevelInit(Level & level);
 
+void BonusListInit(std::list<Bonus*>& bonus_list, Level& level, BonusType type);
+
 void EnemyListInit(std::list<Enemy*> & en_list, Level & level, Type type);
 
 void ProcessEvents(Game & game);
 
-void ProcessEnemiesEvents(Game & game);
+void ProcessEnemiesEvents(Enemy& enemy, sf::FloatRect & player_box);
 
 void Update(Game& game, const sf::Time& deltaTime);
 

@@ -142,7 +142,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="lab3.cpp" />
+    <ClCompile Include="fs_functions.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="TreeObhod.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fs_functions.h" />
+    <ClInclude Include="TreeObhod.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

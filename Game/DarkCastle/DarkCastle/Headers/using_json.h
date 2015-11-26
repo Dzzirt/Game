@@ -3,6 +3,32 @@
 #include <fstream>
 #include "consts_and_enums.h"
 
+inline std::string TypeToString(Type type) {
+	switch (type) {
+		case PLAYER:
+			return "PLAYER";
+		case SPEARMAN:
+			return "SPEARMAN";
+		case SWORDSMAN:
+			return "SWORDSMAN";
+		default:
+			return "INVALID ENUM";
+	}
+}
+
+inline std::string TypeToString(BonusType type) {
+	switch (type) {
+		case HP_REGEN:
+			return "HP_REGEN";
+		case SPEED_UP:
+			return "SPEED_UP";
+		case ATK_UP:
+			return "ATK_UP";
+		default:
+			return "INVALID_VALUE";
+	}
+}
+
 inline sf::IntRect GetIntRect(std::string entity, std::string action, std::string file_name) {
 	sf::IntRect anim_rect;
 	std::ifstream is("Resourses/" + file_name);
@@ -34,15 +60,19 @@ inline sf::IntRect GetIntRect(std::string entity, std::string action, std::strin
 
 }
 
-inline std::string TypeToString(Type type) {
-	switch (type) {
-	case PLAYER:
-		return "PLAYER";
-	case SPEARMAN:
-		return "SPEARMAN";
-	case SWORDSMAN:
-		return "SWORDSMAN";
-	default:
-		return "INVALID ENUM";
+inline int GetBonusValue(BonusType type, std::string file_name) {
+	std::string bonus_type = TypeToString(type);
+	std::ifstream is("Resourses/" + file_name);
+	json_spirit::Value value;
+	read(is, value);
+	const json_spirit::Object& object = value.get_obj();
+	for (size_t i = 0; i < object.size(); i++) {
+		const json_spirit::Pair& pair = object[i];
+		const std::string& name = pair.name_;
+		const json_spirit::Value& val = pair.value_;
+		if (name == bonus_type) {
+			return val.get_int();
+		}
 	}
+	return -1;
 }

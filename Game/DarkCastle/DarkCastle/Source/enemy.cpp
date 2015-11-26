@@ -1,6 +1,6 @@
 #include <sstream>
 #include "../Headers/enemy.h"
-
+#include "math.h"
 using namespace sf;
 using namespace std;
 
@@ -18,8 +18,10 @@ void DestroyEnemy(Enemy *& enemy) {
 }
 
 void EnemyInit(Enemy& enemy, Type type, Level & level, int number) {
+	enemy.type = type;
 	enemy.fight = CreateFightLogic(type);
 	enemy.movement = CreateMovement(type);
+	enemy.ai = CreateAI(type);
 	FloatRect rect = GetEnemyRectFromLvl(level, type, number);
 	enemy.visual = CreateVisual(type, rect);
 }
@@ -44,6 +46,8 @@ int GetEnemiesCount(Level& lvl, Type type) {
 }
 
 
+
+
 void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level& level) {
 	Movement& movement = *enemy.movement;
 	Animation& animation = *enemy.visual->animation;
@@ -56,14 +60,42 @@ void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level& level) {
 
 	CheckEnemyAndLevelCollision(enemy, level);
 
-	movement.x_pos = enemy_rect.left;
+	movement.x_pos = enemy_rect.left + animation.frame->displacement;
 	movement.y_pos = enemy_rect.top + enemy_rect.height;
 
 	animation.frame->sprite.setOrigin(0, animation.frame->sprite.getGlobalBounds().height);
 	animation.frame->sprite.setPosition(movement.x_pos, movement.y_pos);
 
-	sf::FloatRect enemy_bound = enemy.visual->animation->frame->sprite.getGlobalBounds();
+	sf::FloatRect & enemy_bound = *enemy.visual->rect;
 	HpBarUpdate(*enemy.fight->hp_bar, enemy_bound, SPEARMAN);
+	//===================================================================================
+	LogicAI & ai = *enemy.ai;
+	cout << movement.prev_state << endl;
+	if (movement.state == NONE) {
+		ai.stay_time += deltaTime.asSeconds();
+		if (int(ai.stay_time) >= ai.max_stay_time) {
+			ai.stay_time = 0.f;
+			if (movement.prev_state == RIGHT) {
+				movement.state = LEFT;
+			}
+			else {
+				movement.state = RIGHT;
+			}
+		}
+	}
+	if (abs(int(ai.current_distance)) >= ai.max_distance) {
+		if (ai.current_distance < 0) {
+			movement.prev_state = LEFT;
+		}
+		if (ai.current_distance > 0) {
+			movement.prev_state = RIGHT;
+		}
+		ai.current_distance = 0.f;
+		movement.state = NONE;
+	}
+	else {
+		ai.current_distance += movement.delta_x * deltaTime.asSeconds();
+	}
 }
 
 void AnimationsUpdate(Enemy& enemy) {
@@ -71,7 +103,7 @@ void AnimationsUpdate(Enemy& enemy) {
 	State& state = enemy.movement->state;
 	float game_step = enemy.movement->step * TimePerFrame.asSeconds();
 	MoveAndStayAnimation(animation, state, game_step);
-	AttackAnimation(animation, game_step);
+	AttackAnimation(animation, enemy.type, game_step);
 }
 
 void ProcessCollision(Enemy& enemy, const Object& map_object) {
@@ -109,3 +141,5 @@ void CheckEnemyAndLevelCollision(Enemy& enemy, const Level& level) {
 		ProcessCollision(enemy, map_objects[i]);
 	}
 }
+
+

@@ -5,6 +5,7 @@
 struct LogicHpBar {
 	float health_points;
 	float max_health_points;
+	int max_strip_width;
 };
 
 struct VisualHpBar {
@@ -26,9 +27,9 @@ void HpBarInit(HpBar& hp, Type type, float curr_hp, float max_hp);
 
 VisualHpBar* CreateVisualHpBar(Type type);
 
-LogicHpBar* CreateLogicHpBar(float curr_hp, float max_hp);
+LogicHpBar* CreateLogicHpBar(float curr_hp, float max_hp, Type type);
 
-void LogicHpBarInit(LogicHpBar& hp, float curr_hp, float max_hp);
+void LogicHpBarInit(LogicHpBar& hp, float curr_hp, float max_hp, Type type);
 
 void VisualHpBarInit(VisualHpBar & hp, Type type);
 

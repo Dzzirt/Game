@@ -42,6 +42,7 @@ int main()
 				stack.push(result);
 			}
 			else {
+				cout << "Неверно заданное выражение: " << stack.getData() << " -> " << post[i] << " <- " + post.substr(i, post.length() - i);
 				needToPrint = false;
 				break;
 			}
@@ -49,12 +50,15 @@ int main()
 
 		}
 	}
+	if (stack.getSize() > 1) {
+		string err = stack.getData();
+		stack.pop();
+		string exp = stack.getData();
+		cout << "Неверно заданное выражение: " << stack.getData() << " -> " << err << " <- ";
+	}
 	if (needToPrint && have_op) {
 		cout << "Результат перевода: ";
 		stack.print();
-	}
-	else {
-		cout << "Неверно заданное выражение!" << endl;;
 	}
 	return 0;
 }

@@ -6,20 +6,20 @@
 #include "movement.h"
 #include "fight_logic.h"
 #include "visual.h"
+#include "logic_AI.h"
 #include <list>
 #include <vector>
 
 
 
-enum EnemyState {
-	NOT_DETECT,
-	DETECT
-};
+
 
 struct Enemy {
 	Movement * movement;
 	FightLogic * fight;
 	Visual * visual;
+	LogicAI * ai;
+	Type type;
 };
 
 Enemy* CreateEnemy(Level & level, int number);
@@ -34,12 +34,11 @@ int GetEnemiesCount(Level & lvl, Type type);
 
 void ProcessCollision(Enemy & enemy, const Object & map_object);
 
-void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level & level);
+void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level& level);
 
 void AnimationsUpdate(Enemy& enemy);
 
 void CheckEnemyAndLevelCollision(Enemy & enemy, const Level & level);
-
 
 
 

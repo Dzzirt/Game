@@ -8,7 +8,7 @@ HpBar* CreateHpBar(Type type, float curr_hp, float max_hp) {
 }
 
 void HpBarInit(HpBar& hp, Type type, float curr_hp, float max_hp) {
-	hp.logic_hp = CreateLogicHpBar(curr_hp, max_hp);
+	hp.logic_hp = CreateLogicHpBar(curr_hp, max_hp, type);
 	hp.visual_hp = CreateVisualHpBar(type);
 }
 
@@ -18,15 +18,27 @@ VisualHpBar* CreateVisualHpBar(Type type) {
 	return visual_hp;
 }
 
-LogicHpBar* CreateLogicHpBar(float curr_hp, float max_hp) {
+LogicHpBar* CreateLogicHpBar(float curr_hp, float max_hp, Type type) {
 	LogicHpBar* logic_hp = new LogicHpBar();
-	LogicHpBarInit(*logic_hp, curr_hp, max_hp);
+	LogicHpBarInit(*logic_hp, curr_hp, max_hp, type);
 	return logic_hp;
 }
 
-void LogicHpBarInit(LogicHpBar& hp, float curr_hp, float max_hp) {
+void LogicHpBarInit(LogicHpBar& hp, float curr_hp, float max_hp, Type type) {
 	hp.health_points = curr_hp;
 	hp.max_health_points = max_hp;
+	switch (type) {
+		case PLAYER:
+			hp.max_strip_width = 184;
+			break;
+		case SPEARMAN: 
+			hp.max_strip_width = 28;
+			break;
+		default: break;
+
+
+	}
+	
 }
 
 void VisualHpBarInit(VisualHpBar & hp, Type type) {
@@ -64,7 +76,7 @@ void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type) {
 	float health_in_percent = logic_hp.health_points / logic_hp.max_health_points;
 	sf::FloatRect bar_bounds = visual_hp.bar_sprite.getGlobalBounds();
 	sf::FloatRect strip_bounds = visual_hp.strip_sprite.getGlobalBounds();
-	float border_width = (bar_bounds.width - strip_bounds.width) / 2.f;
+	float border_width = (bar_bounds.width - logic_hp.max_strip_width) / 2.f;
 	float border_height = (bar_bounds.height - strip_bounds.height) / 2.f;
 	visual_hp.strip_sprite.setPosition(bar_bounds.left + border_width, bar_bounds.top + border_height);
 	visual_hp.strip_sprite.setTextureRect(sf::IntRect(hp_strip.left, hp_strip.top, int(hp_strip.width * health_in_percent), hp_strip.height));
@@ -81,7 +93,7 @@ void HpBarUpdate(HpBar & hp, sf::View & view) {
 	float health_in_percent = logic_hp.health_points / logic_hp.max_health_points;
 	sf::FloatRect bar_bounds = visual_hp.bar_sprite.getGlobalBounds();
 	sf::FloatRect strip_bounds = visual_hp.strip_sprite.getGlobalBounds();
-	float border_left = (bar_bounds.width - strip_bounds.width) / 2.f;
+	float border_left = (bar_bounds.width - logic_hp.max_strip_width) / 2.f;
 	float border_top = (bar_bounds.height - strip_bounds.height) / 2.f;
 	visual_hp.strip_sprite.setPosition(bar_bounds.left + border_left, bar_bounds.top + border_top);
 	visual_hp.strip_sprite.setTextureRect(sf::IntRect(0, hp_strip.top, int(hp_strip.width * health_in_percent), hp_strip.height));

@@ -19,45 +19,51 @@
     <Filter Include="TinyXML">
       <UniqueIdentifier>{b8b73bce-1345-4c7f-a73b-fab13189fd3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Fight Logic">
+      <UniqueIdentifier>{c4842189-0769-4dc3-9925-2f1db999c782}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Animation">
+      <UniqueIdentifier>{73fe4f77-3608-4dce-8517-3a1cf1c21d05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Movement">
+      <UniqueIdentifier>{b8703b32-4551-4e3c-9de8-9e2902dbb7f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game">
+      <UniqueIdentifier>{22243129-6649-4339-b0e2-cc5d6e063773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AI">
+      <UniqueIdentifier>{06669921-d712-4198-b130-c94936643b28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Player and Enemy Visual">
+      <UniqueIdentifier>{23eb77f5-bdf2-4205-a01e-54a7216467cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Fight Logic">
+      <UniqueIdentifier>{64f7b1d1-47f0-4389-ad43-8acab1cd655d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animations">
+      <UniqueIdentifier>{3f3136fc-aa07-4b69-a17f-15a9578e09aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Movement">
+      <UniqueIdentifier>{8f34741d-9475-4ba9-bd46-44b7cf05c1f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game">
+      <UniqueIdentifier>{09b7165d-9c1e-4434-8df6-4daac475d6bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AI">
+      <UniqueIdentifier>{9c9b4b85-693e-4d7e-b9f5-1b5652be61a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Player and Enemy Visual">
+      <UniqueIdentifier>{5a1785b3-8bda-454c-90dc-9b376239c623}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Bonus">
+      <UniqueIdentifier>{56628fb9-90f6-4900-a850-3224cb863058}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Bonus">
+      <UniqueIdentifier>{c4506f4c-8b9c-4e4c-a718-13e3ebce2cc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\animation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\enemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\fight_logic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\frame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\frame_rect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\hp_bar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\jump.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\level.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\movement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\visual.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Libs\json_spirit\json_spirit_reader.cpp">
@@ -81,51 +87,60 @@
     <ClCompile Include="Libs\TinyXML\tinyxmlerror.cpp">
       <Filter>TinyXML</Filter>
     </ClCompile>
+    <ClCompile Include="Source\fight_logic.cpp">
+      <Filter>Source Files\Fight Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\frame.cpp">
+      <Filter>Source Files\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\frame_rect.cpp">
+      <Filter>Source Files\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\animation.cpp">
+      <Filter>Source Files\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\movement.cpp">
+      <Filter>Source Files\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\jump.cpp">
+      <Filter>Source Files\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\enemy.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\game.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\level.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\player.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LogicAI.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hp_bar.cpp">
+      <Filter>Source Files\Fight Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\visual.cpp">
+      <Filter>Source Files\Player and Enemy Visual</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bonus_visual.cpp">
+      <Filter>Source Files\Bonus</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bonus.cpp">
+      <Filter>Source Files\Bonus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\animation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\consts_and_enums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\enemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\fight_logic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\frame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\frame_rect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\gameconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\hp_bar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\jump.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\level.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\movement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\using_json.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\visual.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Libs\json_spirit\json_spirit.h">
@@ -163,6 +178,51 @@
     </ClInclude>
     <ClInclude Include="Libs\TinyXML\tinystr.h">
       <Filter>TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\fight_logic.h">
+      <Filter>Header Files\Fight Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\animation.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\frame.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\frame_rect.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\hp_bar.h">
+      <Filter>Header Files\Fight Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\movement.h">
+      <Filter>Header Files\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\jump.h">
+      <Filter>Header Files\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\game.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\enemy.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\player.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\level.hpp">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\logic_AI.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\visual.h">
+      <Filter>Header Files\Player and Enemy Visual</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\bonus.h">
+      <Filter>Header Files\Bonus</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\bonus_visual.h">
+      <Filter>Header Files\Bonus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

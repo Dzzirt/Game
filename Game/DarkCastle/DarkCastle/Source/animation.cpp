@@ -33,15 +33,13 @@ void AnimationInit(Animation& animation, Type type) {
 			animation.max_stay_frame = 0.f;
 			break;
 		case SWORDSMAN:
-
 			break;
 		default:
 			break;
 	}
 }
 
-void DestroyAnimation(Animation *& animation)
-{
+void DestroyAnimation(Animation*& animation) {
 	DestroyFrame(animation->frame);
 	delete animation;
 }
@@ -65,35 +63,76 @@ void JumpAnimation(Animation& animation, float game_step) {
 	frame.sprite.setTextureRect(jump_rect);
 }
 
-void AttackAnimation(Animation& animation, float game_step) {
+void AttackAnimation(Animation& animation, Type type, float game_step) {
 	Frame& frame = *animation.frame;
 	IntRect atk_rect = frame.rect->attack;
 	float& atk_frame = animation.current_attack_frame;
 	if (animation.left_attack) {
-		frame.displacement = -41;
-		animation.right_attack = false;
-		atk_frame += float(animation.anim_speed * game_step);
-		CheckAttackReset(animation);
-		atk_rect.left *= int(atk_frame);
-		FlipRectHoriz(atk_rect);
-		frame.sprite.setTextureRect(atk_rect);
-
-	}
-	if (animation.right_attack) {
-		animation.left_attack = false;
-		atk_frame += float(animation.anim_speed * game_step);
-		atk_rect.left *= int(atk_frame);
-		if (atk_frame < animation.max_attack_frame) {
-			frame.sprite.setTextureRect(atk_rect);
+		if (type == SPEARMAN) {
+			switch (int(atk_frame)) {
+			case 0: frame.displacement = 0 - 7;
+				break;
+			case 1: frame.displacement = -3 - 7;
+				break;
+			case 2: frame.displacement = -5 - 7;
+				break;
+			case 3: frame.displacement = -3 - 7;
+				break;
+			case 4: frame.displacement = 0 - 7;
+				break;
+			case 5: frame.displacement = -2 - 7;
+				break;
+			case 6: frame.displacement = -2 - 7;
+				break;
+			}
 		}
-		CheckAttackReset(animation);
-	}
+			if (type == PLAYER) {
+				frame.displacement = -45;
+			}
+			animation.right_attack = false;
+			atk_frame += float(animation.anim_speed * game_step);
+			CheckAttackReset(animation);
+			atk_rect.left *= int(atk_frame);
+			FlipRectHoriz(atk_rect);
+			frame.sprite.setTextureRect(atk_rect);
+
+		}
+	
+		if (animation.right_attack) {
+			if (type == SPEARMAN) {
+				switch (int(atk_frame)) {
+				case 0: frame.displacement = -13;
+					break;
+				case 1: frame.displacement = -10;
+					break;
+				case 2: frame.displacement = -8;
+					break;
+				case 3: frame.displacement = -10;
+					break;
+				case 4: frame.displacement = -13;
+					break;
+				case 5: frame.displacement = -11;
+					break;
+				case 6: frame.displacement = -11;
+					break;
+				}
+			}
+				animation.left_attack = false;
+				atk_frame += float(animation.anim_speed * game_step);
+				atk_rect.left *= int(atk_frame);
+				if (atk_frame < animation.max_attack_frame) {
+					frame.sprite.setTextureRect(atk_rect);
+				}
+				CheckAttackReset(animation);
+			}
 }
+	
 
 void MoveAndStayAnimation(Animation& animation, State state, float game_step) {
 	Frame& frame = *animation.frame;
 	IntRect move_rect = frame.rect->move;
 	IntRect stay_rect = frame.rect->stay;
+	frame.displacement = 0;
 	float& move_frame = animation.current_move_frame;
 	switch (state) {
 		case LEFT:

@@ -159,6 +159,8 @@
     <ClCompile Include="Libs\TinyXML\tinyxmlerror.cpp" />
     <ClCompile Include="Libs\TinyXML\tinyxmlparser.cpp" />
     <ClCompile Include="Source\animation.cpp" />
+    <ClCompile Include="Source\bonus.cpp" />
+    <ClCompile Include="Source\bonus_visual.cpp" />
     <ClCompile Include="Source\enemy.cpp" />
     <ClCompile Include="Source\fight_logic.cpp" />
     <ClCompile Include="Source\frame.cpp" />
@@ -167,6 +169,7 @@
     <ClCompile Include="Source\hp_bar.cpp" />
     <ClCompile Include="Source\jump.cpp" />
     <ClCompile Include="Source\level.cpp" />
+    <ClCompile Include="Source\LogicAI.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\movement.cpp" />
     <ClCompile Include="Source\player.cpp" />
@@ -174,6 +177,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\animation.h" />
+    <ClInclude Include="Headers\bonus.h" />
+    <ClInclude Include="Headers\bonus_visual.h" />
     <ClInclude Include="Headers\consts_and_enums.h" />
     <ClInclude Include="Headers\enemy.h" />
     <ClInclude Include="Headers\fight_logic.h" />
@@ -200,6 +205,7 @@
     <ClInclude Include="Libs\json_spirit\json_spirit_writer_template.h" />
     <ClInclude Include="Libs\TinyXML\tinystr.h" />
     <ClInclude Include="Libs\TinyXML\tinyxml.h" />
+    <ClInclude Include="Headers\logic_AI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

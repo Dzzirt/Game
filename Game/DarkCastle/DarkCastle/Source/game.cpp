@@ -40,11 +40,29 @@ std::list<Enemy*>* CreateEnemyList(Level& level) {
 	return list;
 }
 
+std::list<Bonus*>* CreateBonusList(Level& level) {
+	std::list<Bonus*>* list = new std::list<Bonus*>();
+	BonusListInit(*list, level, HP_REGEN);
+	BonusListInit(*list, level, ATK_UP);
+	BonusListInit(*list, level, SPEED_UP);
+	// и др. типы монстров
+	return list;
+}
+
 void EnemyListInit(list<Enemy*>& enemy_list, Level& level, Type type) {
 	int enemies_count = GetEnemiesCount(level, type);
 	for (int i = 0; i < enemies_count; i++) {
 		Enemy* enemy = CreateEnemy(level, i);
 		enemy_list.push_back(enemy);
+	}
+}
+
+
+void BonusListInit(list<Bonus*>& bonus_list, Level& level, BonusType type) {
+	int bonuses_count = GetBonusesCount(level, type);
+	for (int i = 0; i < bonuses_count; i++) {
+		Bonus* bonus = CreateBonus(level, type, i);
+		bonus_list.push_back(bonus);
 	}
 }
 
@@ -72,13 +90,13 @@ void DestroyGame(Game*& game) {
 	delete game;
 }
 
-void ProcessEnemiesEvents(Enemy& enemy, Type type) { }
+
 
 void ProcessEvents(Game& game) {
 	RenderWindow& window = *game.window;
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
-		ProcessEnemiesEvents(*enemy, SPEARMAN);
+		ProcessEnemiesEvents(*enemy, *game.player->visual->rect);
 	}
 	ProcessPlayerEvents(window, *game.player, *game.lvl);
 }
@@ -112,6 +130,42 @@ void Render(Game& game) {
 		window.draw(enemy_hp.strip_sprite);
 	}
 	window.display();
+}
+
+void ProcessEnemiesEvents(Enemy& enemy, FloatRect & player_box) {
+	Animation & anim = *enemy.visual->animation;
+	FloatRect & enemy_box = *enemy.visual->rect;
+	float enemy_box_right = enemy_box.left + enemy_box.width;
+	float player_box_right = player_box.left + player_box.width;
+	bool right_detect = player_box.left - enemy.ai->field_of_view <= enemy_box_right && player_box.left >= enemy_box.left;
+	bool left_detect = player_box_right + enemy.ai->field_of_view >= enemy_box.left && player_box.left <= enemy_box.left;
+	bool not_too_higher = player_box.top + player_box.height >= enemy_box.top - player_box.height;
+	if (enemy.ai->state == NOT_DETECT) {
+		if (left_detect || right_detect && not_too_higher) {
+			enemy.ai->state = DETECT;
+		}
+	}
+	else if (enemy.ai->state == DETECT) {
+		if (left_detect) {
+			enemy.movement->state = LEFT;
+		}
+		else if (right_detect) {
+			enemy.movement->state = RIGHT;
+		}
+		else enemy.movement->state = NONE;
+		bool close_from_left = enemy_box_right > player_box.left && enemy_box_right < player_box_right;
+		bool close_from_right = enemy_box.left < player_box_right && enemy_box.left > player_box.left;
+		if (close_from_left) {
+			anim.right_attack = true;
+			anim.left_attack = false;
+			enemy.movement->state = NONE;
+		}
+		else if (close_from_right) {
+			anim.left_attack = true;
+			anim.right_attack = false;
+			enemy.movement->state = NONE;
+		}
+	}
 }
 
 void CheckPlayerAndEnemyCollision(Game& game) {
@@ -166,8 +220,8 @@ void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	LogicHpBar& player_hp = *player.fight->hp_bar->logic_hp;
 	FloatRect enemy_sprite = enemy.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& player_rect = *player.visual->rect;
-	const float& enemy_damage = enemy.fight->damage;
-	bool is_hit = enemy_anim.current_attack_frame == 4;
+	float& enemy_damage = enemy.fight->damage;
+	bool is_hit = int(enemy_anim.current_attack_frame) == 4;
 
 	if (enemy_sprite.intersects(player_rect) && is_hit) {
 		if (player_hp.health_points <= 0) {
@@ -176,5 +230,9 @@ void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 		else {
 			player_hp.health_points -= enemy_damage;
 		}
+		enemy_damage = 0;
+	}
+	else {
+		enemy_damage = CEnemyDamage;
 	}
 }

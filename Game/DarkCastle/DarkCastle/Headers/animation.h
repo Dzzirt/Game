@@ -29,7 +29,7 @@ void GravityAnimation(Animation & animation);
 
 void JumpAnimation(Animation & animation, float game_step);
 
-void AttackAnimation(Animation & animation, float game_step);
+void AttackAnimation(Animation& animation, Type type, float game_step);
 
 void MoveAndStayAnimation(Animation & animation, State state, float game_step);
 

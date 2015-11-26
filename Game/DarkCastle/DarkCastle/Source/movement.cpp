@@ -15,9 +15,11 @@ void MovementInit(Movement & movement, Type type) {
 
 	switch (type) {
 	case PLAYER:
+		movement.state = NONE;
 		movement.step = 150;
 		break;
 	case SPEARMAN:
+		movement.state = LEFT;
 		movement.step = 110;
 		break;
 	case SWORDSMAN:

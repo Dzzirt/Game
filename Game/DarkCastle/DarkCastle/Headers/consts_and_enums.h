@@ -26,6 +26,12 @@
 		SWORDSMAN
 	};
 
+	enum BonusType {
+		HP_REGEN,
+		SPEED_UP,
+		ATK_UP,
+	};
+
 	
 
 
