@@ -61,9 +61,10 @@ void VisualHpBarInit(VisualHpBar & hp, Type type) {
 
 }
 
-void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type) {
+void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type, float curr_hp) {
 	VisualHpBar & visual_hp = *hp.visual_hp;
 	LogicHpBar & logic_hp = *hp.logic_hp;
+	logic_hp.health_points = curr_hp;
 	sf::IntRect & hp_strip = visual_hp.strip_rect;
 	switch (type) {
 	case SPEARMAN:
@@ -82,9 +83,10 @@ void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type) {
 	visual_hp.strip_sprite.setTextureRect(sf::IntRect(hp_strip.left, hp_strip.top, int(hp_strip.width * health_in_percent), hp_strip.height));
 }
 
-void HpBarUpdate(HpBar & hp, sf::View & view) {
+void HpBarUpdate(HpBar & hp, sf::View & view, float curr_hp) {
 	VisualHpBar & visual_hp = *hp.visual_hp;
 	LogicHpBar & logic_hp = *hp.logic_hp;
+	logic_hp.health_points = curr_hp;
 	float x_pos = view.getCenter().x - view.getSize().x / 2.f;
 	float y_pos = view.getCenter().y - view.getSize().y / 2.f;
 	sf::IntRect & hp_strip = visual_hp.strip_rect;

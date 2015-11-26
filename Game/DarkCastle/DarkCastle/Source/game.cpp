@@ -7,10 +7,11 @@ using namespace std;
 
 
 Game* CreateGame() {
-	Game * game = new Game();
+	Game* game = new Game();
 	GameInit(*game);
 	return game;
 }
+
 Level* CreateLevel() {
 	Level* level = new Level();
 	LevelInit(*level);
@@ -80,6 +81,7 @@ void GameInit(Game& game) {
 	game.lvl = CreateLevel();
 	game.player = CreatePlayer(*game.lvl);
 	game.enemy_list = CreateEnemyList(*game.lvl);
+	game.bonus_list = CreateBonusList(*game.lvl);
 }
 
 void DestroyGame(Game*& game) {
@@ -89,7 +91,6 @@ void DestroyGame(Game*& game) {
 	DestroyEnemyList(game->enemy_list);
 	delete game;
 }
-
 
 
 void ProcessEvents(Game& game) {
@@ -104,20 +105,26 @@ void ProcessEvents(Game& game) {
 void Update(Game& game, const Time& deltaTime) {
 	PlayerUpdate(*game.player, *game.lvl, deltaTime);
 	ViewUpdate(*game.player->view, *game.window, *game.player->movement, *game.lvl, game.player->visual->animation->frame->displacement);
-	HpBarUpdate(*game.player->fight->hp_bar, *game.player->view);
+	HpBarUpdate(*game.player->fight->hp_bar, *game.player->view, game.player->fight->health_points);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
 		EnemyUpdate(*enemy, deltaTime, *game.lvl);
 	}
-	CheckPlayerAndEnemyCollision(game);
+	CheckDynamicObjCollisions(game);
 }
 
 void Render(Game& game) {
+
 	VisualHpBar& player_hp = *game.player->fight->hp_bar->visual_hp;
 	Sprite& player_sprite = game.player->visual->animation->frame->sprite;
 	RenderWindow& window = *game.window;
+
 	game.lvl->Draw(window);
 	window.setView(*game.player->view);
+	for (list<Bonus*>::iterator iter = game.bonus_list->begin(); iter != game.bonus_list->end(); ++iter) {
+		Bonus* bonus = *iter;
+		window.draw(bonus->bonus_visual->sprite);
+	}
 	window.draw(player_sprite);
 	window.draw(player_hp.bar_sprite);
 	window.draw(player_hp.strip_sprite);
@@ -129,12 +136,13 @@ void Render(Game& game) {
 		window.draw(enemy_hp.bar_sprite);
 		window.draw(enemy_hp.strip_sprite);
 	}
+
 	window.display();
 }
 
-void ProcessEnemiesEvents(Enemy& enemy, FloatRect & player_box) {
-	Animation & anim = *enemy.visual->animation;
-	FloatRect & enemy_box = *enemy.visual->rect;
+void ProcessEnemiesEvents(Enemy& enemy, FloatRect& player_box) {
+	Animation& anim = *enemy.visual->animation;
+	FloatRect& enemy_box = *enemy.visual->rect;
 	float enemy_box_right = enemy_box.left + enemy_box.width;
 	float player_box_right = player_box.left + player_box.width;
 	bool right_detect = player_box.left - enemy.ai->field_of_view <= enemy_box_right && player_box.left >= enemy_box.left;
@@ -168,26 +176,33 @@ void ProcessEnemiesEvents(Enemy& enemy, FloatRect & player_box) {
 	}
 }
 
-void CheckPlayerAndEnemyCollision(Game& game) {
+void CheckDynamicObjCollisions(Game& game) {
 	Player& player = *game.player;
 	vector<Object> map_objects = game.lvl->GetAllObjects();
 	list<Enemy*>::iterator list_begin = game.enemy_list->begin();
 	list<Enemy*>::iterator list_end = game.enemy_list->end();
-	for (size_t i = 0; i < map_objects.size(); i++) {
-		list_begin = game.enemy_list->begin();
-		list_end = game.enemy_list->end();
-		for (list<Enemy*>::iterator iter = list_begin; iter != list_end; ++iter) {
-			Enemy* enemy = *iter;
-			PlayerEnemyCollision(player, *enemy);
-			EnemyPlayerCollision(*enemy, player);
-			if (player.fight->is_dead) {
-				cout << "Player is dead!";
-				break;
-			}
-			if (enemy->fight->is_dead) {
-				game.enemy_list->remove(*iter);
-				break;
-			}
+	for (list<Bonus*>::iterator iter = game.bonus_list->begin(); iter != game.bonus_list->end(); ++iter) {
+		Bonus* bonus = *iter;
+		PlayerBonusCollision(player, *bonus);
+		if (bonus->picked_up) {
+			DestroyBonus(*bonus);
+			game.bonus_list->remove(*iter);
+			break;
+		}
+	}
+	for (list<Enemy*>::iterator iter = list_begin; iter != list_end; ++iter) {
+		Enemy* enemy = *iter;
+		PlayerEnemyCollision(player, *enemy);
+		EnemyPlayerCollision(*enemy, player);
+		if (player.fight->is_dead) {
+			cout << "Player is dead!";
+			break;
+		}
+		if (enemy->fight->is_dead) {
+			DestroyEnemy(enemy);
+			game.enemy_list->remove(*iter);
+			break;
+
 		}
 	}
 }
@@ -195,17 +210,18 @@ void CheckPlayerAndEnemyCollision(Game& game) {
 void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 	Animation& player_anim = *player.visual->animation;
 	FightLogic& enemy_fight = *enemy.fight;
-	LogicHpBar& enemy_hp = *enemy.fight->hp_bar->logic_hp;
+	float & enemy_hp = enemy.fight->health_points;
 	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& enemy_rect = *enemy.visual->rect;
 	float& player_damage = player.fight->damage;
 	bool is_hit = int(player_anim.current_attack_frame) == 3;
+	cout << is_hit << endl;
 	if (player_sprite.intersects(enemy_rect) && is_hit) {
-		if (enemy_hp.health_points <= 0) {
+		if (enemy_hp <= 0) {
 			enemy_fight.is_dead = true;
 		}
 		else {
-			enemy_hp.health_points -= player_damage;
+			enemy_hp -= player_damage;
 		}
 		player_damage = 0;
 	}
@@ -214,21 +230,43 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 	}
 }
 
+void PlayerBonusCollision(const Player& player, Bonus& bonus) {
+	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
+	FloatRect bonus_sprite = bonus.bonus_visual->sprite.getGlobalBounds();
+	FightLogic& fight = *player.fight;
+	Movement& movement = *player.movement;
+	if (player_sprite.intersects(bonus_sprite)) {
+		bonus.picked_up = true;
+		switch (bonus.bonus_type) {
+			case HP_REGEN:
+				fight.health_points += bonus.value;
+				break;
+			case SPEED_UP:
+				movement.step *= bonus.value;
+				break;
+			case ATK_UP:
+				fight.damage *= bonus.value;
+				break;
+		}
+	}
+
+}
+
 void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	Animation& enemy_anim = *enemy.visual->animation;
 	FightLogic& player_fight = *player.fight;
-	LogicHpBar& player_hp = *player.fight->hp_bar->logic_hp;
+	float & player_hp = player.fight->health_points;
 	FloatRect enemy_sprite = enemy.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& player_rect = *player.visual->rect;
 	float& enemy_damage = enemy.fight->damage;
 	bool is_hit = int(enemy_anim.current_attack_frame) == 4;
 
 	if (enemy_sprite.intersects(player_rect) && is_hit) {
-		if (player_hp.health_points <= 0) {
+		if (player_hp <= 0) {
 			player_fight.is_dead = true;
 		}
 		else {
-			player_hp.health_points -= enemy_damage;
+			player_hp -= enemy_damage;
 		}
 		enemy_damage = 0;
 	}

@@ -20,10 +20,13 @@ int GetBonusesCount(Level& lvl, BonusType type) {
 }
 
 void BonusInit(Bonus& bonus, Level & level, BonusType type, int number) {
+	bonus.picked_up = false;
+	bonus.bonus_type = type;
 	bonus.bonus_visual = CreateBonusVisual(type);
 	bonus.value = GetBonusValue(type, "bonus_config.txt");
 	bonus.rect = new sf::Rect<float>;
 	*bonus.rect = GetBonusRectFromLvl(level, type, number);
+	bonus.bonus_visual->sprite.setPosition(bonus.rect->left, bonus.rect->top);
 }
 
 

@@ -70,8 +70,15 @@ inline int GetBonusValue(BonusType type, std::string file_name) {
 		const json_spirit::Pair& pair = object[i];
 		const std::string& name = pair.name_;
 		const json_spirit::Value& val = pair.value_;
-		if (name == bonus_type) {
-			return val.get_int();
+		if (name == "BONUS") {
+			const json_spirit::Object& entity_obj = val.get_obj();
+			for (size_t j = 0; j < entity_obj.size(); j++) {
+				if (entity_obj[j].name_ == bonus_type) {
+					return entity_obj[j].value_.get_int();
+
+				}
+			}
+			break;
 		}
 	}
 	return -1;

@@ -33,8 +33,8 @@ void LogicHpBarInit(LogicHpBar& hp, float curr_hp, float max_hp, Type type);
 
 void VisualHpBarInit(VisualHpBar & hp, Type type);
 
-void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type);
+void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type, float curr_hp);
 
-void HpBarUpdate(HpBar & hp, sf::View & view);
+void HpBarUpdate(HpBar & hp, sf::View & view, float curr_hp);
 
 void DestroyHpBar(HpBar *& hp);

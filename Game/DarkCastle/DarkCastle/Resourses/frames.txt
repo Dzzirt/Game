@@ -53,13 +53,13 @@
     },
     "BONUS": {
         "HP_REGEN": {
-            "x": 0,
+            "x": 28,
             "y": 0,
             "width": 28,
             "height": 28
         },
         "ATK_UP": {
-            "x": 28,
+            "x": 0,
             "y": 0,
             "width": 28,
             "height": 28

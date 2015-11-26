@@ -67,7 +67,7 @@ void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level& level) {
 	animation.frame->sprite.setPosition(movement.x_pos, movement.y_pos);
 
 	sf::FloatRect & enemy_bound = *enemy.visual->rect;
-	HpBarUpdate(*enemy.fight->hp_bar, enemy_bound, SPEARMAN);
+	HpBarUpdate(*enemy.fight->hp_bar, enemy_bound, SPEARMAN, enemy.fight->health_points);
 	//===================================================================================
 	LogicAI & ai = *enemy.ai;
 	cout << movement.prev_state << endl;

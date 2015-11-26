@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="40" tilewidth="16" tileheight="16" nextobjectid="34">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="40" tilewidth="16" tileheight="16" nextobjectid="37">
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" tilecount="1044">
   <image source="Resourses/tiles.png" width="474" height="586"/>
  </tileset>
@@ -4010,7 +4010,7 @@
  <objectgroup name="Слой объектов 1">
   <object id="4" name="solid" x="256" y="143.333" width="32" height="240.667"/>
   <object id="5" name="player" x="357" y="325.333" width="34" height="41"/>
-  <object id="6" name="SPEARMAN0" x="678.545" y="347.727" width="14" height="36"/>
+  <object id="6" name="SPEARMAN0" x="491.545" y="348.727" width="14" height="36"/>
   <object id="7" name="solid" x="288" y="385" width="478" height="63"/>
   <object id="8" name="solid" x="752" y="368" width="16" height="16"/>
   <object id="9" name="solid" x="768" y="352" width="16" height="16"/>
@@ -4029,6 +4029,9 @@
   <object id="29" name="solid" x="864" y="384" width="736" height="15.5198"/>
   <object id="32" name="enemy1" x="1470" y="349.5" width="16" height="23"/>
   <object id="33" name="enemy2" x="1539" y="351.5" width="16" height="23"/>
+  <object id="34" name="HP_REGEN0" x="580" y="340" width="28" height="28"/>
+  <object id="35" name="ATK_UP0" x="636" y="340" width="28" height="28"/>
+  <object id="36" name="SPEED_UP0" x="411" y="345" width="28" height="28"/>
  </objectgroup>
  <layer name="traps and columns" width="100" height="40">
   <data>

@@ -8,8 +8,10 @@
 
 struct Bonus {
 	int value;
+	bool picked_up;
 	sf::FloatRect* rect;
 	BonusVisual* bonus_visual;
+	BonusType bonus_type;
 };
 
 Bonus* CreateBonus(Level & level, BonusType type, int number);
