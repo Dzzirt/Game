@@ -39,8 +39,9 @@ int main(int argc, char* argv[])
 
 
 	Tree* current = root->left;
-	Tree* fath = nullptr;
+	Tree* fath = root;
 	Tree* copy_val = nullptr;
+	bool paste_failed = false;
 	int curr_pos = 0;
 	PrintLevel(*current, curr_pos);
 	int input = -1;
@@ -53,49 +54,33 @@ int main(int argc, char* argv[])
 		}
 		else if (input == 'z')
 		{
-			if (current == nullptr) {
-				current = new Tree();
-				current->fath = fath;
-				current->urov = fath->urov + 1;
-				current->fath->left = current;
-				memcpy(current->name, copy_val->name, sizeof(current->name));
-				if (copy_val->left != nullptr) {
-					CopyBranch(copy_val->left, current->left);
-					SetFather(current->left, current);
-				}
-				else {
-					current->left = nullptr;
-				}
+			if (CheckPastePossibility(copy_val, fath))
+			{
+				Paste(current, copy_val, fath);
 			}
-			else {
-				Tree* temp = current->right;
-				current->right = new Tree();
-				if (copy_val->left != nullptr) {
-					CopyBranch(copy_val->left, current->right->left);
-					SetFather(current->right->left, current->right);
-				}
-				else
-				{
-					current->right->left = nullptr;
-				}
-				current->right->fath = current->fath;
-				current->right->urov = current->urov;
-				current->right->right = temp;
-				memcpy(current->right->name, copy_val->name, sizeof(current->right->name));
+			else
+			{
+				paste_failed = true;
 			}
 		}
-		else if (input == 'x') {
-			copy_val = current;
-
+		else if (input == 'x')
+		{
+			if (current != nullptr)
+			{
+				copy_val = current;
+			}
 		}
-		else if (input == 'd') {
+		else if (input == 'd')
+		{
 			DeleteCatalog(current, fath);
 		}
-		else if (input == 'r') {
+		else if (input == 'r')
+		{
 			cout << "Введите новое имя каталога: ";
 			ChangeName(current);
 		}
-		else if (input == 'q') {
+		else if (input == 'q')
+		{
 			StepOut(current, fath);
 			curr_pos = 0;
 		}
@@ -112,15 +97,18 @@ int main(int argc, char* argv[])
 		{
 			PreviousCatalog(current, curr_pos);
 		}
-
+		system("cls");
+		if (paste_failed)
+		{
+			cout << "Папка назначения является подпапкой исходной папки!" << endl << endl;
+			paste_failed = false;
+		}
 		if (current != nullptr)
 		{
 			PrintLevel(*current->fath->left, curr_pos);
-			back_from_bin(root);
 		}
 		else
 		{
-			system("cls");
 			PrintHelp();
 			cout << "Каталог пуст" << endl;
 		}
@@ -129,5 +117,8 @@ int main(int argc, char* argv[])
 		cin.ignore();
 	}
 	cout << "Завершение работы..." << endl << endl;
+	ofstream fout(argv[1], ios_base::trunc);
+	TreeSave(root, fout);
+	fout.close();
 	return 0;
 }

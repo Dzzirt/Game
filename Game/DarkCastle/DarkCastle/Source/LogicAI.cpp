@@ -11,7 +11,7 @@ void InitLogicAI(LogicAI & ai, Type type) {
 	ai.current_distance = 0.f;
 	ai.stay_time = 0.f;
 	ai.state = NOT_DETECT;
-	ai.field_of_view = 20.f;
+	ai.field_of_view = 30.f;
 	switch (type) {
 	case SPEARMAN:
 		ai.max_distance = 50.f;

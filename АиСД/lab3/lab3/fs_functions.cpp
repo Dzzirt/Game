@@ -3,18 +3,21 @@
 
 using namespace std;
 
-void PrintLevel(const Tree &  current, int curr_pos) {
-	system("cls");
+void PrintLevel(const Tree& current, int curr_pos)
+{
 	PrintHelp();
 	int counter = 0;
 	Tree* ptr = new Tree();
 	*ptr = current;
-	while (ptr != nullptr) {
-		if (counter == curr_pos) {
+	while (ptr != nullptr)
+	{
+		if (counter == curr_pos)
+		{
 			cout << ptr->name << "  <--" << endl;
 			counter++;
 		}
-		else {
+		else
+		{
 			counter++;
 			cout << ptr->name << endl;
 		}
@@ -23,21 +26,29 @@ void PrintLevel(const Tree &  current, int curr_pos) {
 	delete ptr;
 }
 
-void PreviousCatalog(Tree *&  current, int & curr_pos)
+void PreviousCatalog(Tree*& current, int& curr_pos)
 {
-	current = current->fath->left;
-	int counter = 0;
-	curr_pos--;
-	while (counter != curr_pos) {
-		current = current->right;
-		counter++;
+	
+	if (curr_pos != 0)
+	{
+		current = current->fath->left;
+		int counter = 0;
+		curr_pos--;
+		while (counter != curr_pos)
+		{
+			current = current->right;
+			counter++;
+		}
 	}
 }
 
-void NextCatalog(Tree *&  current, int & curr_pos)
+void NextCatalog(Tree*& current, int& curr_pos)
 {
-	curr_pos++;
-	current = current->right;
+	if (current->right != nullptr)
+	{
+		curr_pos++;
+		current = current->right;
+	}
 }
 
 Tree* GetTreeFromFile(char const* arg)
@@ -45,7 +56,8 @@ Tree* GetTreeFromFile(char const* arg)
 	Tree* root = nullptr;
 	FILE* Fin;
 	Fin = fopen(arg, "r");
-	if (Fin == nullptr) {
+	if (Fin == nullptr)
+	{
 		return root;
 	}
 	read_from_file(Fin, &root);
@@ -54,14 +66,16 @@ Tree* GetTreeFromFile(char const* arg)
 
 void CreateCatalog(Tree*& current, Tree*& fath)
 {
-	if (current == nullptr) {
+	if (current == nullptr)
+	{
 		current = new Tree();
 		current->fath = fath;
 		current->urov = fath->urov + 1;
 		cin.getline(current->name, DL);
 		current->fath->left = current;
 	}
-	else {
+	else
+	{
 		Tree* temp = current->right;
 		current->right = new Tree();
 		current->right->fath = current->fath;
@@ -73,13 +87,20 @@ void CreateCatalog(Tree*& current, Tree*& fath)
 
 void StepInto(Tree*& current, Tree*& fath)
 {
-	fath = current;
-	current = current->left;
+	if (current != nullptr) {
+		fath = current;
+		current = current->left;
+	}
+
 }
 
-void StepOut(Tree*& current, Tree*& fath) {
-	current = fath->fath->left;
-	fath = current->fath;
+void StepOut(Tree*& current, Tree*& fath)
+{
+	if (fath->urov != 0 ) {
+		current = fath->fath->left;
+		fath = current->fath;
+	}
+
 }
 
 void ChangeName(Tree*& current)
@@ -93,16 +114,20 @@ void PrintHelp()
 	cout << "c: NEW| d: DELETE| x: COPY      | z: PASTE    | r: RENAME|" << endl << endl;
 }
 
-void DestroyBranch(Tree *&p) {
-	if (p) {
+void DestroyBranch(Tree*& p)
+{
+	if (p)
+	{
 		DestroyBranch(p->left);
 		DestroyBranch(p->right);
 		delete p;
 	}
 }
 
-void CopyBranch(Tree*& from, Tree*& to) {
-	if (from) {
+void CopyBranch(Tree*& from, Tree*& to)
+{
+	if (from)
+	{
 		to = new Tree();
 		*to = *from;
 		CopyBranch(from->left, to->left);
@@ -110,17 +135,29 @@ void CopyBranch(Tree*& from, Tree*& to) {
 	}
 }
 
-void SetFather(Tree*& curr, Tree *& fath)
+void SetFather(Tree*& curr, Tree*& fath)
 {
-	if (curr) {
+	if (curr)
+	{
 		curr->fath = fath;
+		SetFather(curr->left, curr);
 		SetFather(curr->right, fath);
 	}
 }
 
-void DeleteCatalog(Tree *& current, Tree *& fath)
+void SetLevel(Tree*& curr)
 {
-	Tree * next = &*current->right;
+	if (curr)
+	{
+		curr->urov = curr->fath->urov + 1;
+		SetLevel(curr->left);
+		SetLevel(curr->right);
+	}
+}
+
+void DeleteCatalog(Tree*& current, Tree*& fath)
+{
+	Tree* next = &*current->right;
 	fath = current->fath;
 	DestroyBranch(current->left);
 	delete current;
@@ -128,34 +165,68 @@ void DeleteCatalog(Tree *& current, Tree *& fath)
 	current = fath->left;
 }
 
-void Copy(Tree *& copy_val, Tree*& current)
+void Copy(Tree*& copy_val, Tree*& current)
 {
-	if (copy_val->left != nullptr) {
+	if (copy_val->left != nullptr)
+	{
 		CopyBranch(copy_val->left, current->left);
 		SetFather(current->left, current);
+		SetLevel(current->left);
 	}
-	else {
+	else
+	{
 		current->left = nullptr;
 	}
 }
 
 void Paste(Tree*& current, Tree*& copy_val, Tree*& fath)
 {
-	if (current == nullptr) {
-		current = new Tree();
-		current->fath = fath;
-		current->urov = fath->urov + 1;
-		current->fath->left = current;
-		memcpy(current->name, copy_val->name, sizeof(current->name));
-		Copy(copy_val, current);
+	if (copy_val != nullptr) {
+		if (current == nullptr) {
+			current = new Tree();
+			current->fath = fath;
+			current->urov = fath->urov + 1;
+			current->fath->left = current;
+			memcpy(current->name, copy_val->name, sizeof(current->name));
+			Copy(copy_val, current);
+		}
+		else {
+			Tree* temp = current->right;
+			current->right = new Tree();
+			current->right->fath = current->fath;
+			current->right->urov = current->urov;
+			current->right->right = temp;
+			memcpy(current->right->name, copy_val->name, sizeof(current->right->name));
+			Copy(copy_val, current->right);
+		}
 	}
-	else {
-		Tree* temp = current->right;
-		current->right = new Tree();
-		Copy(copy_val, current);
-		current->right->fath = current->fath;
-		current->right->urov = current->urov;
-		current->right->right = temp;
-		memcpy(current->right->name, copy_val->name, sizeof(current->right->name));
+	
+}
+
+bool CheckPastePossibility(Tree* copy_val, Tree*& current)
+{
+	if (current->urov != 0) {
+		if (current->name == copy_val->name) {
+			return false;
+		}
+		if (!CheckPastePossibility(copy_val, current->fath)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void TreeSave(Tree* p, ofstream& fout)
+{
+	string st;
+	if (p)
+	{
+		for (int i = 0; i < p->urov; i++) st.append(".");
+		string name(p->name);
+		st.append(name + "\n");
+		fout.write(st.c_str(), st.size());
+		TreeSave(p->left, fout);
+		TreeSave(p->right, fout);
 	}
 }
+

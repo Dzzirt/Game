@@ -13,7 +13,6 @@ Game* CreateGame() {
 }
 
 
-
 void DestroyWindow(RenderWindow*& window) {
 	delete window;
 }
@@ -22,14 +21,14 @@ RenderWindow* CreateRenderWindow() {
 	return new RenderWindow(VideoMode(WindowWidth, WindowHeight), "Dark Castle");
 }
 
-std::list<Enemy*>* CreateEnemyList(Resourses & res) {
+std::list<Enemy*>* CreateEnemyList(Resourses& res) {
 	std::list<Enemy*>* list = new std::list<Enemy*>();
 	EnemyListInit(*list, res, SPEARMAN);
 	// и др. типы монстров
 	return list;
 }
 
-std::list<Bonus*>* CreateBonusList(Resourses & res) {
+std::list<Bonus*>* CreateBonusList(Resourses& res) {
 	std::list<Bonus*>* list = new std::list<Bonus*>();
 	BonusListInit(*list, res, HP_REGEN);
 	BonusListInit(*list, res, ATK_UP);
@@ -38,7 +37,7 @@ std::list<Bonus*>* CreateBonusList(Resourses & res) {
 	return list;
 }
 
-void EnemyListInit(list<Enemy*>& enemy_list, Resourses & res, Type type) {
+void EnemyListInit(list<Enemy*>& enemy_list, Resourses& res, Type type) {
 	int enemies_count = GetEnemiesCount(*res.lvl, type);
 	for (int i = 0; i < enemies_count; i++) {
 		Enemy* enemy = CreateEnemy(res, i);
@@ -47,7 +46,7 @@ void EnemyListInit(list<Enemy*>& enemy_list, Resourses & res, Type type) {
 }
 
 
-void BonusListInit(list<Bonus*>& bonus_list, Resourses & res, BonusType type) {
+void BonusListInit(list<Bonus*>& bonus_list, Resourses& res, BonusType type) {
 	int bonuses_count = GetBonusesCount(*res.lvl, type);
 	for (int i = 0; i < bonuses_count; i++) {
 		Bonus* bonus = CreateBonus(res, type, i);
@@ -116,8 +115,8 @@ void Render(Game& game) {
 	window.draw(player_hp.strip_sprite);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
-		VisualHpBar & enemy_hp = *enemy->hp_bar->visual_hp;
-		Sprite & enemy_sprite = enemy->visual->animation->frame->sprite;
+		VisualHpBar& enemy_hp = *enemy->hp_bar->visual_hp;
+		Sprite& enemy_sprite = enemy->visual->animation->frame->sprite;
 		window.draw(enemy_sprite);
 		window.draw(enemy_hp.bar_sprite);
 		window.draw(enemy_hp.strip_sprite);
@@ -130,16 +129,20 @@ void ProcessEnemiesEvents(Enemy& enemy, FloatRect& player_box) {
 	Animation& anim = *enemy.visual->animation;
 	FloatRect& enemy_box = *enemy.visual->rect;
 	float enemy_box_right = enemy_box.left + enemy_box.width;
+	float enemy_box_bottom = enemy_box.top + enemy_box.height;
 	float player_box_right = player_box.left + player_box.width;
+	float player_box_bottom = player_box.top + player_box.height;
+
 	bool right_detect = player_box.left - enemy.ai->field_of_view <= enemy_box_right && player_box.left >= enemy_box.left;
 	bool left_detect = player_box_right + enemy.ai->field_of_view >= enemy_box.left && player_box.left <= enemy_box.left;
-	bool not_too_higher = player_box.top + player_box.height >= enemy_box.top - player_box.height;
-	if (enemy.ai->state == NOT_DETECT) {
-		if (left_detect || right_detect && not_too_higher) {
-			enemy.ai->state = DETECT;
-		}
+	bool not_too_high = player_box_bottom > enemy_box.top && player_box_bottom <= enemy_box_bottom;
+	if ((left_detect || right_detect) && not_too_high) {
+		enemy.ai->state = DETECT;
 	}
-	else if (enemy.ai->state == DETECT) {
+	else {
+		enemy.ai->state = NOT_DETECT;
+	}
+	if (enemy.ai->state == DETECT) {
 		if (left_detect) {
 			enemy.movement->state = LEFT;
 		}
@@ -181,7 +184,7 @@ void CheckDynamicObjCollisions(Game& game) {
 		PlayerEnemyCollision(player, *enemy);
 		EnemyPlayerCollision(*enemy, player);
 		if (player.fight->is_dead) {
-			
+
 			break;
 		}
 		if (enemy->fight->is_dead) {
@@ -196,7 +199,7 @@ void CheckDynamicObjCollisions(Game& game) {
 void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 	Animation& player_anim = *player.visual->animation;
 	FightLogic& enemy_fight = *enemy.fight;
-	float & enemy_hp = enemy.fight->health_points;
+	float& enemy_hp = enemy.fight->health_points;
 	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& enemy_rect = *enemy.visual->rect;
 	float& player_damage = player.fight->damage;
@@ -218,7 +221,7 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 		if (enemy.is_attacked) {
 			player_damage = player_stored_damage;
 		}
-		
+
 	}
 }
 
@@ -247,7 +250,7 @@ void PlayerBonusCollision(const Player& player, Bonus& bonus) {
 void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	Animation& enemy_anim = *enemy.visual->animation;
 	FightLogic& player_fight = *player.fight;
-	float & player_hp = player.fight->health_points;
+	float& player_hp = player.fight->health_points;
 	FloatRect enemy_sprite = enemy.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& player_rect = *player.visual->rect;
 	float& enemy_damage = enemy.fight->damage;
