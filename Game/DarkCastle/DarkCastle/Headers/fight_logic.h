@@ -14,9 +14,9 @@ struct FightLogic {
 	float health_points;
 	float max_health_points;
 	float damage;
+	float stored_damage;
 	bool attack_occured;
 	bool is_dead;
-	HpBar* hp_bar;
 };
 
 FightLogic* CreateFightLogic(Type type);

@@ -2,6 +2,7 @@
 #include "../Libs/json_spirit/json_spirit.h"
 #include <fstream>
 #include "consts_and_enums.h"
+#include "SFML/Graphics.hpp"
 
 inline std::string TypeToString(Type type) {
 	switch (type) {
@@ -29,35 +30,38 @@ inline std::string TypeToString(BonusType type) {
 	}
 }
 
-inline sf::IntRect GetIntRect(std::string entity, std::string action, std::string file_name) {
-	sf::IntRect anim_rect;
-	std::ifstream is("Resourses/" + file_name);
+inline std::vector<json_spirit::Pair>* GetEntitiesVector(std::string file_name) {
+	std::ifstream is(file_name);
 	json_spirit::Value value;
 	read(is, value);
 	const json_spirit::Object& object = value.get_obj();
+	std::vector<json_spirit::Pair>* entities = new std::vector<json_spirit::Pair>;
 	for (size_t i = 0; i < object.size(); i++) {
-		const json_spirit::Pair& pair = object[i];
-		const std::string& entity_name = pair.name_;
-		const json_spirit::Value& entity_val = pair.value_;
-		if (entity_name == entity) {
-			const json_spirit::Object& entity_obj = entity_val.get_obj();
-			for (size_t j = 0; j < entity_obj.size(); j++) {
-				if (entity_obj[j].name_ == action) {
-					const json_spirit::Pair& x = entity_obj[j].value_.get_obj()[0];
-					const json_spirit::Pair& y = entity_obj[j].value_.get_obj()[1];
-					const json_spirit::Pair& width = entity_obj[j].value_.get_obj()[2];
-					const json_spirit::Pair& height = entity_obj[j].value_.get_obj()[3];
+		entities->push_back(object[i]);
+	}
+	is.close();
+	return entities;
+}
+
+inline sf::IntRect GetIntRect(std::vector<json_spirit::Pair>& vector, std::string entity, std::string action) {
+	sf::IntRect anim_rect;
+	for (size_t i = 0; i < vector.size(); i++) {
+		if (vector[i].name_ == entity) {
+			auto action_types = vector[i].value_.get_obj();
+			for (size_t j = 0; j < action_types.size(); j++) {
+				if (action_types[j].name_ == action) {
+					const json_spirit::Pair& x = action_types[j].value_.get_obj()[0];
+					const json_spirit::Pair& y = action_types[j].value_.get_obj()[1];
+					const json_spirit::Pair& width = action_types[j].value_.get_obj()[2];
+					const json_spirit::Pair& height = action_types[j].value_.get_obj()[3];
 					anim_rect = sf::IntRect(x.value_.get_int(), y.value_.get_int(), width.value_.get_int(), height.value_.get_int());
 					break;
 				}
 			}
 			break;
-
 		}
 	}
-	is.close();
 	return anim_rect;
-
 }
 
 inline int GetBonusValue(BonusType type, std::string file_name) {

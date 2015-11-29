@@ -1,9 +1,10 @@
 #include "../Headers/bonus.h"
 
 
-Bonus* CreateBonus(Level & level, BonusType type, int number) {
+
+Bonus* CreateBonus(Resourses & res, BonusType type, int number) {
 	Bonus* bonus = new Bonus();
-	BonusInit(*bonus, level, type, number);
+	BonusInit(*bonus, res, type, number);
 	return bonus;
 }
 
@@ -19,13 +20,13 @@ int GetBonusesCount(Level& lvl, BonusType type) {
 	return 0;
 }
 
-void BonusInit(Bonus& bonus, Level & level, BonusType type, int number) {
+void BonusInit(Bonus& bonus, Resourses & res, BonusType type, int number) {
 	bonus.picked_up = false;
 	bonus.bonus_type = type;
-	bonus.bonus_visual = CreateBonusVisual(type);
+	bonus.bonus_visual = CreateBonusVisual(type, *res.int_rects);
 	bonus.value = GetBonusValue(type, "bonus_config.txt");
 	bonus.rect = new sf::Rect<float>;
-	*bonus.rect = GetBonusRectFromLvl(level, type, number);
+	*bonus.rect = GetBonusRectFromLvl(*res.lvl, type, number);
 	bonus.bonus_visual->sprite.setPosition(bonus.rect->left, bonus.rect->top);
 }
 

@@ -4,11 +4,12 @@
 #include "player.h"
 #include "enemy.h"
 #include "bonus.h"
+#include "resourses.h"
 
 
 struct Game {
 	Player* player;
-	Level *lvl;
+	Resourses* res;
 	std::list<Enemy*> * enemy_list;
 	std::list<Bonus*> * bonus_list;
 	sf::RenderWindow * window;
@@ -17,27 +18,27 @@ struct Game {
 
 Game* CreateGame();
 
-Level* CreateLevel();
+
 
 sf::RenderWindow* CreateRenderWindow();
 
-std::list<Enemy*>* CreateEnemyList(Level & level);
+std::list<Enemy*>* CreateEnemyList(Resourses & res);
 
-std::list<Bonus*>* CreateBonusList(Level& level);
+std::list<Bonus*>* CreateBonusList(Resourses & res);
 
 void DestroyGame(Game*& game);
 
-void DestroyLevel(Level*& level);
+
 
 void DestroyWindow(sf::RenderWindow*& window);
 
 void GameInit(Game& game);
 
-void LevelInit(Level & level);
 
-void BonusListInit(std::list<Bonus*>& bonus_list, Level& level, BonusType type);
 
-void EnemyListInit(std::list<Enemy*> & en_list, Level & level, Type type);
+void BonusListInit(std::list<Bonus*>& bonus_list, Resourses & res, BonusType type);
+
+void EnemyListInit(std::list<Enemy*> & en_list, Resourses & res, Type type);
 
 void ProcessEvents(Game & game);
 

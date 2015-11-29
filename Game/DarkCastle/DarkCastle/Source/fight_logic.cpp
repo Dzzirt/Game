@@ -23,14 +23,12 @@ void FightLogicInit(FightLogic& fight, Type type) {
 			break;
 		default: break;
 	}
-
-	fight.hp_bar = CreateHpBar(type, fight.health_points, fight.max_health_points);
+	fight.stored_damage = fight.damage;
 	fight.attack_occured = false;
 	fight.is_dead = false;
 }
 
 void DestroyFightLogic(FightLogic *& fight)
 {
-	DestroyHpBar(fight->hp_bar);
 	delete fight;
 }

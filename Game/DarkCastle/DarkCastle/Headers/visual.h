@@ -9,8 +9,8 @@ struct Visual {
 	sf::FloatRect* rect;
 };
 
-Visual* CreateVisual(Type type, sf::FloatRect & rect);
+Visual* CreateVisual(Type type, sf::FloatRect & rect, std::vector<json_spirit::Pair> & int_rects);
 
-void VisualInit(Visual & visual, Type type, sf::FloatRect & rect);
+void VisualInit(Visual & visual, Type type, sf::FloatRect & rect, std::vector<json_spirit::Pair> & int_rects);
 
 void DestroyVisual(Visual *& visual);

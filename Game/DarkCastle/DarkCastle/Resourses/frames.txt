@@ -70,5 +70,33 @@
             "width": 28,
             "height": 28
         }
+    },
+"PLAYER_HP": {
+    "HP_BAR": {
+      "x": 0,
+      "y": 0,
+      "width": 193,
+      "height": 28
+    },
+    "HP_STRIP": {
+      "x": 0,
+      "y": 28,
+      "width": 184,
+      "height": 14
     }
+  },
+  "BASIC_ENEMY_HP": {
+    "HP_BAR": {
+      "x": 0,
+      "y": 0,
+      "width": 30,
+      "height": 3
+    },
+    "HP_STRIP": {
+      "x": 0,
+      "y": 4,
+      "width": 28,
+      "height": 1
+    }
+  }
 }

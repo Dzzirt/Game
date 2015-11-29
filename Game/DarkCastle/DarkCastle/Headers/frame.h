@@ -11,8 +11,8 @@ struct Frame {
 	FrameRects* rect;
 };
 
-Frame* CreateFrame(Type type);
+Frame* CreateFrame(Type type, std::vector<json_spirit::Pair> & int_rects);
 
-void FrameInit(Frame& frame, Type type);
+void FrameInit(Frame& frame, Type type, std::vector<json_spirit::Pair> & int_rects);
 
 void DestroyFrame(Frame *& frame);

@@ -1,13 +1,13 @@
 #include "../Headers/frame.h"
 
-Frame* CreateFrame(Type type) {
+Frame* CreateFrame(Type type, std::vector<json_spirit::Pair> & int_rects) {
 	Frame * frame = new Frame();
-	FrameInit(*frame, type);
+	FrameInit(*frame, type, int_rects);
 	return frame;
 }
 
-void FrameInit(Frame & frame, Type type) {
-	frame.rect = CreateFrameRects(type);
+void FrameInit(Frame & frame, Type type, std::vector<json_spirit::Pair> & int_rects) {
+	frame.rect = CreateFrameRects(type, int_rects);
 	frame.displacement = 0.f;
 	switch (type) {
 	case PLAYER:

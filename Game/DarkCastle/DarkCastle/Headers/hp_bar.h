@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "consts_and_enums.h"
+#include "../Headers/using_json.h"
 
 struct LogicHpBar {
 	float health_points;
@@ -21,17 +22,17 @@ struct HpBar {
 	VisualHpBar * visual_hp;
 };
 
-HpBar* CreateHpBar(Type type, float curr_hp, float max_hp);
+HpBar* CreateHpBar(Type type, std::vector<json_spirit::Pair>& int_rects, float curr_hp, float max_hp);
 
-void HpBarInit(HpBar& hp, Type type, float curr_hp, float max_hp);
+void HpBarInit(HpBar& hp, Type type, std::vector<json_spirit::Pair>& int_rects, float curr_hp, float max_hp);
 
-VisualHpBar* CreateVisualHpBar(Type type);
+VisualHpBar* CreateVisualHpBar(Type type, std::vector<json_spirit::Pair>& int_rects);
 
 LogicHpBar* CreateLogicHpBar(float curr_hp, float max_hp, Type type);
 
 void LogicHpBarInit(LogicHpBar& hp, float curr_hp, float max_hp, Type type);
 
-void VisualHpBarInit(VisualHpBar & hp, Type type);
+void VisualHpBarInit(VisualHpBar & hp, Type type, std::vector<json_spirit::Pair>& int_rects);
 
 void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type, float curr_hp);
 

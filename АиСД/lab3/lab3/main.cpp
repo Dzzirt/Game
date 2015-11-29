@@ -116,6 +116,7 @@ int main(int argc, char* argv[])
 		if (current != nullptr)
 		{
 			PrintLevel(*current->fath->left, curr_pos);
+			back_from_bin(root);
 		}
 		else
 		{

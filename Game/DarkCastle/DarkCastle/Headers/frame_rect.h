@@ -10,8 +10,8 @@ struct FrameRects {
 	sf::IntRect gravity;
 };
 
-FrameRects* CreateFrameRects(Type type);
+FrameRects* CreateFrameRects(Type type, std::vector<json_spirit::Pair> & int_rects);
 
-void FrameRectInit(FrameRects&, Type);
+void FrameRectInit(FrameRects&, Type, std::vector<json_spirit::Pair> & int_rects);
 
 void DestroyFrameRects(FrameRects *& frame_rects);

@@ -1,4 +1,5 @@
 #include "../Headers/player.h"
+#include <boost/bind/bind.hpp>
 
 using namespace sf;
 using namespace std;
@@ -83,18 +84,19 @@ void PlayerLevelCollision(Player& player, const Object& map_object) {
 	}
 }
 
-Player* CreatePlayer(Level& level) {
+Player* CreatePlayer(Resourses & res) {
 	Player* player = new Player();
-	PlayerInit(*player, level);
+	PlayerInit(*player, res);
 	return player;
 }
 
-void PlayerInit(Player& player, Level& level) {
+void PlayerInit(Player& player, Resourses & res) {
 	player.fight = CreateFightLogic(PLAYER);
+	player.hp_bar = CreateHpBar(PLAYER, *res.int_rects, player.fight->health_points, player.fight->max_health_points);
 	player.movement = CreateMovement(PLAYER);
 	player.jumping = CreateJump(PLAYER);
-	FloatRect rect = GetPlayerRectFromLvl(level);
-	player.visual = CreateVisual(PLAYER, rect);
+	FloatRect rect = GetPlayerRectFromLvl(*res.lvl);
+	player.visual = CreateVisual(PLAYER, rect, *res.int_rects);
 	player.view = CreateView();
 }
 

@@ -4,9 +4,9 @@
 using namespace sf;
 using namespace std;
 
-Enemy* CreateEnemy(Level & level, int number) {
+Enemy* CreateEnemy(Resourses & res, int number) {
 	Enemy * enemy = new Enemy();
-	EnemyInit(*enemy, SPEARMAN, level, number);
+	EnemyInit(*enemy, SPEARMAN, res, number);
 	return enemy;
 }
 
@@ -17,13 +17,15 @@ void DestroyEnemy(Enemy *& enemy) {
 	delete enemy;
 }
 
-void EnemyInit(Enemy& enemy, Type type, Level & level, int number) {
+void EnemyInit(Enemy& enemy, Type type, Resourses & res, int number) {
 	enemy.type = type;
 	enemy.fight = CreateFightLogic(type);
+	enemy.hp_bar = CreateHpBar(type, *res.int_rects, enemy.fight->health_points, enemy.fight->max_health_points);
 	enemy.movement = CreateMovement(type);
 	enemy.ai = CreateAI(type);
-	FloatRect rect = GetEnemyRectFromLvl(level, type, number);
-	enemy.visual = CreateVisual(type, rect);
+	FloatRect rect = GetEnemyRectFromLvl(*res.lvl, type, number);
+	enemy.visual = CreateVisual(type, rect, *res.int_rects);
+	enemy.is_attacked = false;
 }
 
 FloatRect GetEnemyRectFromLvl(Level& lvl, Type type, int number) {
@@ -67,10 +69,9 @@ void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level& level) {
 	animation.frame->sprite.setPosition(movement.x_pos, movement.y_pos);
 
 	sf::FloatRect & enemy_bound = *enemy.visual->rect;
-	HpBarUpdate(*enemy.fight->hp_bar, enemy_bound, SPEARMAN, enemy.fight->health_points);
+	HpBarUpdate(*enemy.hp_bar, enemy_bound, SPEARMAN, enemy.fight->health_points);
 	//===================================================================================
 	LogicAI & ai = *enemy.ai;
-	cout << movement.prev_state << endl;
 	if (movement.state == NONE) {
 		ai.stay_time += deltaTime.asSeconds();
 		if (int(ai.stay_time) >= ai.max_stay_time) {

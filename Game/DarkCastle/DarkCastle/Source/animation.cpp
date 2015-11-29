@@ -2,14 +2,14 @@
 
 using namespace sf;
 
-Animation* CreateAnimation(Type type) {
+Animation* CreateAnimation(Type type, std::vector<json_spirit::Pair> & int_rects) {
 	Animation* animation = new Animation();
-	AnimationInit(*animation, type);
+	AnimationInit(*animation, type, int_rects);
 	return animation;
 }
 
-void AnimationInit(Animation& animation, Type type) {
-	animation.frame = CreateFrame(type);
+void AnimationInit(Animation& animation, Type type, std::vector<json_spirit::Pair> & int_rects) {
+	animation.frame = CreateFrame(type, int_rects);
 	animation.left_attack = false;
 	animation.right_attack = false;
 	animation.current_attack_frame = 0.f;

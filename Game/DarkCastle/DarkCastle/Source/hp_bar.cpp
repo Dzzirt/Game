@@ -1,20 +1,20 @@
 #include "../Headers/hp_bar.h"
-#include "../Headers/using_json.h"
 
-HpBar* CreateHpBar(Type type, float curr_hp, float max_hp) {
+
+HpBar* CreateHpBar(Type type, std::vector<json_spirit::Pair>& int_rects, float curr_hp, float max_hp) {
 	HpBar * hp = new HpBar();
-	HpBarInit(*hp, type, curr_hp, max_hp);
+	HpBarInit(*hp, type, int_rects, curr_hp, max_hp);
 	return hp;
 }
 
-void HpBarInit(HpBar& hp, Type type, float curr_hp, float max_hp) {
+void HpBarInit(HpBar& hp, Type type, std::vector<json_spirit::Pair>& int_rects,  float curr_hp, float max_hp) {
 	hp.logic_hp = CreateLogicHpBar(curr_hp, max_hp, type);
-	hp.visual_hp = CreateVisualHpBar(type);
+	hp.visual_hp = CreateVisualHpBar(type, int_rects);
 }
 
-VisualHpBar* CreateVisualHpBar(Type type) {
+VisualHpBar* CreateVisualHpBar(Type type, std::vector<json_spirit::Pair> & int_rects) {
 	VisualHpBar* visual_hp = new VisualHpBar();
-	VisualHpBarInit(*visual_hp, type);
+	VisualHpBarInit(*visual_hp, type, int_rects);
 	return visual_hp;
 }
 
@@ -41,17 +41,17 @@ void LogicHpBarInit(LogicHpBar& hp, float curr_hp, float max_hp, Type type) {
 	
 }
 
-void VisualHpBarInit(VisualHpBar & hp, Type type) {
+void VisualHpBarInit(VisualHpBar & hp, Type type, std::vector<json_spirit::Pair>& int_rects) {
 	switch (type) {
 	case PLAYER:
 		hp.bar_texture.loadFromFile("Resourses/Hero/hero_hp.png");
-		hp.bar_rect = GetIntRect("PLAYER", "HP_BAR", "bars.txt");
-		hp.strip_rect = GetIntRect("PLAYER", "HP_STRIP", "bars.txt");
+		hp.bar_rect = GetIntRect(int_rects, "PLAYER_HP", "HP_BAR");
+		hp.strip_rect = GetIntRect(int_rects, "PLAYER_HP", "HP_STRIP");
 		break;
 	default:
 		hp.bar_texture.loadFromFile("Resourses/Enemy/enemy_hp.png");
-		hp.bar_rect = GetIntRect("BASIC_ENEMY", "HP_BAR", "bars.txt");
-		hp.strip_rect = GetIntRect("BASIC_ENEMY", "HP_STRIP", "bars.txt");	
+		hp.bar_rect = GetIntRect(int_rects, "BASIC_ENEMY_HP", "HP_BAR");
+		hp.strip_rect = GetIntRect(int_rects, "BASIC_ENEMY_HP", "HP_STRIP");	
 		break;
 	}
 	hp.bar_sprite.setTexture(hp.bar_texture);

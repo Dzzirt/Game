@@ -19,9 +19,9 @@ struct Animation {
 	Frame * frame;
 };
 
-Animation* CreateAnimation(Type type);
+Animation* CreateAnimation(Type type, std::vector<json_spirit::Pair> & int_rects);
 
-void AnimationInit(Animation & animation, Type type);
+void AnimationInit(Animation & animation, Type type, std::vector<json_spirit::Pair> & int_rects);
 
 void DestroyAnimation(Animation *& animation);
 

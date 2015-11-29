@@ -7,6 +7,7 @@
 #include "fight_logic.h"
 #include "visual.h"
 #include "logic_AI.h"
+#include "resourses.h"
 #include <list>
 #include <vector>
 
@@ -17,16 +18,18 @@
 struct Enemy {
 	Movement * movement;
 	FightLogic * fight;
+	HpBar* hp_bar;
 	Visual * visual;
 	LogicAI * ai;
 	Type type;
+	bool is_attacked;
 };
 
-Enemy* CreateEnemy(Level & level, int number);
+Enemy* CreateEnemy(Resourses & res, int number);
 
 void DestroyEnemy(Enemy *& enemy);
 
-void EnemyInit(Enemy& enemy, Type type, Level & level, int number);
+void EnemyInit(Enemy& enemy, Type type, Resourses & res, int number);
 
 sf::FloatRect GetEnemyRectFromLvl(Level & lvl, Type type, int number);
 

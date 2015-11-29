@@ -3,25 +3,25 @@
 #include "visual.h"
 #include "jump.h"
 #include "fight_logic.h"
-#include "level.hpp"
-
+#include "resourses.h"
 
 
 struct Player {
 	Movement * movement;
 	FightLogic * fight;
+	HpBar* hp_bar;
 	Visual * visual;
 	Jump* jumping;
 	sf::View* view;
 };
 
-Player* CreatePlayer(Level & level);
+Player* CreatePlayer(Resourses & res);
 
 sf::View* CreateView(); // колхоз
 
 void DestroyPlayer(Player*& player);
 
-void PlayerInit(Player & player, Level & level);
+void PlayerInit(Player& player, Resourses & res);
 
 void PlayerUpdate(Player & player, const Level & level, const sf::Time& deltaTime);
 
@@ -37,4 +37,4 @@ void ViewUpdate(sf::View& view, sf::RenderWindow & window, const Movement & move
 
 void ProcessPlayerEvents(sf::RenderWindow& window, Player & player, Level & level);
 
-void CheckPlayerAndLevelCollision(Player & player, Level & level);
+void CheckPlayerAndLevelCollision(Player& player, const Level& level);

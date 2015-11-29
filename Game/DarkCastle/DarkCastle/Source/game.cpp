@@ -1,6 +1,6 @@
 #include <sstream>
 #include "../Headers/game.h"
-
+#include <chrono>
 
 using namespace sf;
 using namespace std;
@@ -12,19 +12,7 @@ Game* CreateGame() {
 	return game;
 }
 
-Level* CreateLevel() {
-	Level* level = new Level();
-	LevelInit(*level);
-	return level;
-}
 
-void LevelInit(Level& level) {
-	level.LoadFromFile("Resourses/map.tmx");
-}
-
-void DestroyLevel(Level*& level) {
-	delete level;
-}
 
 void DestroyWindow(RenderWindow*& window) {
 	delete window;
@@ -34,35 +22,35 @@ RenderWindow* CreateRenderWindow() {
 	return new RenderWindow(VideoMode(WindowWidth, WindowHeight), "Dark Castle");
 }
 
-std::list<Enemy*>* CreateEnemyList(Level& level) {
+std::list<Enemy*>* CreateEnemyList(Resourses & res) {
 	std::list<Enemy*>* list = new std::list<Enemy*>();
-	EnemyListInit(*list, level, SPEARMAN);
+	EnemyListInit(*list, res, SPEARMAN);
 	// и др. типы монстров
 	return list;
 }
 
-std::list<Bonus*>* CreateBonusList(Level& level) {
+std::list<Bonus*>* CreateBonusList(Resourses & res) {
 	std::list<Bonus*>* list = new std::list<Bonus*>();
-	BonusListInit(*list, level, HP_REGEN);
-	BonusListInit(*list, level, ATK_UP);
-	BonusListInit(*list, level, SPEED_UP);
+	BonusListInit(*list, res, HP_REGEN);
+	BonusListInit(*list, res, ATK_UP);
+	BonusListInit(*list, res, SPEED_UP);
 	// и др. типы монстров
 	return list;
 }
 
-void EnemyListInit(list<Enemy*>& enemy_list, Level& level, Type type) {
-	int enemies_count = GetEnemiesCount(level, type);
+void EnemyListInit(list<Enemy*>& enemy_list, Resourses & res, Type type) {
+	int enemies_count = GetEnemiesCount(*res.lvl, type);
 	for (int i = 0; i < enemies_count; i++) {
-		Enemy* enemy = CreateEnemy(level, i);
+		Enemy* enemy = CreateEnemy(res, i);
 		enemy_list.push_back(enemy);
 	}
 }
 
 
-void BonusListInit(list<Bonus*>& bonus_list, Level& level, BonusType type) {
-	int bonuses_count = GetBonusesCount(level, type);
+void BonusListInit(list<Bonus*>& bonus_list, Resourses & res, BonusType type) {
+	int bonuses_count = GetBonusesCount(*res.lvl, type);
 	for (int i = 0; i < bonuses_count; i++) {
-		Bonus* bonus = CreateBonus(level, type, i);
+		Bonus* bonus = CreateBonus(res, type, i);
 		bonus_list.push_back(bonus);
 	}
 }
@@ -78,15 +66,15 @@ void DestroyEnemyList(list<Enemy*>*& enemy_list) {
 
 void GameInit(Game& game) {
 	game.window = CreateRenderWindow();
-	game.lvl = CreateLevel();
-	game.player = CreatePlayer(*game.lvl);
-	game.enemy_list = CreateEnemyList(*game.lvl);
-	game.bonus_list = CreateBonusList(*game.lvl);
+	game.res = CreateResourses();
+	game.player = CreatePlayer(*game.res);
+	game.enemy_list = CreateEnemyList(*game.res);
+	game.bonus_list = CreateBonusList(*game.res);
 }
 
 void DestroyGame(Game*& game) {
 	DestroyWindow(game->window);
-	DestroyLevel(game->lvl);
+	DestroyLevel(game->res->lvl);
 	DestroyPlayer(game->player);
 	DestroyEnemyList(game->enemy_list);
 	delete game;
@@ -99,27 +87,25 @@ void ProcessEvents(Game& game) {
 		Enemy* enemy = *iter;
 		ProcessEnemiesEvents(*enemy, *game.player->visual->rect);
 	}
-	ProcessPlayerEvents(window, *game.player, *game.lvl);
+	ProcessPlayerEvents(window, *game.player, *game.res->lvl);
 }
 
 void Update(Game& game, const Time& deltaTime) {
-	PlayerUpdate(*game.player, *game.lvl, deltaTime);
-	ViewUpdate(*game.player->view, *game.window, *game.player->movement, *game.lvl, game.player->visual->animation->frame->displacement);
-	HpBarUpdate(*game.player->fight->hp_bar, *game.player->view, game.player->fight->health_points);
+	PlayerUpdate(*game.player, *game.res->lvl, deltaTime);
+	ViewUpdate(*game.player->view, *game.window, *game.player->movement, *game.res->lvl, game.player->visual->animation->frame->displacement);
+	HpBarUpdate(*game.player->hp_bar, *game.player->view, game.player->fight->health_points);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
-		EnemyUpdate(*enemy, deltaTime, *game.lvl);
+		EnemyUpdate(*enemy, deltaTime, *game.res->lvl);
 	}
 	CheckDynamicObjCollisions(game);
 }
 
 void Render(Game& game) {
-
-	VisualHpBar& player_hp = *game.player->fight->hp_bar->visual_hp;
+	VisualHpBar& player_hp = *game.player->hp_bar->visual_hp;
 	Sprite& player_sprite = game.player->visual->animation->frame->sprite;
 	RenderWindow& window = *game.window;
-
-	game.lvl->Draw(window);
+	game.res->lvl->Draw(window);
 	window.setView(*game.player->view);
 	for (list<Bonus*>::iterator iter = game.bonus_list->begin(); iter != game.bonus_list->end(); ++iter) {
 		Bonus* bonus = *iter;
@@ -130,8 +116,8 @@ void Render(Game& game) {
 	window.draw(player_hp.strip_sprite);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
-		VisualHpBar enemy_hp = *enemy->fight->hp_bar->visual_hp;
-		Sprite enemy_sprite = enemy->visual->animation->frame->sprite;
+		VisualHpBar & enemy_hp = *enemy->hp_bar->visual_hp;
+		Sprite & enemy_sprite = enemy->visual->animation->frame->sprite;
 		window.draw(enemy_sprite);
 		window.draw(enemy_hp.bar_sprite);
 		window.draw(enemy_hp.strip_sprite);
@@ -178,7 +164,7 @@ void ProcessEnemiesEvents(Enemy& enemy, FloatRect& player_box) {
 
 void CheckDynamicObjCollisions(Game& game) {
 	Player& player = *game.player;
-	vector<Object> map_objects = game.lvl->GetAllObjects();
+	vector<Object> map_objects = game.res->lvl->GetAllObjects();
 	list<Enemy*>::iterator list_begin = game.enemy_list->begin();
 	list<Enemy*>::iterator list_end = game.enemy_list->end();
 	for (list<Bonus*>::iterator iter = game.bonus_list->begin(); iter != game.bonus_list->end(); ++iter) {
@@ -195,7 +181,7 @@ void CheckDynamicObjCollisions(Game& game) {
 		PlayerEnemyCollision(player, *enemy);
 		EnemyPlayerCollision(*enemy, player);
 		if (player.fight->is_dead) {
-			cout << "Player is dead!";
+			
 			break;
 		}
 		if (enemy->fight->is_dead) {
@@ -214,19 +200,25 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& enemy_rect = *enemy.visual->rect;
 	float& player_damage = player.fight->damage;
+	float& player_stored_damage = player.fight->stored_damage;
 	bool is_hit = int(player_anim.current_attack_frame) == 3;
-	cout << is_hit << endl;
 	if (player_sprite.intersects(enemy_rect) && is_hit) {
+		enemy.is_attacked = true;
 		if (enemy_hp <= 0) {
 			enemy_fight.is_dead = true;
+			player_damage = player_stored_damage;
 		}
 		else {
 			enemy_hp -= player_damage;
+			player_damage = 0;
 		}
-		player_damage = 0;
+
 	}
 	else {
-		player_damage = CPlayerDamage;
+		if (enemy.is_attacked) {
+			player_damage = player_stored_damage;
+		}
+		
 	}
 }
 
@@ -245,7 +237,7 @@ void PlayerBonusCollision(const Player& player, Bonus& bonus) {
 				movement.step *= bonus.value;
 				break;
 			case ATK_UP:
-				fight.damage *= bonus.value;
+				fight.stored_damage = fight.damage *= bonus.value;
 				break;
 		}
 	}
