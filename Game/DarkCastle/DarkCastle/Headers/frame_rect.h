@@ -14,4 +14,4 @@ FrameRects* CreateFrameRects(Type type, std::vector<json_spirit::Pair> & int_rec
 
 void FrameRectInit(FrameRects&, Type, std::vector<json_spirit::Pair> & int_rects);
 
-void DestroyFrameRects(FrameRects *& frame_rects);
+void DestroyFrameRects(FrameRects & frame_rects);

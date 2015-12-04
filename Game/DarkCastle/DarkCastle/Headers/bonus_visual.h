@@ -7,6 +7,7 @@ struct BonusVisual {
 	sf::Image image;
 	sf::Texture texture;
 	sf::Sprite sprite;
+	sf::IntRect sprite_rect;
 };
 
 

@@ -10,13 +10,6 @@ Enemy* CreateEnemy(Resourses & res, int number) {
 	return enemy;
 }
 
-void DestroyEnemy(Enemy *& enemy) {
-	DestroyMovement(enemy->movement);
-	DestroyFightLogic(enemy->fight);
-	DestroyVisual(enemy->visual);
-	delete enemy;
-}
-
 void EnemyInit(Enemy& enemy, Type type, Resourses & res, int number) {
 	enemy.type = type;
 	enemy.fight = CreateFightLogic(type);
@@ -48,7 +41,45 @@ int GetEnemiesCount(Level& lvl, Type type) {
 }
 
 
+void ProcessEnemiesEvents(Enemy& enemy, FloatRect& player_box) {
+	Animation& anim = *enemy.visual->animation;
+	FloatRect& enemy_box = *enemy.visual->rect;
+	float enemy_box_right = enemy_box.left + enemy_box.width;
+	float enemy_box_bottom = enemy_box.top + enemy_box.height;
+	float player_box_right = player_box.left + player_box.width;
+	float player_box_bottom = player_box.top + player_box.height;
 
+	bool right_detect = player_box.left - enemy.ai->field_of_view <= enemy_box_right && player_box.left >= enemy_box.left;
+	bool left_detect = player_box_right + enemy.ai->field_of_view >= enemy_box.left && player_box.left <= enemy_box.left;
+	bool not_too_high = player_box_bottom > enemy_box.top && player_box_bottom <= enemy_box_bottom;
+	if ((left_detect || right_detect) && not_too_high) {
+		enemy.ai->state = DETECT;
+	}
+	else {
+		enemy.ai->state = NOT_DETECT;
+	}
+	if (enemy.ai->state == DETECT) {
+		if (left_detect) {
+			enemy.movement->state = LEFT;
+		}
+		else if (right_detect) {
+			enemy.movement->state = RIGHT;
+		}
+		else enemy.movement->state = NONE;
+		bool close_from_left = enemy_box_right > player_box.left && enemy_box_right < player_box_right;
+		bool close_from_right = enemy_box.left < player_box_right && enemy_box.left > player_box.left;
+		if (close_from_left) {
+			anim.right_attack = true;
+			anim.left_attack = false;
+			enemy.movement->state = NONE;
+		}
+		else if (close_from_right) {
+			anim.left_attack = true;
+			anim.right_attack = false;
+			enemy.movement->state = NONE;
+		}
+	}
+}
 
 void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level& level) {
 	Movement& movement = *enemy.movement;
@@ -143,4 +174,10 @@ void CheckEnemyAndLevelCollision(Enemy& enemy, const Level& level) {
 	}
 }
 
-
+void DestroyEnemy(Enemy & enemy) {
+	DestroyMovement(*enemy.movement);
+	DestroyFightLogic(*enemy.fight);
+	DestroyVisual(*enemy.visual);
+	DestroyAI(*enemy.ai);
+	delete &enemy;
+}

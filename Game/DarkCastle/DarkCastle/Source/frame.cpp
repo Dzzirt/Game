@@ -29,8 +29,8 @@ void FrameInit(Frame & frame, Type type, std::vector<json_spirit::Pair> & int_re
 	}
 }
 
-void DestroyFrame(Frame *& frame)
+void DestroyFrame(Frame & frame)
 {
-	DestroyFrameRects(frame->rect);
-	delete frame;
+	DestroyFrameRects(*frame.rect);
+	delete &frame;
 }

@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 		}
 		else if (input == 'd')
 		{
-			DeleteCatalog(current, fath);
+			DeleteCatalog(current, fath, curr_pos);
 		}
 		else if (input == 'r')
 		{

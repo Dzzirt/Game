@@ -10,10 +10,12 @@ struct Resourses {
 
 Resourses* CreateResourses();
 
-void ResInit(Resourses & res);
-
 Level* CreateLevel();
+
+void ResInit(Resourses & res);
 
 void LevelInit(Level & level);
 
-void DestroyLevel(Level*& level);
+void DestroyLevel(Level& level);
+
+void DestroyResourses(Resourses & res);

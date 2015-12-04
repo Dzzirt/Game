@@ -28,7 +28,6 @@ void PrintLevel(const Tree& current, int curr_pos)
 
 void PreviousCatalog(Tree*& current, int& curr_pos)
 {
-	
 	if (curr_pos != 0)
 	{
 		current = current->fath->left;
@@ -44,10 +43,13 @@ void PreviousCatalog(Tree*& current, int& curr_pos)
 
 void NextCatalog(Tree*& current, int& curr_pos)
 {
-	if (current->right != nullptr)
+	if (current != nullptr)
 	{
-		curr_pos++;
-		current = current->right;
+		if (current->right != nullptr) {
+			curr_pos++;
+			current = current->right;
+		}
+		
 	}
 }
 
@@ -87,20 +89,20 @@ void CreateCatalog(Tree*& current, Tree*& fath)
 
 void StepInto(Tree*& current, Tree*& fath)
 {
-	if (current != nullptr) {
+	if (current != nullptr)
+	{
 		fath = current;
 		current = current->left;
 	}
-
 }
 
 void StepOut(Tree*& current, Tree*& fath)
 {
-	if (fath->urov != 0 ) {
+	if (fath->urov != 0)
+	{
 		current = fath->fath->left;
 		fath = current->fath;
 	}
-
 }
 
 void ChangeName(Tree*& current)
@@ -155,14 +157,54 @@ void SetLevel(Tree*& curr)
 	}
 }
 
-void DeleteCatalog(Tree*& current, Tree*& fath)
+void DeleteCatalog(Tree*& current, Tree*& fath, int& curr_pos)
 {
-	Tree* next = &*current->right;
-	fath = current->fath;
-	DestroyBranch(current->left);
-	delete current;
-	fath->left = next;
-	current = fath->left;
+	if (current != nullptr) {
+		fath = current->fath;
+		DestroyBranch(current->left);
+		if (curr_pos == 0) {
+			if (current->right != nullptr) {
+				fath->left = current->right;
+			}
+			else {
+				fath->left = nullptr;
+			}
+		}
+		else if (current->right == nullptr) {
+			SetNullBrother(fath, curr_pos);
+		}
+		else {
+			SetNextBrother(fath, curr_pos);
+		}
+		delete current;
+		current = fath->left;
+		curr_pos = 0;
+	}
+	
+}
+
+void SetNullBrother(Tree*& fath, int curr_pos)
+{
+	int pos = 0;
+	Tree* father_ptr = fath->left;
+	while (pos != curr_pos - 1)
+	{
+		father_ptr = father_ptr->right;
+		pos++;
+	}
+	father_ptr->right = nullptr;
+}
+
+void SetNextBrother(Tree*& fath, int curr_pos)
+{
+	int pos = 0;
+	Tree* current = fath->left;
+	while (pos != curr_pos - 1)
+	{
+		current = current->right;
+		pos++;
+	}
+	current->right = current->right->right;
 }
 
 void Copy(Tree*& copy_val, Tree*& current)
@@ -181,8 +223,10 @@ void Copy(Tree*& copy_val, Tree*& current)
 
 void Paste(Tree*& current, Tree*& copy_val, Tree*& fath)
 {
-	if (copy_val != nullptr) {
-		if (current == nullptr) {
+	if (copy_val != nullptr)
+	{
+		if (current == nullptr)
+		{
 			current = new Tree();
 			current->fath = fath;
 			current->urov = fath->urov + 1;
@@ -190,7 +234,8 @@ void Paste(Tree*& current, Tree*& copy_val, Tree*& fath)
 			memcpy(current->name, copy_val->name, sizeof(current->name));
 			Copy(copy_val, current);
 		}
-		else {
+		else
+		{
 			Tree* temp = current->right;
 			current->right = new Tree();
 			current->right->fath = current->fath;
@@ -200,16 +245,18 @@ void Paste(Tree*& current, Tree*& copy_val, Tree*& fath)
 			Copy(copy_val, current->right);
 		}
 	}
-	
 }
 
 bool CheckPastePossibility(Tree* copy_val, Tree*& current)
 {
-	if (current->urov != 0) {
-		if (current->name == copy_val->name) {
+	if (current->urov != 0)
+	{
+		if (current->name == copy_val->name)
+		{
 			return false;
 		}
-		if (!CheckPastePossibility(copy_val, current->fath)) {
+		if (!CheckPastePossibility(copy_val, current->fath))
+		{
 			return false;
 		}
 	}
@@ -229,4 +276,3 @@ void TreeSave(Tree* p, ofstream& fout)
 		TreeSave(p->right, fout);
 	}
 }
-

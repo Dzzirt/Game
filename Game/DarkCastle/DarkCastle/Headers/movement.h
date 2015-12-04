@@ -18,4 +18,4 @@ void MovementInit(Movement & movement, Type type);
 
 void CheckMovementLogic(Movement & movement);
 
-void DestroyMovement(Movement *& movement);
+void DestroyMovement(Movement & movement);

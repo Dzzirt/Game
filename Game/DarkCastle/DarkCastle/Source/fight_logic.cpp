@@ -28,7 +28,7 @@ void FightLogicInit(FightLogic& fight, Type type) {
 	fight.is_dead = false;
 }
 
-void DestroyFightLogic(FightLogic *& fight)
+void DestroyFightLogic(FightLogic & fight)
 {
-	delete fight;
+	delete &fight;
 }

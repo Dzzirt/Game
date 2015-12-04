@@ -21,24 +21,13 @@ int GetBonusesCount(Level& lvl, BonusType type) {
 }
 
 void BonusInit(Bonus& bonus, Resourses & res, BonusType type, int number) {
-	bonus.picked_up = false;
-	bonus.bonus_type = type;
 	bonus.bonus_visual = CreateBonusVisual(type, *res.int_rects);
-	bonus.value = GetBonusValue(type, "bonus_config.txt");
-	bonus.rect = new sf::Rect<float>;
-	*bonus.rect = GetBonusRectFromLvl(*res.lvl, type, number);
-	bonus.bonus_visual->sprite.setPosition(bonus.rect->left, bonus.rect->top);
-}
-
-
-sf::FloatRect GetBonusRectFromLvl(Level& lvl, BonusType type, int number) {
-	std::stringstream str_number;
-	std::string bonus_type = TypeToString(type);
-	str_number << number;
-	return lvl.GetObject(bonus_type + str_number.str()).rect;
+	bonus.bonus_logic = CreateBonusLogic(type, *res.lvl, number);
+	bonus.bonus_visual->sprite.setPosition(bonus.bonus_logic->rect->left, bonus.bonus_logic->rect->top);
 }
 
 void DestroyBonus(Bonus& bonus) {
 	DestroyBonusVisual(*bonus.bonus_visual);
+	DestroyBonusLogic(*bonus.bonus_logic);
 	delete &bonus;
 }

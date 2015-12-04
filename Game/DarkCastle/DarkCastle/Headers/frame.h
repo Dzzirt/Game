@@ -15,4 +15,4 @@ Frame* CreateFrame(Type type, std::vector<json_spirit::Pair> & int_rects);
 
 void FrameInit(Frame& frame, Type type, std::vector<json_spirit::Pair> & int_rects);
 
-void DestroyFrame(Frame *& frame);
+void DestroyFrame(Frame & frame);

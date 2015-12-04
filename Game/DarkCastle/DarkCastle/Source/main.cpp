@@ -18,7 +18,7 @@ int main() {
 		Render(*game);
 
 	}
-	DestroyGame(game);
+	DestroyGame(*game);
 	return 0;
 }
 

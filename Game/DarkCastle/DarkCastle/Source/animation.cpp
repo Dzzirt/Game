@@ -39,9 +39,9 @@ void AnimationInit(Animation& animation, Type type, std::vector<json_spirit::Pai
 	}
 }
 
-void DestroyAnimation(Animation*& animation) {
-	DestroyFrame(animation->frame);
-	delete animation;
+void DestroyAnimation(Animation& animation) {
+	DestroyFrame(*animation.frame);
+	delete &animation;
 }
 
 void GravityAnimation(Animation& animation) {

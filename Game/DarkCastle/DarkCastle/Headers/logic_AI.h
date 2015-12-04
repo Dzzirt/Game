@@ -1,5 +1,6 @@
 #pragma once
 #include "../Headers/consts_and_enums.h"
+#include "../Headers/game_rand.h"
 
 enum EntityState {
 	NOT_DETECT,
@@ -18,3 +19,5 @@ struct LogicAI {
 LogicAI* CreateAI(Type type);
 
 void InitLogicAI(LogicAI & ai, Type type);
+
+void DestroyAI(LogicAI & ai);

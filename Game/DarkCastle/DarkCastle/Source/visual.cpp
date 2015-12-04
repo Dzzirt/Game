@@ -12,9 +12,9 @@ void VisualInit(Visual& visual, Type type, sf::FloatRect & rect, std::vector<jso
 	*visual.rect = rect;
 }
 
-void DestroyVisual(Visual*& visual){
-	DestroyAnimation(visual->animation);
-	delete visual->rect;
-	delete visual;
+void DestroyVisual(Visual& visual){
+	DestroyAnimation(*visual.animation);
+	delete visual.rect;
+	delete &visual;
 }
 

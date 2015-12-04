@@ -12,28 +12,22 @@ Game* CreateGame() {
 	return game;
 }
 
-
-void DestroyWindow(RenderWindow*& window) {
-	delete window;
-}
-
 RenderWindow* CreateRenderWindow() {
 	return new RenderWindow(VideoMode(WindowWidth, WindowHeight), "Dark Castle");
 }
 
+
 std::list<Enemy*>* CreateEnemyList(Resourses& res) {
 	std::list<Enemy*>* list = new std::list<Enemy*>();
 	EnemyListInit(*list, res, SPEARMAN);
-	// и др. типы монстров
 	return list;
 }
 
 std::list<Bonus*>* CreateBonusList(Resourses& res) {
-	std::list<Bonus*>* list = new std::list<Bonus*>();
+	auto list = new std::list<Bonus*>();
 	BonusListInit(*list, res, HP_REGEN);
 	BonusListInit(*list, res, ATK_UP);
 	BonusListInit(*list, res, SPEED_UP);
-	// и др. типы монстров
 	return list;
 }
 
@@ -54,30 +48,19 @@ void BonusListInit(list<Bonus*>& bonus_list, Resourses& res, BonusType type) {
 	}
 }
 
-void DestroyEnemyList(list<Enemy*>*& enemy_list) {
-	list<Enemy*>::iterator begin = enemy_list->begin();
-	list<Enemy*>::iterator end = enemy_list->end();
-	for (list<Enemy*>::iterator iter = begin; iter != end; ++iter) {
-		DestroyEnemy(*iter);
-	}
-	delete enemy_list;
-}
+
 
 void GameInit(Game& game) {
 	game.window = CreateRenderWindow();
+	game.view = CreateView();
 	game.res = CreateResourses();
 	game.player = CreatePlayer(*game.res);
 	game.enemy_list = CreateEnemyList(*game.res);
 	game.bonus_list = CreateBonusList(*game.res);
+	game.b_panel = CreateBonusesPanel();
 }
 
-void DestroyGame(Game*& game) {
-	DestroyWindow(game->window);
-	DestroyLevel(game->res->lvl);
-	DestroyPlayer(game->player);
-	DestroyEnemyList(game->enemy_list);
-	delete game;
-}
+
 
 
 void ProcessEvents(Game& game) {
@@ -86,13 +69,14 @@ void ProcessEvents(Game& game) {
 		Enemy* enemy = *iter;
 		ProcessEnemiesEvents(*enemy, *game.player->visual->rect);
 	}
-	ProcessPlayerEvents(window, *game.player, *game.res->lvl);
+	ProcessPlayerEvents(window, *game.player, *game.res->lvl, *game.view);
 }
 
 void Update(Game& game, const Time& deltaTime) {
 	PlayerUpdate(*game.player, *game.res->lvl, deltaTime);
-	ViewUpdate(*game.player->view, *game.window, *game.player->movement, *game.res->lvl, game.player->visual->animation->frame->displacement);
-	HpBarUpdate(*game.player->hp_bar, *game.player->view, game.player->fight->health_points);
+	ViewUpdate(*game.view, *game.player->movement, *game.res->lvl, game.player->visual->animation->frame->displacement);
+	HpBarUpdate(*game.player->hp_bar, *game.view, game.player->fight->health_points);
+	BonusesPanelUpdate(*game.b_panel, *game.view);
 	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
 		Enemy* enemy = *iter;
 		EnemyUpdate(*enemy, deltaTime, *game.res->lvl);
@@ -100,12 +84,13 @@ void Update(Game& game, const Time& deltaTime) {
 	CheckDynamicObjCollisions(game);
 }
 
+
 void Render(Game& game) {
 	VisualHpBar& player_hp = *game.player->hp_bar->visual_hp;
 	Sprite& player_sprite = game.player->visual->animation->frame->sprite;
 	RenderWindow& window = *game.window;
 	game.res->lvl->Draw(window);
-	window.setView(*game.player->view);
+	window.setView(*game.view);
 	for (list<Bonus*>::iterator iter = game.bonus_list->begin(); iter != game.bonus_list->end(); ++iter) {
 		Bonus* bonus = *iter;
 		window.draw(bonus->bonus_visual->sprite);
@@ -121,49 +106,10 @@ void Render(Game& game) {
 		window.draw(enemy_hp.bar_sprite);
 		window.draw(enemy_hp.strip_sprite);
 	}
-
+	DrawBonusesPanel(*game.b_panel, *game.window);
 	window.display();
 }
 
-void ProcessEnemiesEvents(Enemy& enemy, FloatRect& player_box) {
-	Animation& anim = *enemy.visual->animation;
-	FloatRect& enemy_box = *enemy.visual->rect;
-	float enemy_box_right = enemy_box.left + enemy_box.width;
-	float enemy_box_bottom = enemy_box.top + enemy_box.height;
-	float player_box_right = player_box.left + player_box.width;
-	float player_box_bottom = player_box.top + player_box.height;
-
-	bool right_detect = player_box.left - enemy.ai->field_of_view <= enemy_box_right && player_box.left >= enemy_box.left;
-	bool left_detect = player_box_right + enemy.ai->field_of_view >= enemy_box.left && player_box.left <= enemy_box.left;
-	bool not_too_high = player_box_bottom > enemy_box.top && player_box_bottom <= enemy_box_bottom;
-	if ((left_detect || right_detect) && not_too_high) {
-		enemy.ai->state = DETECT;
-	}
-	else {
-		enemy.ai->state = NOT_DETECT;
-	}
-	if (enemy.ai->state == DETECT) {
-		if (left_detect) {
-			enemy.movement->state = LEFT;
-		}
-		else if (right_detect) {
-			enemy.movement->state = RIGHT;
-		}
-		else enemy.movement->state = NONE;
-		bool close_from_left = enemy_box_right > player_box.left && enemy_box_right < player_box_right;
-		bool close_from_right = enemy_box.left < player_box_right && enemy_box.left > player_box.left;
-		if (close_from_left) {
-			anim.right_attack = true;
-			anim.left_attack = false;
-			enemy.movement->state = NONE;
-		}
-		else if (close_from_right) {
-			anim.left_attack = true;
-			anim.right_attack = false;
-			enemy.movement->state = NONE;
-		}
-	}
-}
 
 void CheckDynamicObjCollisions(Game& game) {
 	Player& player = *game.player;
@@ -173,7 +119,7 @@ void CheckDynamicObjCollisions(Game& game) {
 	for (list<Bonus*>::iterator iter = game.bonus_list->begin(); iter != game.bonus_list->end(); ++iter) {
 		Bonus* bonus = *iter;
 		PlayerBonusCollision(player, *bonus);
-		if (bonus->picked_up) {
+		if (bonus->bonus_logic->picked_up) {
 			DestroyBonus(*bonus);
 			game.bonus_list->remove(*iter);
 			break;
@@ -188,7 +134,7 @@ void CheckDynamicObjCollisions(Game& game) {
 			break;
 		}
 		if (enemy->fight->is_dead) {
-			DestroyEnemy(enemy);
+			DestroyEnemy(*enemy);
 			game.enemy_list->remove(*iter);
 			break;
 
@@ -231,16 +177,16 @@ void PlayerBonusCollision(const Player& player, Bonus& bonus) {
 	FightLogic& fight = *player.fight;
 	Movement& movement = *player.movement;
 	if (player_sprite.intersects(bonus_sprite)) {
-		bonus.picked_up = true;
-		switch (bonus.bonus_type) {
+		bonus.bonus_logic->picked_up = true;
+		switch (bonus.bonus_logic->bonus_type) {
 			case HP_REGEN:
-				fight.health_points += bonus.value;
+				fight.health_points += bonus.bonus_logic->value;
 				break;
 			case SPEED_UP:
-				movement.step *= bonus.value;
+				movement.step *= bonus.bonus_logic->value;
 				break;
 			case ATK_UP:
-				fight.stored_damage = fight.damage *= bonus.value;
+				fight.stored_damage = fight.damage *= bonus.bonus_logic->value;
 				break;
 		}
 	}
@@ -268,4 +214,36 @@ void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	else {
 		enemy_damage = CEnemyDamage;
 	}
+}
+
+
+void DestroyWindow(RenderWindow& window) {
+	delete &window;
+}
+
+void DestroyEnemyList(list<Enemy*>& enemy_list) {
+	list<Enemy*>::iterator begin = enemy_list.begin();
+	list<Enemy*>::iterator end = enemy_list.end();
+	for (list<Enemy*>::iterator iter = begin; iter != end; ++iter) {
+		DestroyEnemy(**iter);
+	}
+	delete &enemy_list;
+}
+
+void DestroyBonusList(list<Bonus*>& bonus_list) {
+	for (Bonus* bonus : bonus_list) {
+		DestroyBonus(*bonus);
+	}
+}
+
+void DestroyGame(Game& game) {
+	DestroyWindow(*game.window);
+	DestroyLevel(*game.res->lvl);
+	DestroyPlayer(*game.player);
+	DestroyEnemyList(*game.enemy_list);
+	DestroyBonusList(*game.bonus_list);
+	DestroyResourses(*game.res);
+	DestroyBonusesPanel(*game.b_panel);
+	delete game.view;
+	delete &game;
 }

@@ -149,6 +149,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\bonusses_panel.cpp" />
+    <ClCompile Include="Source\bonus_logic.cpp" />
+    <ClCompile Include="Source\game_rand.cpp" />
     <ClCompile Include="Libs\json_spirit\json_spirit_reader.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
@@ -179,8 +182,13 @@
     <ClCompile Include="Source\movement.cpp" />
     <ClCompile Include="Source\player.cpp" />
     <ClCompile Include="Source\visual.cpp" />
+    <ClCompile Include="Source\view.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\bonus_logic.h" />
+    <ClInclude Include="Headers\bonuses_panel.h" />
+    <ClInclude Include="Headers\bonuses_panel_const.h" />
+    <ClInclude Include="Headers\game_rand.h" />
     <ClInclude Include="Headers\animation.h" />
     <ClInclude Include="Headers\bonus.h" />
     <ClInclude Include="Headers\bonus_visual.h" />
@@ -212,6 +220,7 @@
     <ClInclude Include="Libs\TinyXML\tinyxml.h" />
     <ClInclude Include="Headers\logic_AI.h" />
     <ClInclude Include="Headers\resourses.h" />
+    <ClInclude Include="Headers\view.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

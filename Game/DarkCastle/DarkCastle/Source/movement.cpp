@@ -1,4 +1,5 @@
 #include "../Headers/movement.h"
+#include "../Headers/game_rand.h"
 
 Movement* CreateMovement(Type type) {
 	Movement* movement = new Movement();
@@ -19,7 +20,7 @@ void MovementInit(Movement & movement, Type type) {
 		movement.step = 150;
 		break;
 	case SPEARMAN:
-		movement.state = LEFT;
+		movement.state = GetRandomDir(LEFT, RIGHT);
 		movement.step = 110;
 		break;
 	case SWORDSMAN:
@@ -29,9 +30,9 @@ void MovementInit(Movement & movement, Type type) {
 	}
 }
 
-void DestroyMovement(Movement *& movement)
+void DestroyMovement(Movement & movement)
 {
-	delete movement;
+	delete &movement;
 }
 
 void CheckMovementLogic(Movement & movement) {

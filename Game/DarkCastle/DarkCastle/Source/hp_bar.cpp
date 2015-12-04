@@ -8,7 +8,7 @@ HpBar* CreateHpBar(Type type, std::vector<json_spirit::Pair>& int_rects, float c
 }
 
 void HpBarInit(HpBar& hp, Type type, std::vector<json_spirit::Pair>& int_rects,  float curr_hp, float max_hp) {
-	hp.logic_hp = CreateLogicHpBar(curr_hp, max_hp, type);
+	hp.logic_hp = CreateLogicHpBar(curr_hp, max_hp);
 	hp.visual_hp = CreateVisualHpBar(type, int_rects);
 }
 
@@ -18,27 +18,15 @@ VisualHpBar* CreateVisualHpBar(Type type, std::vector<json_spirit::Pair> & int_r
 	return visual_hp;
 }
 
-LogicHpBar* CreateLogicHpBar(float curr_hp, float max_hp, Type type) {
+LogicHpBar* CreateLogicHpBar(float curr_hp, float max_hp) {
 	LogicHpBar* logic_hp = new LogicHpBar();
-	LogicHpBarInit(*logic_hp, curr_hp, max_hp, type);
+	LogicHpBarInit(*logic_hp, curr_hp, max_hp);
 	return logic_hp;
 }
 
-void LogicHpBarInit(LogicHpBar& hp, float curr_hp, float max_hp, Type type) {
+void LogicHpBarInit(LogicHpBar& hp, float curr_hp, float max_hp) {
 	hp.health_points = curr_hp;
 	hp.max_health_points = max_hp;
-	switch (type) {
-		case PLAYER:
-			hp.max_strip_width = 184;
-			break;
-		case SPEARMAN: 
-			hp.max_strip_width = 28;
-			break;
-		default: break;
-
-
-	}
-	
 }
 
 void VisualHpBarInit(VisualHpBar & hp, Type type, std::vector<json_spirit::Pair>& int_rects) {
@@ -47,6 +35,8 @@ void VisualHpBarInit(VisualHpBar & hp, Type type, std::vector<json_spirit::Pair>
 		hp.bar_texture.loadFromFile("Resourses/Hero/hero_hp.png");
 		hp.bar_rect = GetIntRect(int_rects, "PLAYER_HP", "HP_BAR");
 		hp.strip_rect = GetIntRect(int_rects, "PLAYER_HP", "HP_STRIP");
+		hp.strip_sprite.setRotation(-90);
+		hp.bar_sprite.setRotation(-90);
 		break;
 	default:
 		hp.bar_texture.loadFromFile("Resourses/Enemy/enemy_hp.png");
@@ -77,7 +67,8 @@ void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type, float curr
 	float health_in_percent = logic_hp.health_points / logic_hp.max_health_points;
 	sf::FloatRect bar_bounds = visual_hp.bar_sprite.getGlobalBounds();
 	sf::FloatRect strip_bounds = visual_hp.strip_sprite.getGlobalBounds();
-	float border_width = (bar_bounds.width - logic_hp.max_strip_width) / 2.f;
+	float max_strip_width = visual_hp.strip_rect.width;
+	float border_width = (bar_bounds.width - max_strip_width) / 2.f;
 	float border_height = (bar_bounds.height - strip_bounds.height) / 2.f;
 	visual_hp.strip_sprite.setPosition(bar_bounds.left + border_width, bar_bounds.top + border_height);
 	visual_hp.strip_sprite.setTextureRect(sf::IntRect(hp_strip.left, hp_strip.top, int(hp_strip.width * health_in_percent), hp_strip.height));
@@ -87,21 +78,21 @@ void HpBarUpdate(HpBar & hp, sf::View & view, float curr_hp) {
 	VisualHpBar & visual_hp = *hp.visual_hp;
 	LogicHpBar & logic_hp = *hp.logic_hp;
 	logic_hp.health_points = curr_hp;
-	float x_pos = view.getCenter().x - view.getSize().x / 2.f;
-	float y_pos = view.getCenter().y - view.getSize().y / 2.f;
+	float x_pos = view.getCenter().x - view.getSize().x / 2.f + 10;
+	float y_pos = view.getCenter().y - view.getSize().y / 2.f + 400 + visual_hp.bar_rect.width;
 	sf::IntRect & hp_strip = visual_hp.strip_rect;
 	visual_hp.bar_sprite.setPosition(x_pos, y_pos);
 	visual_hp.bar_sprite.setOrigin(0, 0);
 	float health_in_percent = logic_hp.health_points / logic_hp.max_health_points;
 	sf::FloatRect bar_bounds = visual_hp.bar_sprite.getGlobalBounds();
 	sf::FloatRect strip_bounds = visual_hp.strip_sprite.getGlobalBounds();
-	float border_left = (bar_bounds.width - logic_hp.max_strip_width) / 2.f;
-	float border_top = (bar_bounds.height - strip_bounds.height) / 2.f;
-	visual_hp.strip_sprite.setPosition(bar_bounds.left + border_left, bar_bounds.top + border_top);
+	float border_top = (bar_bounds.height - visual_hp.strip_rect.width) / 2.f;
+	float border_left = (bar_bounds.width - strip_bounds.width) / 2.f;
+	visual_hp.strip_sprite.setPosition(bar_bounds.left + border_left, bar_bounds.top + bar_bounds.height - border_top);
 	visual_hp.strip_sprite.setTextureRect(sf::IntRect(0, hp_strip.top, int(hp_strip.width * health_in_percent), hp_strip.height));
 }
 
-void DestroyHpBar(HpBar *& hp)
+void DestroyHpBar(HpBar & hp)
 {
-	delete hp;
+	delete &hp;
 }

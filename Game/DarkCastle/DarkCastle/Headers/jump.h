@@ -14,7 +14,7 @@ Jump* CreateJump(Type type);
 
 void JumpingInit(Jump & jump, Type type);
 
-void DestroyJump(Jump *& jump);
-
 void CheckJumpLogic(Jump & jump, Movement & movement, Animation & animation);
+
+void DestroyJump(Jump & jump);
 

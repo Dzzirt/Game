@@ -28,7 +28,11 @@ void SetLevel(Tree *& curr);
 
 void PrintHelp();
 
-void DeleteCatalog(Tree *& current, Tree *& fath);
+void DeleteCatalog(Tree *& current, Tree *& fath, int& curr_pos);
+
+void SetNullBrother(Tree*& fath, int curr_pos);
+
+void SetNextBrother(Tree*& fath, int curr_pos);
 
 void Copy(Tree *& copy_val, Tree*& current);
 

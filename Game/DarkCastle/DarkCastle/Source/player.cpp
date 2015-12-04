@@ -4,43 +4,25 @@
 using namespace sf;
 using namespace std;
 
-View* CreateView() {
-	View * view = new View();
-	view->reset(sf::FloatRect(0.f, 0.f, float(WindowWidth), float(WindowHeight)));
-	return view;
+
+
+Player* CreatePlayer(Resourses & res) {
+	Player* player = new Player();
+	PlayerInit(*player, res);
+	return player;
 }
 
-void ViewUpdate(sf::View& view, RenderWindow& window, const Movement& movement, const Level& level, float displacement) {
-
-
-	float left_right_border = view.getSize().x / 2;
-	float up_down_border = view.getSize().y / 2;
-	int map_height = level.height * level.tileHeight;
-	int map_width = level.width * level.tileWidth;
-
-	float x_pos = movement.x_pos - displacement;
-	float y_pos = movement.y_pos;
-	float tempX = x_pos;
-	float tempY = y_pos;
-
-	if (x_pos < left_right_border) {
-		tempX = left_right_border;
-	}
-	if (y_pos > map_height - up_down_border) {
-		tempY = map_height - up_down_border;
-	}
-	if (x_pos > map_width - left_right_border) {
-		tempX = map_width - left_right_border;
-	}
-	if (y_pos < up_down_border) {
-		tempY = up_down_border;
-	}
-
-	view.setCenter(tempX, tempY);
-}
-
-sf::FloatRect GetPlayerRectFromLvl(Level& lvl) {
+FloatRect GetPlayerRectFromLvl(Level& lvl) {
 	return lvl.GetObject("player").rect;
+}
+
+void PlayerInit(Player& player, Resourses & res) {
+	player.fight = CreateFightLogic(PLAYER);
+	player.hp_bar = CreateHpBar(PLAYER, *res.int_rects, player.fight->health_points, player.fight->max_health_points);
+	player.movement = CreateMovement(PLAYER);
+	player.jumping = CreateJump(PLAYER);
+	FloatRect rect = GetPlayerRectFromLvl(*res.lvl);
+	player.visual = CreateVisual(PLAYER, rect, *res.int_rects);
 }
 
 void CheckPlayerAndLevelCollision(Player& player, const Level& level) {
@@ -66,7 +48,7 @@ void PlayerLevelCollision(Player& player, const Object& map_object) {
 
 			if (movement.delta_y > 0 && bottom_collision) {
 				jump.on_ground = true;
-				player_rect.top = map_object.rect.top - player_rect.height - 1;
+				player_rect.top = map_object.rect.top - player_rect.height;
 			}
 			else if (movement.delta_y < 0 && upper_collision) {
 				player_rect.top = map_object.rect.top + map_object.rect.height;
@@ -82,31 +64,6 @@ void PlayerLevelCollision(Player& player, const Object& map_object) {
 		}
 
 	}
-}
-
-Player* CreatePlayer(Resourses & res) {
-	Player* player = new Player();
-	PlayerInit(*player, res);
-	return player;
-}
-
-void PlayerInit(Player& player, Resourses & res) {
-	player.fight = CreateFightLogic(PLAYER);
-	player.hp_bar = CreateHpBar(PLAYER, *res.int_rects, player.fight->health_points, player.fight->max_health_points);
-	player.movement = CreateMovement(PLAYER);
-	player.jumping = CreateJump(PLAYER);
-	FloatRect rect = GetPlayerRectFromLvl(*res.lvl);
-	player.visual = CreateVisual(PLAYER, rect, *res.int_rects);
-	player.view = CreateView();
-}
-
-void DestroyPlayer(Player*& player) {
-	DestroyFightLogic(player->fight);
-	DestroyMovement(player->movement);
-	DestroyJump(player->jumping);
-	DestroyVisual(player->visual);
-	delete player->view;
-	delete player;
 }
 
 void PlayerUpdate(Player& player, const Level& level, const sf::Time& deltaTime) {
@@ -157,9 +114,8 @@ void CheckGravityLogic(Jump& jump, Movement& movement, const sf::Time& deltaTime
 	}
 }
 
-void ProcessPlayerEvents(RenderWindow& window, Player& player, Level& level) {
+void ProcessPlayerEvents(RenderWindow& window, Player& player, Level& level, View & view) {
 	Jump& jump = *player.jumping;
-	View& view = *player.view;
 	Movement& movement = *player.movement;
 	Animation& animation = *player.visual->animation;
 	FloatRect sprite_bounds = animation.frame->sprite.getGlobalBounds();
@@ -211,4 +167,12 @@ void ProcessPlayerEvents(RenderWindow& window, Player& player, Level& level) {
 
 		}
 	}
+}
+
+void DestroyPlayer(Player& player) {
+	DestroyFightLogic(*player.fight);
+	DestroyMovement(*player.movement);
+	DestroyJump(*player.jumping);
+	DestroyVisual(*player.visual);
+	delete &player;
 }

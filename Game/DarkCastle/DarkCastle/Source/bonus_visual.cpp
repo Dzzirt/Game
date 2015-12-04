@@ -11,7 +11,8 @@ void BonusVisualInit(BonusVisual& bonus_visual, BonusType type, std::vector<json
 	bonus_visual.image.loadFromFile("Resourses/bonus.png");
 	bonus_visual.texture.loadFromImage(bonus_visual.image);
 	bonus_visual.sprite.setTexture(bonus_visual.texture);
-	bonus_visual.sprite.setTextureRect(GetIntRect(int_rects, "BONUS", bon_type));
+	bonus_visual.sprite_rect = GetIntRect(int_rects, "BONUS", bon_type);
+	bonus_visual.sprite.setTextureRect(bonus_visual.sprite_rect);
 }
 
 void DestroyBonusVisual(BonusVisual& bonus_visual) {

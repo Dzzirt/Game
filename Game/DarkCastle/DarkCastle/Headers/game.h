@@ -5,20 +5,22 @@
 #include "enemy.h"
 #include "bonus.h"
 #include "resourses.h"
+#include "view.h"
+#include "bonuses_panel.h"
 
 
 struct Game {
 	Player* player;
 	Resourses* res;
+	BonusesPanel* b_panel;
 	std::list<Enemy*> * enemy_list;
 	std::list<Bonus*> * bonus_list;
 	sf::RenderWindow * window;
+	sf::View* view;
 };
 
 
 Game* CreateGame();
-
-
 
 sf::RenderWindow* CreateRenderWindow();
 
@@ -26,27 +28,20 @@ std::list<Enemy*>* CreateEnemyList(Resourses & res);
 
 std::list<Bonus*>* CreateBonusList(Resourses & res);
 
-void DestroyGame(Game*& game);
-
-
-
-void DestroyWindow(sf::RenderWindow*& window);
 
 void GameInit(Game& game);
-
-
 
 void BonusListInit(std::list<Bonus*>& bonus_list, Resourses & res, BonusType type);
 
 void EnemyListInit(std::list<Enemy*> & en_list, Resourses & res, Type type);
 
-void ProcessEvents(Game & game);
 
-void ProcessEnemiesEvents(Enemy& enemy, sf::FloatRect & player_box);
+void ProcessEvents(Game & game);
 
 void Update(Game& game, const sf::Time& deltaTime);
 
 void Render(Game & game);
+
 
 void CheckDynamicObjCollisions(Game& game);
 
@@ -56,3 +51,11 @@ void PlayerEnemyCollision(const Player & player, Enemy & enemy);
 
 void EnemyPlayerCollision(const Enemy& enemy, Player& player);
 
+
+void DestroyGame(Game& game);
+
+void DestroyWindow(sf::RenderWindow& window);
+
+void DestroyBonusList(std::list<Bonus*>& bonus_list);
+
+void DestroyEnemyList(std::list<Enemy*>& enemy_list);

@@ -6,15 +6,15 @@ Resourses* CreateResourses() {
 	return res;
 }
 
-void ResInit(Resourses& res) {
-	res.int_rects = GetEntitiesVector("Resourses/frames.txt");
-	res.lvl = CreateLevel();
-}
-
 Level* CreateLevel() {
 	Level* level = new Level();
 	LevelInit(*level);
 	return level;
+}
+
+void ResInit(Resourses& res) {
+	res.int_rects = GetEntitiesVector("Resourses/frames.txt");
+	res.lvl = CreateLevel();
 }
 
 void LevelInit(Level& level) {
@@ -22,7 +22,10 @@ void LevelInit(Level& level) {
 }
 
 
+void DestroyResourses(Resourses & res) {
+	delete & res;
+}
 
-void DestroyLevel(Level*& level) {
-	delete level;
+void DestroyLevel(Level& level) {
+	delete &level;
 }
