@@ -8,8 +8,6 @@
 #include "visual.h"
 #include "logic_AI.h"
 #include "resourses.h"
-#include <list>
-#include <vector>
 
 
 

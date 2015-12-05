@@ -5,6 +5,7 @@
 struct Movement {
 	float x_pos;
 	float y_pos;
+	float default_step;
 	float step;
 	float delta_x;
 	float delta_y;

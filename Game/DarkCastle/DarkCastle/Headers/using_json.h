@@ -64,26 +64,20 @@ inline sf::IntRect GetIntRect(std::vector<json_spirit::Pair>& vector, std::strin
 	return anim_rect;
 }
 
-inline int GetBonusValue(BonusType type, std::string file_name) {
+inline int GetConfig(std::vector<json_spirit::Pair>& vector, std:: string entity, BonusType type) {
 	std::string bonus_type = TypeToString(type);
-	std::ifstream is("Resourses/" + file_name);
 	json_spirit::Value value;
-	read(is, value);
-	const json_spirit::Object& object = value.get_obj();
-	for (size_t i = 0; i < object.size(); i++) {
-		const json_spirit::Pair& pair = object[i];
-		const std::string& name = pair.name_;
-		const json_spirit::Value& val = pair.value_;
-		if (name == "BONUS") {
-			const json_spirit::Object& entity_obj = val.get_obj();
-			for (size_t j = 0; j < entity_obj.size(); j++) {
-				if (entity_obj[j].name_ == bonus_type) {
-					return entity_obj[j].value_.get_int();
-
+	for (size_t i = 0; i < vector.size(); i++) {
+		if (vector[i].name_ == entity) {
+			auto action_types = vector[i].value_.get_obj();
+			for (size_t j = 0; j < action_types.size(); j++) {
+				if (action_types[j].name_ == bonus_type) {
+					value = action_types[j].value_;
+					break;
 				}
 			}
 			break;
 		}
 	}
-	return -1;
+	return value.get_int();
 }

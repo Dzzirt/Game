@@ -67,7 +67,7 @@ void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type, float curr
 	float health_in_percent = logic_hp.health_points / logic_hp.max_health_points;
 	sf::FloatRect bar_bounds = visual_hp.bar_sprite.getGlobalBounds();
 	sf::FloatRect strip_bounds = visual_hp.strip_sprite.getGlobalBounds();
-	float max_strip_width = visual_hp.strip_rect.width;
+	float max_strip_width = float(visual_hp.strip_rect.width);
 	float border_width = (bar_bounds.width - max_strip_width) / 2.f;
 	float border_height = (bar_bounds.height - strip_bounds.height) / 2.f;
 	visual_hp.strip_sprite.setPosition(bar_bounds.left + border_width, bar_bounds.top + border_height);

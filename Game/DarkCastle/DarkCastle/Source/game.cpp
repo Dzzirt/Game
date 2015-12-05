@@ -31,6 +31,10 @@ std::list<Bonus*>* CreateBonusList(Resourses& res) {
 	return list;
 }
 
+std::list<DurationController*>* CreateDurationControllerVec() {
+	std::list<DurationController*>* controllers = new std::list<DurationController*>();
+	return controllers;
+}
 void EnemyListInit(list<Enemy*>& enemy_list, Resourses& res, Type type) {
 	int enemies_count = GetEnemiesCount(*res.lvl, type);
 	for (int i = 0; i < enemies_count; i++) {
@@ -58,6 +62,7 @@ void GameInit(Game& game) {
 	game.enemy_list = CreateEnemyList(*game.res);
 	game.bonus_list = CreateBonusList(*game.res);
 	game.b_panel = CreateBonusesPanel();
+	game.dur_ctrl_list = CreateDurationControllerVec();
 }
 
 
@@ -77,9 +82,18 @@ void Update(Game& game, const Time& deltaTime) {
 	ViewUpdate(*game.view, *game.player->movement, *game.res->lvl, game.player->visual->animation->frame->displacement);
 	HpBarUpdate(*game.player->hp_bar, *game.view, game.player->fight->health_points);
 	BonusesPanelUpdate(*game.b_panel, *game.view);
-	for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
-		Enemy* enemy = *iter;
+	for (Enemy * enemy : *game.enemy_list) {
 		EnemyUpdate(*enemy, deltaTime, *game.res->lvl);
+	}
+	for (DurationController *& ctrl : *game.dur_ctrl_list) {
+		DuratonControllerUpdate(*ctrl, deltaTime);
+	}
+	for (DurationController *& ctrl : *game.dur_ctrl_list) {
+		if (CheckBonusEffectEnd(*game.player, *ctrl, *game.res->config)) {
+			DestroyDurationController(*ctrl);
+			game.dur_ctrl_list->remove(ctrl);
+			break;
+		}
 	}
 	CheckDynamicObjCollisions(game);
 }
@@ -110,7 +124,19 @@ void Render(Game& game) {
 	window.display();
 }
 
-
+bool CheckBonusEffectEnd(Player & player, DurationController & ctrl, std::vector<json_spirit::Pair>& config) {
+	if (ctrl.curr_elapsed_time >= ctrl.max_elapsed_time) {
+		ctrl.curr_elapsed_time = 0.f;
+		if (ctrl.type == ATK_UP) {
+			player.fight->stored_damage = player.fight->damage /= GetConfig(config, "BONUS_VALUE", ATK_UP);
+		}
+		else if (ctrl.type == SPEED_UP) {
+			player.movement->step /= GetConfig(config, "BONUS_VALUE", SPEED_UP);
+		}
+		return true;
+	}
+	return false;
+}
 void CheckDynamicObjCollisions(Game& game) {
 	Player& player = *game.player;
 	vector<Object> map_objects = game.res->lvl->GetAllObjects();
@@ -120,6 +146,7 @@ void CheckDynamicObjCollisions(Game& game) {
 		Bonus* bonus = *iter;
 		PlayerBonusCollision(player, *bonus);
 		if (bonus->bonus_logic->picked_up) {
+			game.dur_ctrl_list->push_back(CreateDurationController(*bonus->bonus_logic));
 			DestroyBonus(*bonus);
 			game.bonus_list->remove(*iter);
 			break;

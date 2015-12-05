@@ -14,6 +14,7 @@ Level* CreateLevel() {
 
 void ResInit(Resourses& res) {
 	res.int_rects = GetEntitiesVector("Resourses/frames.txt");
+	res.config = GetEntitiesVector("Resourses/bonus_config.txt");
 	res.lvl = CreateLevel();
 }
 

@@ -1,7 +1,12 @@
-{
-  "BONUS": {
-    "HP_REGEN": 50,
-    "ATK_UP": 2,
-    "SPEED_UP": 2,
-  }
+{  
+   "BONUS_VALUE":{  
+      "HP_REGEN":50,
+      "ATK_UP":2,
+      "SPEED_UP":2
+   },
+   "BONUS_DURATION":{  
+      "HP_REGEN":0,
+      "ATK_UP":5,
+      "SPEED_UP":5
+   }
 }

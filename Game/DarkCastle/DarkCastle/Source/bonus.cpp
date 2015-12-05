@@ -22,7 +22,7 @@ int GetBonusesCount(Level& lvl, BonusType type) {
 
 void BonusInit(Bonus& bonus, Resourses & res, BonusType type, int number) {
 	bonus.bonus_visual = CreateBonusVisual(type, *res.int_rects);
-	bonus.bonus_logic = CreateBonusLogic(type, *res.lvl, number);
+	bonus.bonus_logic = CreateBonusLogic(type, res, number);
 	bonus.bonus_visual->sprite.setPosition(bonus.bonus_logic->rect->left, bonus.bonus_logic->rect->top);
 }
 

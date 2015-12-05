@@ -7,6 +7,7 @@
 #include "resourses.h"
 #include "view.h"
 #include "bonuses_panel.h"
+#include "duration_controller.h"
 
 
 struct Game {
@@ -15,6 +16,7 @@ struct Game {
 	BonusesPanel* b_panel;
 	std::list<Enemy*> * enemy_list;
 	std::list<Bonus*> * bonus_list;
+	std::list<DurationController*> * dur_ctrl_list;
 	sf::RenderWindow * window;
 	sf::View* view;
 };
@@ -27,6 +29,8 @@ sf::RenderWindow* CreateRenderWindow();
 std::list<Enemy*>* CreateEnemyList(Resourses & res);
 
 std::list<Bonus*>* CreateBonusList(Resourses & res);
+
+std::list<DurationController*>* CreateDurationControllerVec();
 
 
 void GameInit(Game& game);
@@ -41,6 +45,9 @@ void ProcessEvents(Game & game);
 void Update(Game& game, const sf::Time& deltaTime);
 
 void Render(Game & game);
+
+
+bool CheckBonusEffectEnd(Player & player, DurationController & ctrl, std::vector<json_spirit::Pair>& config);
 
 
 void CheckDynamicObjCollisions(Game& game);

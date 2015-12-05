@@ -5,6 +5,7 @@
 
 struct Resourses {
 	std::vector<json_spirit::Pair>* int_rects;
+	std::vector<json_spirit::Pair>* config;
 	Level *lvl;
 };
 

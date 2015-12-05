@@ -1,18 +1,19 @@
 #include "../Headers/bonus_logic.h"
 #include "../Headers/using_json.h"
 
-BonusLogic* CreateBonusLogic(BonusType type, Level& level, int number) {
+BonusLogic* CreateBonusLogic(BonusType type, Resourses & res, int number) {
 	BonusLogic * logic = new BonusLogic();
-	BonusLogicInit(*logic, level, type, number);
+	BonusLogicInit(*logic, res, type, number);
 	return logic;
 }
 
-void BonusLogicInit(BonusLogic& bonus_logic, Level & level, BonusType type, int number) {
+void BonusLogicInit(BonusLogic& bonus_logic, Resourses & res, BonusType type, int number) {
 	bonus_logic.bonus_type = type;
 	bonus_logic.rect = new sf::Rect<float>;
-	*bonus_logic.rect = GetBonusRectFromLvl(level, type, number);
+	*bonus_logic.rect = GetBonusRectFromLvl(*res.lvl, type, number);
 	bonus_logic.picked_up = false;
-	bonus_logic.value = GetBonusValue(type, "bonus_config.txt");
+	bonus_logic.value = GetConfig(*res.config, "BONUS_VALUE", type);
+	bonus_logic.duration = GetConfig(*res.config, "BONUS_DURATION", type);
 }
 
 sf::FloatRect GetBonusRectFromLvl(Level& lvl, BonusType type, int number) {

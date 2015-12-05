@@ -153,6 +153,9 @@
     <ClCompile Include="Source\bonus_logic.cpp">
       <Filter>Source Files\Bonus</Filter>
     </ClCompile>
+    <ClCompile Include="Source\duration_controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\consts_and_enums.h">
@@ -262,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="Headers\bonus_logic.h">
       <Filter>Header Files\Bonus</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\duration_controller.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
