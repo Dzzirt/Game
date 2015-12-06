@@ -16,7 +16,6 @@ RenderWindow* CreateRenderWindow() {
 	return new RenderWindow(VideoMode(WindowWidth, WindowHeight), "Dark Castle");
 }
 
-
 std::list<Enemy*>* CreateEnemyList(Resourses& res) {
 	std::list<Enemy*>* list = new std::list<Enemy*>();
 	EnemyListInit(*list, res, SPEARMAN);
@@ -35,6 +34,7 @@ std::list<DurationController*>* CreateDurationControllerVec() {
 	std::list<DurationController*>* controllers = new std::list<DurationController*>();
 	return controllers;
 }
+
 void EnemyListInit(list<Enemy*>& enemy_list, Resourses& res, Type type) {
 	int enemies_count = GetEnemiesCount(*res.lvl, type);
 	for (int i = 0; i < enemies_count; i++) {
@@ -185,6 +185,7 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 			player_damage = player_stored_damage;
 		}
 		else {
+			enemy.visual->animation->is_injured = true;
 			enemy_hp -= player_damage;
 			player_damage = 0;
 		}
@@ -192,6 +193,7 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 	}
 	else {
 		if (enemy.is_attacked) {
+			enemy.visual->animation->is_injured = false;
 			player_damage = player_stored_damage;
 		}
 
@@ -230,15 +232,20 @@ void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	bool is_hit = int(enemy_anim.current_attack_frame) == 4;
 
 	if (enemy_sprite.intersects(player_rect) && is_hit) {
+		
 		if (player_hp <= 0) {
 			player_fight.is_dead = true;
 		}
 		else {
 			player_hp -= enemy_damage;
+			player.visual->animation->is_injured = true;
 		}
 		enemy_damage = 0;
 	}
 	else {
+		if (enemy_damage == 0) {
+			player.visual->animation->is_injured = false;
+		}
 		enemy_damage = CEnemyDamage;
 	}
 }

@@ -98,7 +98,7 @@ void AnimationsUpdate(Player& player) {
 	State& state = player.movement->state;
 	float game_step = player.movement->step * TimePerFrame.asSeconds();
 	animation.frame->displacement = 0;
-	MoveAndStayAnimation(animation, state, game_step);
+	MoveAndStayAnimation(animation, state, PLAYER, game_step);
 	AttackAnimation(animation, PLAYER, game_step);
 	if (in_jump) {
 		JumpAnimation(animation, game_step);

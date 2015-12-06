@@ -67,6 +67,12 @@
     <Filter Include="Source Files\Bonuses Panel">
       <UniqueIdentifier>{0b8ac067-83e1-4405-812e-243799b8cdb6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Duration Controller">
+      <UniqueIdentifier>{56afcd90-4423-4e2e-b6db-64915878fd71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Duration Controller">
+      <UniqueIdentifier>{65be422a-d147-4081-9bb9-b40cc8e30ab5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -154,7 +160,7 @@
       <Filter>Source Files\Bonus</Filter>
     </ClCompile>
     <ClCompile Include="Source\duration_controller.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Duration Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -267,7 +273,7 @@
       <Filter>Header Files\Bonus</Filter>
     </ClInclude>
     <ClInclude Include="Headers\duration_controller.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Duration Controller</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

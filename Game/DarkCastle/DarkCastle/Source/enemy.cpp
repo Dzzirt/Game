@@ -134,7 +134,7 @@ void AnimationsUpdate(Enemy& enemy) {
 	Animation& animation = *enemy.visual->animation;
 	State& state = enemy.movement->state;
 	float game_step = enemy.movement->step * TimePerFrame.asSeconds();
-	MoveAndStayAnimation(animation, state, game_step);
+	MoveAndStayAnimation(animation, state, enemy.type, game_step);
 	AttackAnimation(animation, enemy.type, game_step);
 }
 
