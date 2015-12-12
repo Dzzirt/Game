@@ -166,6 +166,7 @@
     <ClCompile Include="Libs\TinyXML\tinyxml.cpp" />
     <ClCompile Include="Libs\TinyXML\tinyxmlerror.cpp" />
     <ClCompile Include="Libs\TinyXML\tinyxmlparser.cpp" />
+    <ClCompile Include="Source\game_sounds.cpp" />
     <ClCompile Include="Source\resourses.cpp" />
     <ClCompile Include="Source\animation.cpp" />
     <ClCompile Include="Source\bonus.cpp" />
@@ -182,6 +183,7 @@
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\movement.cpp" />
     <ClCompile Include="Source\player.cpp" />
+    <ClCompile Include="Source\sounds_utils.cpp" />
     <ClCompile Include="Source\visual.cpp" />
     <ClCompile Include="Source\view.cpp" />
   </ItemGroup>
@@ -201,11 +203,13 @@
     <ClInclude Include="Headers\frame_rect.h" />
     <ClInclude Include="Headers\game.h" />
     <ClInclude Include="Headers\gameconfig.h" />
+    <ClInclude Include="Headers\game_sounds.h" />
     <ClInclude Include="Headers\hp_bar.h" />
     <ClInclude Include="Headers\jump.h" />
     <ClInclude Include="Headers\level.hpp" />
     <ClInclude Include="Headers\movement.h" />
     <ClInclude Include="Headers\player.h" />
+    <ClInclude Include="Headers\sound_enums.h" />
     <ClInclude Include="Headers\using_json.h" />
     <ClInclude Include="Headers\visual.h" />
     <ClInclude Include="Libs\json_spirit\json_spirit.h" />
@@ -223,6 +227,7 @@
     <ClInclude Include="Headers\logic_AI.h" />
     <ClInclude Include="Headers\resourses.h" />
     <ClInclude Include="Headers\view.h" />
+    <ClInclude Include="Headers\sounds_utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

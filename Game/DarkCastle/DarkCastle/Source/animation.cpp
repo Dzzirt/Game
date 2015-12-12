@@ -95,7 +95,9 @@ void AttackAnimation(Animation& animation, Type type, float game_step) {
 				break;
 			case 2: frame.displacement = -5 - 7;
 				break;
-			case 3: frame.displacement = -3 - 7;
+			case 3:
+
+				frame.displacement = -3 - 7;
 				break;
 			case 4: frame.displacement = 0 - 7;
 				break;

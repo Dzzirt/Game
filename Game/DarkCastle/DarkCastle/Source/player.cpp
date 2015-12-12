@@ -114,16 +114,14 @@ void CheckGravityLogic(Jump& jump, Movement& movement, const sf::Time& deltaTime
 	}
 }
 
-void ProcessPlayerEvents(RenderWindow& window, Player& player, Level& level, View & view) {
+void ProcessPlayerEvents(RenderWindow & window, Event & event, Player& player, GameSounds & game_sounds, Level& level, View & view) {
 	Jump& jump = *player.jumping;
 	Movement& movement = *player.movement;
 	Animation& animation = *player.visual->animation;
 	FloatRect sprite_bounds = animation.frame->sprite.getGlobalBounds();
-	Event event;
-
-	while (window.pollEvent(event)) {
 		if (Keyboard::isKeyPressed(Keyboard::Space) && jump.on_ground) {
 			jump.in_jump = true;
+			PlaySound(JUMP, *game_sounds.sounds, *game_sounds.sound_buffers);
 		}
 		else if (Keyboard::isKeyPressed(Keyboard::A)) {
 			movement.state = LEFT;
@@ -135,10 +133,13 @@ void ProcessPlayerEvents(RenderWindow& window, Player& player, Level& level, Vie
 			movement.state = NONE;
 		}
 		if (Mouse::isButtonPressed(Mouse::Left) && !jump.in_jump) {
+			if (!animation.left_attack && !animation.right_attack) {
+				PlaySound(MISS, *game_sounds.sounds, *game_sounds.sound_buffers);
+			}
+
 			const float mouse_global_x = Mouse::getPosition(window).x + view.getCenter().x - (window.getSize().x / 2);
 			if (mouse_global_x > sprite_bounds.left + sprite_bounds.width / 2.f) {
 				animation.right_attack = true;
-
 			}
 			if (mouse_global_x < sprite_bounds.left + sprite_bounds.width / 2.f) {
 				animation.left_attack = true;
@@ -166,7 +167,7 @@ void ProcessPlayerEvents(RenderWindow& window, Player& player, Level& level, Vie
 			}
 
 		}
-	}
+	
 }
 
 void DestroyPlayer(Player& player) {

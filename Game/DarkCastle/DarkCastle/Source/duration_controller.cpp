@@ -14,7 +14,6 @@ void DurationControllerInit(DurationController& ctrl, BonusLogic & b_logic) {
 
 void DuratonControllerUpdate(DurationController& ctrl, const sf::Time& deltaTime) {
 	ctrl.curr_elapsed_time += deltaTime.asSeconds();
-	std::cout << ctrl.curr_elapsed_time << std::endl;
 }
 
 void DestroyDurationController(DurationController& ctrl) {

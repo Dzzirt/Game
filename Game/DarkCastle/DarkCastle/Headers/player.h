@@ -27,7 +27,7 @@ sf::FloatRect GetPlayerRectFromLvl(Level & lvl);
 
 void AnimationsUpdate(Player& player);
 
-void ProcessPlayerEvents(sf::RenderWindow& window, Player & player, Level & level, sf::View & view);
+void ProcessPlayerEvents(sf::RenderWindow& window, sf::Event & event, Player & player, GameSounds & sounds, Level & level, sf::View & view);
 
 void CheckPlayerAndLevelCollision(Player& player, const Level& level);
 

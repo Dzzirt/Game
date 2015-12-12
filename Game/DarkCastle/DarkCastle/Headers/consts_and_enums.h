@@ -37,7 +37,11 @@
 		ATK_UP,
 	};
 
-	
-
+	enum AnimType {
+		MOVE,
+		ATTACK,
+		JUMPING,
+		GRAVITY,
+	};
 
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "consts_and_enums.h"
 #include "frame.h"
+#include "game_sounds.h"
 
 
 struct Animation {

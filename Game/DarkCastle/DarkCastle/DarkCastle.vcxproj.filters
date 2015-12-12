@@ -73,6 +73,12 @@
     <Filter Include="Source Files\Duration Controller">
       <UniqueIdentifier>{65be422a-d147-4081-9bb9-b40cc8e30ab5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Sounds">
+      <UniqueIdentifier>{d6ffb95b-a065-449e-bb33-6be39e8f178d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sounds">
+      <UniqueIdentifier>{9efd7d45-50ea-47cc-a1bd-de22f5f60dc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -161,6 +167,12 @@
     </ClCompile>
     <ClCompile Include="Source\duration_controller.cpp">
       <Filter>Source Files\Duration Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\game_sounds.cpp">
+      <Filter>Source Files\Sounds</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\sounds_utils.cpp">
+      <Filter>Source Files\Sounds</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -274,6 +286,15 @@
     </ClInclude>
     <ClInclude Include="Headers\duration_controller.h">
       <Filter>Header Files\Duration Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\game_sounds.h">
+      <Filter>Header Files\Sounds</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\sounds_utils.h">
+      <Filter>Header Files\Sounds</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\sound_enums.h">
+      <Filter>Header Files\Sounds</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
