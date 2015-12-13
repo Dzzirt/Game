@@ -1,15 +1,15 @@
 #include "../Headers/duration_controller.h"
 
-DurationController* CreateDurationController(BonusLogic & b_logic) {
+DurationController* CreateDurationController(CellLogic & cell_logic) {
 	DurationController* ctrl = new DurationController();
-	DurationControllerInit(*ctrl, b_logic);
+	DurationControllerInit(*ctrl, cell_logic);
 	return ctrl;
 }
 
-void DurationControllerInit(DurationController& ctrl, BonusLogic & b_logic) {
+void DurationControllerInit(DurationController& ctrl, CellLogic & cell_logic) {
 	ctrl.curr_elapsed_time = 0.f;
-	ctrl.max_elapsed_time = float(b_logic.duration);
-	ctrl.type = b_logic.bonus_type;
+	ctrl.max_elapsed_time = float(cell_logic.duration);
+	ctrl.type = cell_logic.type;
 }
 
 void DuratonControllerUpdate(DurationController& ctrl, const sf::Time& deltaTime) {

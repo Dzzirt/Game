@@ -151,6 +151,9 @@
   <ItemGroup>
     <ClCompile Include="Source\bonusses_panel.cpp" />
     <ClCompile Include="Source\bonus_logic.cpp" />
+    <ClCompile Include="Source\cell.cpp" />
+    <ClCompile Include="Source\cell_logic.cpp" />
+    <ClCompile Include="Source\cell_visual.cpp" />
     <ClCompile Include="Source\duration_controller.cpp" />
     <ClCompile Include="Source\game_rand.cpp" />
     <ClCompile Include="Libs\json_spirit\json_spirit_reader.cpp">
@@ -191,6 +194,7 @@
     <ClInclude Include="Headers\bonus_logic.h" />
     <ClInclude Include="Headers\bonuses_panel.h" />
     <ClInclude Include="Headers\bonuses_panel_const.h" />
+    <ClInclude Include="Headers\cell.h" />
     <ClInclude Include="Headers\duration_controller.h" />
     <ClInclude Include="Headers\game_rand.h" />
     <ClInclude Include="Headers\animation.h" />
@@ -207,11 +211,13 @@
     <ClInclude Include="Headers\hp_bar.h" />
     <ClInclude Include="Headers\jump.h" />
     <ClInclude Include="Headers\level.hpp" />
+    <ClInclude Include="Headers\cell_logic.h" />
     <ClInclude Include="Headers\movement.h" />
     <ClInclude Include="Headers\player.h" />
     <ClInclude Include="Headers\sound_enums.h" />
     <ClInclude Include="Headers\using_json.h" />
     <ClInclude Include="Headers\visual.h" />
+    <ClInclude Include="Headers\cell_visual.h" />
     <ClInclude Include="Libs\json_spirit\json_spirit.h" />
     <ClInclude Include="Libs\json_spirit\json_spirit_error_position.h" />
     <ClInclude Include="Libs\json_spirit\json_spirit_reader.h" />

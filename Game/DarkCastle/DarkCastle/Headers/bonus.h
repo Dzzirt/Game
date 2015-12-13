@@ -15,6 +15,8 @@ Bonus* CreateBonus(Resourses & res, BonusType type, int number);
 
 void BonusInit(Bonus& bonus, Resourses & res, BonusType type, int number);
 
+void BonusUpdate(Bonus & bonus, const sf::Time& deltaTime);
+
 int GetBonusesCount(Level& lvl, BonusType type);
 
 void DestroyBonus(Bonus & bonus);

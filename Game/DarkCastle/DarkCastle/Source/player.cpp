@@ -38,9 +38,11 @@ void PlayerLevelCollision(Player& player, const Object& map_object) {
 	Jump& jump = *player.jumping;
 	if (player_rect.intersects(map_object.rect)) {
 		if (map_object.name == "trap") {
-
 			jump.in_jump = true;
 			player.fight->health_points -= 10.f;
+			if (player.fight->health_points <= 0) {
+				player.fight->is_dead = true;
+			}
 		}
 		else if (map_object.name == "solid") {
 			bool bottom_collision = player_rect.top + player_rect.height - 5 < map_object.rect.top;

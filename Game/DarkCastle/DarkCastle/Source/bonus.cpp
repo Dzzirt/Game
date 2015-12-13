@@ -31,3 +31,19 @@ void DestroyBonus(Bonus& bonus) {
 	DestroyBonusLogic(*bonus.bonus_logic);
 	delete &bonus;
 }
+
+void BonusUpdate(Bonus & bonus, const sf::Time& deltaTime) {
+	float & speed = bonus.bonus_logic->speed;
+	const float & max_distance = bonus.bonus_logic->max_distance;
+	float & cur_distance = bonus.bonus_logic->current_distance;
+	float step = 0.f;
+	if (cur_distance <= max_distance) {
+		step = speed * deltaTime.asSeconds();
+	}
+	else {
+		cur_distance = 0.f;
+		speed = -speed;
+	}
+	cur_distance += abs(step);
+	bonus.bonus_visual->sprite.move(0, step);
+}

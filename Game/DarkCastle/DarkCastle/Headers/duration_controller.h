@@ -1,5 +1,5 @@
 #pragma once
-#include "../Headers/bonus_logic.h"
+#include "../Headers/cell_logic.h"
 
 struct DurationController {
 	float curr_elapsed_time;
@@ -7,9 +7,9 @@ struct DurationController {
 	BonusType type;
 };
 
-DurationController* CreateDurationController(BonusLogic & b_logic);
+DurationController* CreateDurationController(CellLogic & cell_logic);
 
-void DurationControllerInit(DurationController& ctrl, BonusLogic & b_logic);
+void DurationControllerInit(DurationController& ctrl, CellLogic & cell_logic);
 
 void DuratonControllerUpdate(DurationController & ctrl, const sf::Time& deltaTime);
 

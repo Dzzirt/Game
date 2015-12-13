@@ -8,6 +8,8 @@ BonusLogic* CreateBonusLogic(BonusType type, Resourses & res, int number) {
 }
 
 void BonusLogicInit(BonusLogic& bonus_logic, Resourses & res, BonusType type, int number) {
+	bonus_logic.max_distance = 10.f;
+	bonus_logic.speed = 8.f;
 	bonus_logic.bonus_type = type;
 	bonus_logic.rect = new sf::Rect<float>;
 	*bonus_logic.rect = GetBonusRectFromLvl(*res.lvl, type, number);

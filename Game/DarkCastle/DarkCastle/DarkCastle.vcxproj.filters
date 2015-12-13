@@ -79,6 +79,12 @@
     <Filter Include="Source Files\Sounds">
       <UniqueIdentifier>{9efd7d45-50ea-47cc-a1bd-de22f5f60dc0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Bonuses Panel\Cell">
+      <UniqueIdentifier>{459dd894-62dd-4f83-8a0c-40d4720c82ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Bonuses Panel\Cell">
+      <UniqueIdentifier>{dc81a9e6-50e7-4d25-a24c-3dd05c5b89ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -173,6 +179,15 @@
     </ClCompile>
     <ClCompile Include="Source\sounds_utils.cpp">
       <Filter>Source Files\Sounds</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cell.cpp">
+      <Filter>Source Files\Bonuses Panel\Cell</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cell_logic.cpp">
+      <Filter>Source Files\Bonuses Panel\Cell</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cell_visual.cpp">
+      <Filter>Source Files\Bonuses Panel\Cell</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -295,6 +310,15 @@
     </ClInclude>
     <ClInclude Include="Headers\sound_enums.h">
       <Filter>Header Files\Sounds</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\cell.h">
+      <Filter>Header Files\Bonuses Panel\Cell</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\cell_logic.h">
+      <Filter>Header Files\Bonuses Panel\Cell</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\cell_visual.h">
+      <Filter>Header Files\Bonuses Panel\Cell</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

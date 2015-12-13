@@ -5,6 +5,9 @@
 
 
 struct BonusLogic {
+	float max_distance;
+	float current_distance;
+	float speed;
 	int value;
 	int duration;
 	bool picked_up;

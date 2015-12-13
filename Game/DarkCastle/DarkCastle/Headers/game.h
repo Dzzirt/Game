@@ -50,6 +50,8 @@ void Update(Game& game, const sf::Time& deltaTime);
 void Render(Game & game);
 
 
+bool ÑheckingBonusEffectActivation(Game & game);
+
 bool CheckBonusEffectEnd(Player & player, DurationController & ctrl, std::vector<json_spirit::Pair>& config);
 
 

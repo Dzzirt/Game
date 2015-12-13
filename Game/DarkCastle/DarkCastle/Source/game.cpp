@@ -82,6 +82,7 @@ void ProcessEvents(Game*& game) {
 
 	while (window.pollEvent(event)) {
 		ProcessPlayerEvents(window, event, *game->player, *game->game_sounds, *game->res->lvl, *game->view);
+		ProcessPanelEvents(*game->b_panel);
 		if (Keyboard::isKeyPressed(Keyboard::R) && game->player->fight->is_dead) {
 			RestartGame(game);
 		}
@@ -93,6 +94,10 @@ void Update(Game& game, const Time& deltaTime) {
 	ViewUpdate(*game.view, *game.player->movement, *game.res->lvl, game.player->visual->animation->frame->displacement);
 	HpBarUpdate(*game.player->hp_bar, *game.view, game.player->fight->health_points);
 	BonusesPanelUpdate(*game.b_panel, *game.view);
+	ÑheckingBonusEffectActivation(game);
+	for (Bonus * bonus : *game.bonus_list) {
+		BonusUpdate(*bonus, deltaTime);
+	}
 	for (Enemy * enemy : *game.enemy_list) {
 		EnemyUpdate(*enemy, deltaTime, *game.res->lvl);
 	}
@@ -146,6 +151,39 @@ void Render(Game& game) {
 	window.display();
 }
 
+bool ÑheckingBonusEffectActivation(Game & game) {
+	FightLogic& fight = *game.player->fight;
+	std::vector<Cell*> & items = *game.b_panel->items;
+	GameSounds & game_sounds = *game.game_sounds;
+	list<DurationController*> & dur_ctrl_list = *game.dur_ctrl_list;
+	Movement& movement = *game.player->movement;
+	for (size_t i = 0; i < items.size(); i++) {
+		if (items[i]->logic->is_activated) {
+			PlaySound(BONUS_PICK, *game_sounds.sounds, *game_sounds.sound_buffers);
+			items[i]->logic->is_activated = false;
+			switch (items[i]->logic->type) {
+			case HP_REGEN:
+				fight.health_points += items[i]->logic->value;
+				if (fight.health_points > fight.max_health_points) {
+					fight.health_points = fight.max_health_points;
+				}
+				break;
+			case SPEED_UP:
+				movement.step *= items[i]->logic->value;
+				break;
+			case ATK_UP:
+				fight.stored_damage = fight.damage *= items[i]->logic->value;
+				break;
+			}
+			dur_ctrl_list.push_back(CreateDurationController(*items[i]->logic));
+			DestroyCell(*items[i]);
+			items.erase(items.begin() + i);
+			return true;
+		}
+	}
+	return false;
+}
+
 bool CheckBonusEffectEnd(Player & player, DurationController & ctrl, std::vector<json_spirit::Pair>& config) {
 	if (ctrl.curr_elapsed_time >= ctrl.max_elapsed_time) {
 		ctrl.curr_elapsed_time = 0.f;
@@ -170,9 +208,13 @@ void CheckDynamicObjCollisions(Game& game) {
 		PlayerBonusCollision(player, *bonus);
 		if (bonus->bonus_logic->picked_up) {
 			PlaySound(BONUS_PICK, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
-			game.dur_ctrl_list->push_back(CreateDurationController(*bonus->bonus_logic));
-			DestroyBonus(*bonus);
-			game.bonus_list->remove(*iter);
+			if (AddToItemsVec(*game.b_panel->items, *bonus)) {
+				game.bonus_list->remove(*iter);
+				DestroyBonus(*bonus);
+			}
+			else {
+				std::cout << "Not enought free space" << endl;
+			}
 			break;
 		}
 	}
@@ -190,10 +232,6 @@ void CheckDynamicObjCollisions(Game& game) {
 				PlaySound(GET_HIT, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
 			}
 			
-		}
-		if (player.fight->is_dead) {
-
-			break;
 		}
 		if (enemy->fight->is_dead) {
 			DestroyEnemy(*enemy);
@@ -236,28 +274,16 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 	}
 }
 
+
+
+
 void PlayerBonusCollision(const Player& player, Bonus& bonus) {
 	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect bonus_sprite = bonus.bonus_visual->sprite.getGlobalBounds();
-	FightLogic& fight = *player.fight;
-	Movement& movement = *player.movement;
 	if (player_sprite.intersects(bonus_sprite)) {
 		bonus.bonus_logic->picked_up = true;
-		switch (bonus.bonus_logic->bonus_type) {
-			case HP_REGEN:
-				fight.health_points += bonus.bonus_logic->value;
-				break;
-			case SPEED_UP:
-				movement.step *= bonus.bonus_logic->value;
-				break;
-			case ATK_UP:
-				fight.stored_damage = fight.damage *= bonus.bonus_logic->value;
-				break;
-		}
 	}
-
 }
-
 void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	Animation& enemy_anim = *enemy.visual->animation;
 	FightLogic& player_fight = *player.fight;
