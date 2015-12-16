@@ -13,7 +13,6 @@
 #include "die_screen.h"
 
 struct Game {
-	float opacity;
 	Player* player;
 	Resourses* res;
 	BonusesPanel* b_panel;
@@ -31,6 +30,8 @@ struct Game {
 Game* CreateGame();
 
 void RestartGame(Game *& game);
+
+void ProcessEnemyListEvents(std::list<Enemy*> & enemy_list, sf::FloatRect & player_rect);
 
 sf::RenderWindow* CreateRenderWindow();
 
@@ -51,6 +52,10 @@ void EnemyListInit(std::list<Enemy*> & en_list, Resourses & res, Type type);
 void ProcessEvents(Game *& game);
 
 void ChangeMap(Game &game, std::string map_name);
+
+void CheckMapChanging(Game &game);
+
+void WoundsCheck(Game &game);
 
 void MaceTrapsVecUpdate(std::vector<MaceTrap*> & traps, const sf::Time& deltaTime);
 
@@ -76,9 +81,13 @@ bool ÑheckingBonusEffectActivation(Game & game);
 bool CheckBonusEffectEnd(Player & player, DurationController & ctrl, std::vector<json_spirit::Pair>& config);
 
 
+void CheckPlayerAndEnemiesCollisions(std::list<Enemy*> & enemy_list, Player& player);
+
+void PickUpBonus(Game &game, Bonus * bonus, std::list<Bonus*>::iterator iter);
+
 void CheckDynamicObjCollisions(Game& game);
 
-void PlayerBonusCollision(const Player& player, Bonus& bonus);
+void CheckPlayerBonusCollision(const Player& player, Bonus& bonus);
 
 void PlayerEnemyCollision(const Player & player, Enemy & enemy);
 

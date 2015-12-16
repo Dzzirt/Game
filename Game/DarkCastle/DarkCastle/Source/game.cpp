@@ -41,7 +41,6 @@ void EnemyListInit(list<Enemy*>& enemy_list, Resourses& res, Type type) {
 	}
 }
 
-
 void BonusListInit(list<Bonus*>& bonus_list, Resourses& res, BonusType type) {
 	int bonuses_count = GetBonusesCount(*res.lvl, type);
 	for (int i = 0; i < bonuses_count; i++) {
@@ -50,10 +49,7 @@ void BonusListInit(list<Bonus*>& bonus_list, Resourses& res, BonusType type) {
 	}
 }
 
-
-
 void GameInit(Game& game) {
-	game.opacity = 0;
 	game.window = CreateRenderWindow();
 	game.view = CreateView();
 	game.res = CreateResourses();
@@ -67,23 +63,22 @@ void GameInit(Game& game) {
 	MaceTrapVecInit(game.mace_traps, *game.res->lvl);
 }
 
-
 void RestartGame(Game *& game) {
 	DestroyGame(game);
 	game = CreateGame();
 }
 
-void ProcessEnemyListEvents(Game*& game) {
-	for (list<Enemy*>::iterator iter = game->enemy_list->begin(); iter != game->enemy_list->end(); ++iter) {
+void ProcessEnemyListEvents(std::list<Enemy*> & enemy_list, sf::FloatRect & player_rect) {
+	for (list<Enemy*>::iterator iter = enemy_list.begin(); iter != enemy_list.end(); ++iter) {
 		Enemy* enemy = *iter;
-		ProcessEnemyEvents(*enemy, *game->player->visual->rect);
+		ProcessEnemyEvents(*enemy, player_rect);
 	}
 }
 
 void ProcessEvents(Game*& game) {
 	RenderWindow& window = *game->window;
 	Event event;
-	ProcessEnemyListEvents(game);
+	ProcessEnemyListEvents(*game->enemy_list, *game->player->visual->rect);
 	while (window.pollEvent(event)) {
 		ProcessPlayerEvents(window, event, *game->player, *game->game_sounds, *game->res->lvl, *game->view);
 		ProcessPanelEvents(*game->b_panel);
@@ -179,7 +174,6 @@ void Update(Game& game, const Time& deltaTime) {
 
 }
 
-
 void DrawEnemies(std::list<Enemy*> & enemies, RenderWindow &window) {
 	for (list<Enemy*>::iterator iter = enemies.begin(); iter != enemies.end(); ++iter) {
 		Enemy* enemy = *iter;
@@ -273,41 +267,52 @@ bool CheckBonusEffectEnd(Player & player, DurationController & ctrl, std::vector
 	return false;
 }
 
+void CheckPlayerAndEnemiesCollisions(std::list<Enemy*> & enemy_list, Player& player) {
+	list<Enemy*>::iterator enemy_list_begin = enemy_list.begin();
+	list<Enemy*>::iterator enemy_list_end = enemy_list.end();
+	for (list<Enemy*>::iterator iter = enemy_list_begin; iter != enemy_list_end; ++iter) {
+		Enemy* enemy = *iter;
+		PlayerEnemyCollision(player, *enemy);
+		EnemyPlayerCollision(*enemy, player);
+		if (enemy->fight->is_dead) {
+			DestroyEnemy(*enemy);
+			enemy_list.remove(*iter);
+			break;
+		}
+	}
+}
+
+void PickUpBonus(Game &game, Bonus * bonus, list<Bonus*>::iterator iter) {
+	if (AddToItemsVec(*game.b_panel->items, *bonus)) {
+		PlaySounds(BONUS_PICK, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
+		game.bonus_list->remove(*iter);
+		DestroyBonus(*bonus);
+	}
+	else {
+		bonus->bonus_logic->picked_up = false;
+	}
+}
+
 void CheckDynamicObjCollisions(Game& game) {
 	Player& player = *game.player;
 	vector<Object> map_objects = game.res->lvl->GetAllObjects();
-	list<Enemy*>::iterator list_begin = game.enemy_list->begin();
-	list<Enemy*>::iterator list_end = game.enemy_list->end();
-	for (list<Bonus*>::iterator iter = game.bonus_list->begin(); iter != game.bonus_list->end(); ++iter) {
-		Bonus* bonus = *iter;
-		PlayerBonusCollision(player, *bonus);
+	for (Bonus * bonus : *game.bonus_list) {
+		CheckPlayerBonusCollision(player, *bonus);
+	}
+	list<Bonus*>::iterator bonus_list_begin = game.bonus_list->begin();
+	list<Bonus*>::iterator bonus_list_end = game.bonus_list->end();
+	for (list<Bonus*>::iterator iter = bonus_list_begin; iter != bonus_list_end; ++iter) {
+		Bonus * bonus = *iter;
 		if (bonus->bonus_logic->picked_up) {
-			if (AddToItemsVec(*game.b_panel->items, *bonus)) {
-				PlaySounds(BONUS_PICK, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
-				game.bonus_list->remove(*iter);
-				DestroyBonus(*bonus);
-			}
-			else {
-				bonus->bonus_logic->picked_up = false;
-			}
+			PickUpBonus(game, bonus, iter);
 			break;
 		}
 	}
 	for (MaceTrap* mace_trap : game.mace_traps) {
 		PlayerMaceTrapCollision(player, *mace_trap);
 	}
-	for (list<Enemy*>::iterator iter = list_begin; iter != list_end; ++iter) {
-		Enemy* enemy = *iter;
-		float old_enemy_hp = enemy->fight->health_points;
-		PlayerEnemyCollision(player, *enemy);
-		float old_player_hp = player.fight->health_points;
-		EnemyPlayerCollision(*enemy, player);
-		if (enemy->fight->is_dead) {
-			DestroyEnemy(*enemy);
-			game.enemy_list->remove(*iter);
-			break;
-		}
-	}
+	CheckPlayerAndEnemiesCollisions(*game.enemy_list, player);
+
 }
 
 void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
@@ -318,7 +323,7 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 	FloatRect& enemy_rect = *enemy.visual->rect;
 	float& player_damage = player.fight->damage;
 	float& player_stored_damage = player.fight->stored_damage;
-	bool is_hit = int(player_anim.current_attack_frame) == 3;
+	bool is_hit = int(player_anim.current_attack_frame) == PlayerAttackFrame;
 	if (player_sprite.intersects(enemy_rect) && is_hit) {
 		enemy.is_attacked = true;
 		if (enemy_hp <= 0) {
@@ -330,17 +335,14 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 			player_damage = 0;
 			enemy.is_injured = true;
 		}
-
 	}
 	else {
 		if (enemy.is_attacked) {
 			enemy.is_attacked = false;
 			player_damage = player_stored_damage;
 		}
-
 	}
 }
-
 
 void PlayerMaceTrapCollision(Player& player, MaceTrap & trap) {
 	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
@@ -365,13 +367,14 @@ void PlayerMaceTrapCollision(Player& player, MaceTrap & trap) {
 	}
 }
 
-void PlayerBonusCollision(const Player& player, Bonus& bonus) {
+void CheckPlayerBonusCollision(const Player& player, Bonus& bonus) {
 	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect bonus_sprite = bonus.bonus_visual->sprite.getGlobalBounds();
 	if (player_sprite.intersects(bonus_sprite)) {
 		bonus.bonus_logic->picked_up = true;
 	}
 }
+
 void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	Animation& enemy_anim = *enemy.visual->animation;
 	FightLogic& player_fight = *player.fight;
@@ -379,20 +382,16 @@ void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	FloatRect enemy_sprite = enemy.visual->animation->frame->sprite.getGlobalBounds();
 	FloatRect& player_rect = *player.visual->rect;
 	float& enemy_damage = enemy.fight->damage;
-	bool is_hit = int(enemy_anim.current_attack_frame) == 4;
-
+	bool is_hit = int(enemy_anim.current_attack_frame) == SpearmanAttackFrame;
 	if (enemy_sprite.intersects(player_rect) && is_hit) {
-
 		if (player_hp <= 0) {
 			player_fight.is_dead = true;
 		}
 		else {
 			player_hp -= enemy_damage;
 			player.is_injured = true;
-			//player.visual->animation->frame->sprite.setColor(Color::Red);
 			enemy_damage = 0;
 		}
-
 	}
 	else {
 		enemy_damage = CEnemyDamage;
@@ -429,6 +428,8 @@ void DestroyGame(Game*& game) {
 	DestroyResourses(*game->res);
 	DestroyBonusesPanel(*game->b_panel);
 	DestroyGameSounds(*game->game_sounds);
+	DestroyMaceTrapVec(game->mace_traps);
+	DestroyDieScreen(*game->die_screen);
 	delete game->view;
 	delete game;
 }

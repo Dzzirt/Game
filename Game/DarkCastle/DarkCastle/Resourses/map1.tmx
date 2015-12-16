@@ -14,7 +14,7 @@
   <object id="16" name="solid" x="1280" y="320" width="48" height="32"/>
   <object id="17" name="solid" x="912" y="176" width="80" height="16"/>
   <object id="18" name="solid" x="1328" y="464" width="16" height="16"/>
-  <object id="20" name="trap" x="464" y="608" width="48" height="16"/>
+  <object id="20" name="trap" x="512" y="608" width="48" height="16"/>
   <object id="28" name="solid" x="1376" y="400" width="16" height="16"/>
   <object id="29" name="solid" x="0" y="624" width="1600" height="15.5198"/>
   <object id="32" name="SPEARMAN1" x="1071.58" y="284.659" width="14" height="36"/>
@@ -49,18 +49,13 @@
   <object id="101" name="MACE_TRAP1" x="1303.83" y="344.833" width="41" height="93"/>
   <object id="102" name="solid" x="1307" y="608" width="4.5" height="16.5"/>
   <object id="103" name="solid" x="1440" y="608" width="4.5" height="16.5"/>
-  <object id="104" name="solid" x="874.25" y="608.25" width="4.5" height="16.5"/>
-  <object id="105" name="solid" x="911.25" y="607.5" width="4.5" height="16.5"/>
-  <object id="106" name="solid" x="831" y="607.75" width="4.5" height="16.5"/>
-  <object id="107" name="solid" x="794.841" y="608.295" width="4.5" height="16.5"/>
-  <object id="108" name="solid" x="751.568" y="608.114" width="4.5" height="16.5"/>
-  <object id="109" name="solid" x="715.386" y="607.932" width="4.5" height="16.5"/>
-  <object id="110" name="solid" x="672.114" y="607.205" width="4.5" height="16.5"/>
-  <object id="111" name="solid" x="635.023" y="608.114" width="4.5" height="16.5"/>
-  <object id="112" name="solid" x="591.205" y="607.568" width="4.5" height="16.5"/>
-  <object id="113" name="solid" x="555.386" y="607.932" width="4.5" height="16.5"/>
-  <object id="114" name="solid" x="510.659" y="608.841" width="4.5" height="16.5"/>
-  <object id="115" name="solid" x="459.932" y="607.75" width="4.5" height="16.5"/>
+  <object id="104" name="solid" x="832" y="608.25" width="46.75" height="16.5"/>
+  <object id="105" name="solid" x="912" y="608" width="15.25" height="16.5"/>
+  <object id="108" name="solid" x="752" y="608" width="48" height="16.5"/>
+  <object id="110" name="solid" x="672.114" y="607.205" width="47.886" height="16.5"/>
+  <object id="112" name="solid" x="592" y="608" width="48" height="16.5"/>
+  <object id="114" name="solid" x="510.659" y="608.841" width="49.341" height="16.5"/>
+  <object id="115" name="solid" x="448" y="607.75" width="16.432" height="16.5"/>
  </objectgroup>
  <layer name="main" width="100" height="60">
   <data>
@@ -9896,36 +9891,36 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="272"/>
    <tile gid="408"/>
    <tile gid="409"/>
    <tile gid="410"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="499"/>
+   <tile gid="272"/>
+   <tile gid="272"/>
+   <tile gid="272"/>
    <tile gid="409"/>
    <tile gid="410"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="499"/>
+   <tile gid="272"/>
+   <tile gid="272"/>
+   <tile gid="272"/>
    <tile gid="409"/>
    <tile gid="410"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="272"/>
+   <tile gid="272"/>
+   <tile gid="272"/>
    <tile gid="409"/>
    <tile gid="410"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="272"/>
+   <tile gid="272"/>
+   <tile gid="272"/>
    <tile gid="409"/>
    <tile gid="410"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="272"/>
+   <tile gid="272"/>
+   <tile gid="272"/>
    <tile gid="409"/>
    <tile gid="410"/>
-   <tile gid="0"/>
+   <tile gid="272"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>

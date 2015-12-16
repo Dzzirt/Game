@@ -7,14 +7,11 @@
 
 	const float FallingSpeedCoef = 1.6f;
 	const float JumpingSpeedCoef = 1.3f;
-
 	const float ForceOfGravity = 200.f;
 
-	const int XEnemySize = 48;
-	const int YEnemySize = 84;
+	const int PlayerAttackFrame = 3;
+	const int SpearmanAttackFrame = 4;
 
-	const float AtkUpDuration = 10.f;
-	const float SpeedUpDuration = 5.f;
 	const sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 
 	enum State {

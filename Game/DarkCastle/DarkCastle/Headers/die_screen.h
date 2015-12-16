@@ -11,3 +11,5 @@ DieScreen* CreateDieScreen();
 void DieScreenInit(DieScreen & screen);
 
 void DrawDieScreen(DieScreen & screen, sf::RenderWindow & window);
+
+void DestroyDieScreen(DieScreen & die_screen);

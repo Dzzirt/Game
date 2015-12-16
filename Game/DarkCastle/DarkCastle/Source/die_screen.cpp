@@ -16,3 +16,7 @@ void DieScreenInit(DieScreen & screen) {
 void DrawDieScreen(DieScreen & screen, sf::RenderWindow & window) {
 	window.draw(screen.sprite);
 }
+
+void DestroyDieScreen(DieScreen & die_screen) {
+	delete &die_screen;
+}
