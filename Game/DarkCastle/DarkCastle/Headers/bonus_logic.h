@@ -9,7 +9,7 @@ struct BonusLogic {
 	float current_distance;
 	float speed;
 	int value;
-	int duration;
+	float duration;
 	bool picked_up;
 	sf::FloatRect* rect;
 	BonusType bonus_type;

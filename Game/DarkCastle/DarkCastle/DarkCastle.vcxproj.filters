@@ -85,6 +85,18 @@
     <Filter Include="Source Files\Bonuses Panel\Cell">
       <UniqueIdentifier>{dc81a9e6-50e7-4d25-a24c-3dd05c5b89ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Misc">
+      <UniqueIdentifier>{861a89b4-aa95-430c-885c-f2d7e4ac91f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Misc">
+      <UniqueIdentifier>{3a0f88c4-9652-43c4-96bd-921eefc2df57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Traps">
+      <UniqueIdentifier>{6dc8ca9e-a00f-4c2b-92d3-572fabfa8aba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Traps">
+      <UniqueIdentifier>{81b6e74b-68f4-4aea-81ec-61cf02537a2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -189,12 +201,18 @@
     <ClCompile Include="Source\cell_visual.cpp">
       <Filter>Source Files\Bonuses Panel\Cell</Filter>
     </ClCompile>
+    <ClCompile Include="Source\mace_trap.cpp">
+      <Filter>Source Files\Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\mace_traps_utils.cpp">
+      <Filter>Source Files\Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\die_screen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\consts_and_enums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\gameconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\using_json.h">
@@ -319,6 +337,15 @@
     </ClInclude>
     <ClInclude Include="Headers\cell_visual.h">
       <Filter>Header Files\Bonuses Panel\Cell</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\mace_trap.h">
+      <Filter>Header Files\Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\mace_traps_utils.h">
+      <Filter>Header Files\Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\die_screen.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

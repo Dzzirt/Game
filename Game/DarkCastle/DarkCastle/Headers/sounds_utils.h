@@ -8,7 +8,9 @@ typedef std::map<SoundType, std::vector<sf::SoundBuffer*>> SoundBuffersMap;
 typedef std::map<SoundType, std::vector<std::string>> SoundNamesMap;
 typedef std::vector<sf::Sound*> SoundsVec;
 
-void PlaySound(SoundType type, SoundsVec & sounds, SoundBuffersMap & buffers);
+
+
+
 
 
 
@@ -17,6 +19,8 @@ SoundBuffersMap* CreateSoundBuffers(SoundNamesMap & sound_names);
 SoundNamesMap* CreateSoundNames();
 
 SoundsVec* CreateSounds();
+
+void PlaySounds(SoundType type, SoundsVec & sounds, SoundBuffersMap & buffers);
 
 void SoundsInit(SoundsVec & sounds);
 
@@ -41,7 +45,7 @@ void DestroySoundsNames(SoundNamesMap & names);
 void DestroySounds(SoundsVec & sounds);
 
 
-int GetSoundsCountFromType(SoundType type);
+unsigned int GetSoundsCountFromType(SoundType type);
 
 std::string GetRandomSoundNameByType(SoundType type, const SoundNamesMap & sound_names);
 

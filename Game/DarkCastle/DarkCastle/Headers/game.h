@@ -1,5 +1,4 @@
 #pragma once
-
 #include <list>
 #include "player.h"
 #include "enemy.h"
@@ -9,16 +8,22 @@
 #include "bonuses_panel.h"
 #include "duration_controller.h"
 #include "SFML/Audio.hpp"
+#include <sstream>
+#include "mace_traps_utils.h"
+#include "die_screen.h"
 
 struct Game {
+	float opacity;
 	Player* player;
 	Resourses* res;
 	BonusesPanel* b_panel;
 	GameSounds* game_sounds;
+	std::vector<MaceTrap*> mace_traps;
 	std::list<Enemy*> * enemy_list;
 	std::list<Bonus*> * bonus_list;
 	std::list<DurationController*> * dur_ctrl_list;
 	sf::RenderWindow * window;
+	DieScreen * die_screen;
 	sf::View* view;
 };
 
@@ -45,6 +50,22 @@ void EnemyListInit(std::list<Enemy*> & en_list, Resourses & res, Type type);
 
 void ProcessEvents(Game *& game);
 
+void ChangeMap(Game &game, std::string map_name);
+
+void MaceTrapsVecUpdate(std::vector<MaceTrap*> & traps, const sf::Time& deltaTime);
+
+void DrawEnemies(std::list<Enemy*> & enemies, sf::RenderWindow &window);
+
+void DrawPlayer(Player & player, sf::RenderWindow &window);
+
+void DrawBonuses(std::list<Bonus*> & bonus_list, sf::RenderWindow &window);
+
+void BonusListUpdate(std::list<Bonus*> & bonuses, const sf::Time& deltaTime);
+
+void EnemyListUpdate(std::list<Enemy*> & enemy_list, Level & level, const sf::Time& deltaTime);
+
+void DurationControllersVecUpdate(std::list<DurationController*> & ctrls, const sf::Time& deltaTime);
+
 void Update(Game& game, const sf::Time& deltaTime);
 
 void Render(Game & game);
@@ -60,6 +81,8 @@ void CheckDynamicObjCollisions(Game& game);
 void PlayerBonusCollision(const Player& player, Bonus& bonus);
 
 void PlayerEnemyCollision(const Player & player, Enemy & enemy);
+
+void PlayerMaceTrapCollision(Player& player, MaceTrap & trap);
 
 void EnemyPlayerCollision(const Enemy& enemy, Player& player);
 

@@ -1,10 +1,8 @@
 #include <sstream>
 #include "../Headers/game.h"
-#include <chrono>
 
 using namespace sf;
 using namespace std;
-
 
 Game* CreateGame() {
 	Game* game = new Game();
@@ -55,6 +53,7 @@ void BonusListInit(list<Bonus*>& bonus_list, Resourses& res, BonusType type) {
 
 
 void GameInit(Game& game) {
+	game.opacity = 0;
 	game.window = CreateRenderWindow();
 	game.view = CreateView();
 	game.res = CreateResourses();
@@ -64,6 +63,8 @@ void GameInit(Game& game) {
 	game.b_panel = CreateBonusesPanel();
 	game.dur_ctrl_list = CreateDurationControllerVec();
 	game.game_sounds = CreateGameSounds();
+	game.die_screen = CreateDieScreen();
+	MaceTrapVecInit(game.mace_traps, *game.res->lvl);
 }
 
 
@@ -72,14 +73,17 @@ void RestartGame(Game *& game) {
 	game = CreateGame();
 }
 
+void ProcessEnemyListEvents(Game*& game) {
+	for (list<Enemy*>::iterator iter = game->enemy_list->begin(); iter != game->enemy_list->end(); ++iter) {
+		Enemy* enemy = *iter;
+		ProcessEnemyEvents(*enemy, *game->player->visual->rect);
+	}
+}
+
 void ProcessEvents(Game*& game) {
 	RenderWindow& window = *game->window;
 	Event event;
-	for (list<Enemy*>::iterator iter = game->enemy_list->begin(); iter != game->enemy_list->end(); ++iter) {
-		Enemy* enemy = *iter;
-		ProcessEnemiesEvents(*enemy, *game->player->visual->rect);
-	}
-
+	ProcessEnemyListEvents(game);
 	while (window.pollEvent(event)) {
 		ProcessPlayerEvents(window, event, *game->player, *game->game_sounds, *game->res->lvl, *game->view);
 		ProcessPanelEvents(*game->b_panel);
@@ -89,21 +93,80 @@ void ProcessEvents(Game*& game) {
 	}
 }
 
+void ChangeMap(Game &game, std::string map_name) {
+	DestroyLevel(*game.res->lvl);
+	DestroyBonusList(*game.bonus_list);
+	DestroyEnemyList(*game.enemy_list);
+	DestroyMaceTrapVec(game.mace_traps);
+	game.res->lvl = CreateLevel(map_name);
+	*game.player->visual->rect = GetPlayerRectFromLvl(*game.res->lvl);
+	game.enemy_list = CreateEnemyList(*game.res);
+	game.bonus_list = CreateBonusList(*game.res);
+	MaceTrapVecInit(game.mace_traps, *game.res->lvl);
+}
+
+void CheckMapChanging(Game &game) {
+	if (game.player->is_map_complete) {
+		stringstream name;
+		game.res->curr_lvl_num++;
+		name << game.res->curr_lvl_num;
+		ChangeMap(game, "map" + name.str() + ".tmx");
+		game.player->is_map_complete = false;
+	}
+}
+
+void WoundsCheck(Game &game) {
+	if (game.player->is_injured) {
+		if ((rand() % 6) == 0) {
+			PlaySounds(GET_HIT, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
+		}
+		game.player->visual->animation->frame->sprite.setColor(Color::Red);
+		game.player->is_injured = false;
+	}
+	for (Enemy * enemy : *game.enemy_list) {
+		if (enemy->is_injured) {
+			PlaySounds(HIT, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
+			enemy->visual->animation->frame->sprite.setColor(Color::Red);
+			enemy->is_injured = false;
+		}
+	}
+}
+
+void MaceTrapsVecUpdate(std::vector<MaceTrap*> & traps, const Time& deltaTime) {
+	for (MaceTrap* trap : traps) {
+		MaceTrapUpdate(*trap, deltaTime);
+	}
+}
+
+void BonusListUpdate(std::list<Bonus*> & bonuses, const Time& deltaTime) {
+	for (Bonus * bonus : bonuses) {
+		BonusUpdate(*bonus, deltaTime);
+	}
+}
+
+void EnemyListUpdate(std::list<Enemy*> & enemy_list, Level & level, const Time& deltaTime) {
+	for (Enemy * enemy : enemy_list) {
+		EnemyUpdate(*enemy, deltaTime, level);
+	}
+}
+
+void DurationControllersVecUpdate(std::list<DurationController*> & ctrls, const Time& deltaTime) {
+	for (DurationController *& ctrl : ctrls) {
+		DuratonControllerUpdate(*ctrl, deltaTime);
+	}
+}
+
 void Update(Game& game, const Time& deltaTime) {
 	PlayerUpdate(*game.player, *game.res->lvl, deltaTime);
+	CheckMapChanging(game);
 	ViewUpdate(*game.view, *game.player->movement, *game.res->lvl, game.player->visual->animation->frame->displacement);
 	HpBarUpdate(*game.player->hp_bar, *game.view, game.player->fight->health_points);
 	BonusesPanelUpdate(*game.b_panel, *game.view);
 	ÑheckingBonusEffectActivation(game);
-	for (Bonus * bonus : *game.bonus_list) {
-		BonusUpdate(*bonus, deltaTime);
-	}
-	for (Enemy * enemy : *game.enemy_list) {
-		EnemyUpdate(*enemy, deltaTime, *game.res->lvl);
-	}
-	for (DurationController *& ctrl : *game.dur_ctrl_list) {
-		DuratonControllerUpdate(*ctrl, deltaTime);
-	}
+	MaceTrapsVecUpdate(game.mace_traps, TimePerFrame);
+	BonusListUpdate(*game.bonus_list, deltaTime);
+	EnemyListUpdate(*game.enemy_list, *game.res->lvl, deltaTime);
+	DurationControllersVecUpdate(*game.dur_ctrl_list, deltaTime);
 	for (DurationController *& ctrl : *game.dur_ctrl_list) {
 		if (CheckBonusEffectEnd(*game.player, *ctrl, *game.res->config)) {
 			DestroyDurationController(*ctrl);
@@ -112,41 +175,53 @@ void Update(Game& game, const Time& deltaTime) {
 		}
 	}
 	CheckDynamicObjCollisions(game);
+	WoundsCheck(game);
+
 }
 
 
+void DrawEnemies(std::list<Enemy*> & enemies, RenderWindow &window) {
+	for (list<Enemy*>::iterator iter = enemies.begin(); iter != enemies.end(); ++iter) {
+		Enemy* enemy = *iter;
+		VisualHpBar& enemy_hp = *enemy->hp_bar->visual_hp;
+		Sprite& enemy_sprite = enemy->visual->animation->frame->sprite;
+		window.draw(enemy_sprite);
+		window.draw(enemy_hp.bar_sprite);
+		window.draw(enemy_hp.strip_sprite);
+	}
+}
+
+void DrawPlayer(Player & player, RenderWindow &window) {
+	VisualHpBar& player_hp = *player.hp_bar->visual_hp;
+	Sprite& player_sprite = player.visual->animation->frame->sprite;
+	window.draw(player_sprite);
+	window.draw(player_hp.bar_sprite);
+	window.draw(player_hp.strip_sprite);
+}
+
+void DrawBonuses(std::list<Bonus*> & bonus_list, RenderWindow &window) {
+	for (list<Bonus*>::iterator iter = bonus_list.begin(); iter != bonus_list.end(); ++iter) {
+		Bonus* bonus = *iter;
+		window.draw(bonus->bonus_visual->sprite);
+	}
+}
+
 void Render(Game& game) {
 	RenderWindow& window = *game.window;
+	window.clear();
 	if (game.player->fight->is_dead) {
 		game.view->setCenter(WindowWidth / 2.f, WindowHeight / 2.f);
 		window.setView(*game.view);
-		Sprite die_screen;
-		Texture texture;
-		texture.loadFromFile("Resourses/die_msg.png");
-		die_screen.setTexture(texture);
-		window.draw(die_screen);
+		DrawDieScreen(*game.die_screen, window);
 	}
 	else {
-		VisualHpBar& player_hp = *game.player->hp_bar->visual_hp;
-		Sprite& player_sprite = game.player->visual->animation->frame->sprite;
 		game.res->lvl->Draw(window);
 		window.setView(*game.view);
-		for (list<Bonus*>::iterator iter = game.bonus_list->begin(); iter != game.bonus_list->end(); ++iter) {
-			Bonus* bonus = *iter;
-			window.draw(bonus->bonus_visual->sprite);
-		}
-		window.draw(player_sprite);
-		window.draw(player_hp.bar_sprite);
-		window.draw(player_hp.strip_sprite);
-		for (list<Enemy*>::iterator iter = game.enemy_list->begin(); iter != game.enemy_list->end(); ++iter) {
-			Enemy* enemy = *iter;
-			VisualHpBar& enemy_hp = *enemy->hp_bar->visual_hp;
-			Sprite& enemy_sprite = enemy->visual->animation->frame->sprite;
-			window.draw(enemy_sprite);
-			window.draw(enemy_hp.bar_sprite);
-			window.draw(enemy_hp.strip_sprite);
-		}
-		DrawBonusesPanel(*game.b_panel, *game.window);
+		DrawBonuses(*game.bonus_list, window);
+		DrawPlayer(*game.player, window);
+		DrawEnemies(*game.enemy_list, window);
+		DrawBonusesPanel(*game.b_panel, window);
+		DrawMaceTraps(game.mace_traps, window);
 	}
 	window.display();
 }
@@ -159,7 +234,7 @@ bool ÑheckingBonusEffectActivation(Game & game) {
 	Movement& movement = *game.player->movement;
 	for (size_t i = 0; i < items.size(); i++) {
 		if (items[i]->logic->is_activated) {
-			PlaySound(BONUS_PICK, *game_sounds.sounds, *game_sounds.sound_buffers);
+			PlaySounds(BONUS_PICK, *game_sounds.sounds, *game_sounds.sound_buffers);
 			items[i]->logic->is_activated = false;
 			switch (items[i]->logic->type) {
 			case HP_REGEN:
@@ -207,37 +282,30 @@ void CheckDynamicObjCollisions(Game& game) {
 		Bonus* bonus = *iter;
 		PlayerBonusCollision(player, *bonus);
 		if (bonus->bonus_logic->picked_up) {
-			PlaySound(BONUS_PICK, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
 			if (AddToItemsVec(*game.b_panel->items, *bonus)) {
+				PlaySounds(BONUS_PICK, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
 				game.bonus_list->remove(*iter);
 				DestroyBonus(*bonus);
 			}
 			else {
-				std::cout << "Not enought free space" << endl;
+				bonus->bonus_logic->picked_up = false;
 			}
 			break;
 		}
+	}
+	for (MaceTrap* mace_trap : game.mace_traps) {
+		PlayerMaceTrapCollision(player, *mace_trap);
 	}
 	for (list<Enemy*>::iterator iter = list_begin; iter != list_end; ++iter) {
 		Enemy* enemy = *iter;
 		float old_enemy_hp = enemy->fight->health_points;
 		PlayerEnemyCollision(player, *enemy);
-		if (old_enemy_hp != enemy->fight->health_points) {
-			PlaySound(HIT, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
-		}
 		float old_player_hp = player.fight->health_points;
 		EnemyPlayerCollision(*enemy, player);
-		if (old_player_hp != player.fight->health_points) {
-			if ((rand() % 6) == 0) {
-				PlaySound(GET_HIT, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
-			}
-			
-		}
 		if (enemy->fight->is_dead) {
 			DestroyEnemy(*enemy);
 			game.enemy_list->remove(*iter);
 			break;
-
 		}
 	}
 }
@@ -258,16 +326,15 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 			player_damage = player_stored_damage;
 		}
 		else {
-			enemy.visual->animation->is_injured = true;
 			enemy_hp -= player_damage;
 			player_damage = 0;
+			enemy.is_injured = true;
 		}
 
 	}
 	else {
 		if (enemy.is_attacked) {
 			enemy.is_attacked = false;
-			enemy.visual->animation->is_injured = false;
 			player_damage = player_stored_damage;
 		}
 
@@ -275,7 +342,28 @@ void PlayerEnemyCollision(const Player& player, Enemy& enemy) {
 }
 
 
-
+void PlayerMaceTrapCollision(Player& player, MaceTrap & trap) {
+	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
+	FloatRect mace_sprite = trap.sprite.getGlobalBounds();
+	mace_sprite.left += DisplaceMace;
+	mace_sprite.width -= DecreaseMaceSize;
+	mace_sprite.height -= DecreaseMaceSize;
+	float& player_hp = player.fight->health_points;
+	FightLogic& player_fight = *player.fight;
+	if (player_sprite.intersects(mace_sprite)) {
+		if (player_hp <= 0) {
+			player_fight.is_dead = true;
+		}
+		else {
+			player_hp -= trap.damage;
+			player.visual->animation->frame->sprite.setColor(Color::Red);
+			trap.damage = 0;
+		}
+	}
+	else {
+		trap.damage = MaceTrapDamage;
+	}
+}
 
 void PlayerBonusCollision(const Player& player, Bonus& bonus) {
 	FloatRect player_sprite = player.visual->animation->frame->sprite.getGlobalBounds();
@@ -294,20 +382,19 @@ void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 	bool is_hit = int(enemy_anim.current_attack_frame) == 4;
 
 	if (enemy_sprite.intersects(player_rect) && is_hit) {
-		
+
 		if (player_hp <= 0) {
 			player_fight.is_dead = true;
 		}
 		else {
 			player_hp -= enemy_damage;
-			player.visual->animation->is_injured = true;
+			player.is_injured = true;
+			//player.visual->animation->frame->sprite.setColor(Color::Red);
+			enemy_damage = 0;
 		}
-		enemy_damage = 0;
+
 	}
 	else {
-		if (enemy_damage == 0) {
-			player.visual->animation->is_injured = false;
-		}
 		enemy_damage = CEnemyDamage;
 	}
 }
@@ -330,6 +417,7 @@ void DestroyBonusList(list<Bonus*>& bonus_list) {
 	for (Bonus* bonus : bonus_list) {
 		DestroyBonus(*bonus);
 	}
+	delete &bonus_list;
 }
 
 void DestroyGame(Game*& game) {

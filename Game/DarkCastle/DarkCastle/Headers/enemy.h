@@ -21,6 +21,7 @@ struct Enemy {
 	LogicAI * ai;
 	Type type;
 	bool is_attacked;
+	bool is_injured;
 };
 
 Enemy* CreateEnemy(Resourses & res, int number);
@@ -33,7 +34,7 @@ int GetEnemiesCount(Level & lvl, Type type);
 
 void ProcessCollision(Enemy & enemy, const Object & map_object);
 
-void ProcessEnemiesEvents(Enemy& enemy, sf::FloatRect & player_box);
+void ProcessEnemyEvents(Enemy& enemy, sf::FloatRect & player_box);
 
 void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level& level);
 

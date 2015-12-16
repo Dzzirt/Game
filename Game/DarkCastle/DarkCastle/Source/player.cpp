@@ -5,8 +5,7 @@ using namespace sf;
 using namespace std;
 
 
-
-Player* CreatePlayer(Resourses & res) {
+Player* CreatePlayer(Resourses& res) {
 	Player* player = new Player();
 	PlayerInit(*player, res);
 	return player;
@@ -16,29 +15,35 @@ FloatRect GetPlayerRectFromLvl(Level& lvl) {
 	return lvl.GetObject("player").rect;
 }
 
-void PlayerInit(Player& player, Resourses & res) {
+void PlayerInit(Player& player, Resourses& res) {
 	player.fight = CreateFightLogic(PLAYER);
 	player.hp_bar = CreateHpBar(PLAYER, *res.int_rects, player.fight->health_points, player.fight->max_health_points);
 	player.movement = CreateMovement(PLAYER);
 	player.jumping = CreateJump(PLAYER);
 	FloatRect rect = GetPlayerRectFromLvl(*res.lvl);
 	player.visual = CreateVisual(PLAYER, rect, *res.int_rects);
+	player.is_map_complete = false;
+	player.is_injured = false;
 }
 
-void CheckPlayerAndLevelCollision(Player& player, const Level& level) {
+void CheckPlayerAndLevelCollision(Player& player, Level& level) {
 	vector<Object> map_objects = level.GetAllObjects();
 	for (size_t i = 0; i < map_objects.size(); i++) {
 		PlayerLevelCollision(player, map_objects[i]);
 	}
 }
 
-void PlayerLevelCollision(Player& player, const Object& map_object) {
+void PlayerLevelCollision(Player & player, const Object & map_object) {
 	FloatRect& player_rect = *player.visual->rect;
 	Movement& movement = *player.movement;
 	Jump& jump = *player.jumping;
 	if (player_rect.intersects(map_object.rect)) {
-		if (map_object.name == "trap") {
+		if (map_object.name == "exit") {
+			player.is_map_complete = true;
+		}
+		else if (map_object.name == "trap") {
 			jump.in_jump = true;
+			player.is_injured = true;
 			player.fight->health_points -= 10.f;
 			if (player.fight->health_points <= 0) {
 				player.fight->is_dead = true;
@@ -68,7 +73,7 @@ void PlayerLevelCollision(Player& player, const Object& map_object) {
 	}
 }
 
-void PlayerUpdate(Player& player, const Level& level, const sf::Time& deltaTime) {
+void PlayerUpdate(Player & player, Level & level, const sf::Time& deltaTime) {
 	Movement& movement = *player.movement;
 	Frame& player_frame = *player.visual->animation->frame;
 	Jump& jump = *player.jumping;
@@ -100,6 +105,7 @@ void AnimationsUpdate(Player& player) {
 	State& state = player.movement->state;
 	float game_step = player.movement->step * TimePerFrame.asSeconds();
 	animation.frame->displacement = 0;
+	animation.frame->sprite.setColor(Color::White);
 	MoveAndStayAnimation(animation, state, PLAYER, game_step);
 	AttackAnimation(animation, PLAYER, game_step);
 	if (in_jump) {
@@ -116,60 +122,60 @@ void CheckGravityLogic(Jump& jump, Movement& movement, const sf::Time& deltaTime
 	}
 }
 
-void ProcessPlayerEvents(RenderWindow & window, Event & event, Player& player, GameSounds & game_sounds, Level& level, View & view) {
+void ProcessPlayerEvents(RenderWindow& window, Event& event, Player& player, GameSounds& game_sounds, Level& level, View& view) {
 	Jump& jump = *player.jumping;
 	Movement& movement = *player.movement;
 	Animation& animation = *player.visual->animation;
 	FloatRect sprite_bounds = animation.frame->sprite.getGlobalBounds();
-		if (Keyboard::isKeyPressed(Keyboard::Space) && jump.on_ground) {
-			jump.in_jump = true;
-			PlaySound(JUMP, *game_sounds.sounds, *game_sounds.sound_buffers);
+	if (Keyboard::isKeyPressed(Keyboard::Space) && jump.on_ground) {
+		jump.in_jump = true;
+		PlaySounds(JUMP, *game_sounds.sounds, *game_sounds.sound_buffers);
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::A)) {
+		movement.state = LEFT;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::D)) {
+		movement.state = RIGHT;
+	}
+	else {
+		movement.state = NONE;
+	}
+	if (Mouse::isButtonPressed(Mouse::Left) && !jump.in_jump) {
+		if (!animation.left_attack && !animation.right_attack) {
+			PlaySounds(MISS, *game_sounds.sounds, *game_sounds.sound_buffers);
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::A)) {
-			movement.state = LEFT;
+
+		const float mouse_global_x = Mouse::getPosition(window).x + view.getCenter().x - (window.getSize().x / 2);
+		if (mouse_global_x > sprite_bounds.left + sprite_bounds.width / 2.f) {
+			animation.right_attack = true;
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::D)) {
-			movement.state = RIGHT;
+		if (mouse_global_x < sprite_bounds.left + sprite_bounds.width / 2.f) {
+			animation.left_attack = true;
+
+		}
+
+	}
+	if (event.type == Event::Closed) {
+		window.close();
+	}
+	else if (event.type == Event::Resized) {
+		view.setSize(float(event.size.width), float(event.size.height));
+		int map_height = level.height * level.tileHeight;
+		int map_width = level.width * level.tileWidth;
+		cout << map_height / float(event.size.height * event.size.height / WindowHeight) << endl;
+		if (map_height < map_width) {
+			if (unsigned int(map_height) < event.size.height) {
+				view.zoom(map_height / float(event.size.height));
+			}
 		}
 		else {
-			movement.state = NONE;
+			if (unsigned int(map_width) < event.size.width) {
+				view.zoom(unsigned int(map_width) / float(event.size.width));
+			}
 		}
-		if (Mouse::isButtonPressed(Mouse::Left) && !jump.in_jump) {
-			if (!animation.left_attack && !animation.right_attack) {
-				PlaySound(MISS, *game_sounds.sounds, *game_sounds.sound_buffers);
-			}
 
-			const float mouse_global_x = Mouse::getPosition(window).x + view.getCenter().x - (window.getSize().x / 2);
-			if (mouse_global_x > sprite_bounds.left + sprite_bounds.width / 2.f) {
-				animation.right_attack = true;
-			}
-			if (mouse_global_x < sprite_bounds.left + sprite_bounds.width / 2.f) {
-				animation.left_attack = true;
+	}
 
-			}
-
-		}
-		if (event.type == Event::Closed) {
-			window.close();
-		}
-		else if (event.type == Event::Resized) {
-			view.setSize(float(event.size.width), float(event.size.height));
-			int map_height = level.height * level.tileHeight;
-			int map_width = level.width * level.tileWidth;
-			cout << map_height / float(event.size.height * event.size.height / WindowHeight) << endl;
-			if (map_height < map_width) {
-				if (unsigned int(map_height) < event.size.height) {
-					view.zoom(map_height / float(event.size.height));
-				}
-			}
-			else {
-				if (unsigned int(map_width) < event.size.width) {
-					view.zoom(unsigned int(map_width) / float(event.size.width));
-				}
-			}
-
-		}
-	
 }
 
 void DestroyPlayer(Player& player) {

@@ -46,11 +46,11 @@ void SoundsInit(SoundsVec & sounds) {
 
 
 std::string GetRandomSoundNameByType(SoundType type, const SoundNamesMap & sound_names) {
-	int count = GetSoundsCountFromType(type);
+	size_t count = GetSoundsCountFromType(type);
 	return sound_names.at(type).at(rand() % count);
 }
 
-int GetSoundsCountFromType(SoundType type) {
+unsigned int GetSoundsCountFromType(SoundType type) {
 	switch (type) {
 		case HIT: 
 			return HitSoundsCount;
@@ -66,15 +66,16 @@ int GetSoundsCountFromType(SoundType type) {
 	return 0;
 }
 
-void PlaySound(SoundType type, SoundsVec & sounds, SoundBuffersMap & buffers) {
-	for (size_t i = 0; i < sounds.size(); i++) {
-		if (sounds[i]->getStatus() == sf::SoundSource::Stopped) {
-			sounds[i]->setBuffer(*buffers.at(type).at(rand() % GetSoundsCountFromType(type)));
-			sounds[i]->play();
-			break;
+void PlaySounds(SoundType type, SoundsVec & sounds, SoundBuffersMap & buffers) {
+		for (size_t i = 0; i < sounds.size(); i++) {
+			if (sounds[i]->getStatus() == sf::SoundSource::Stopped) {
+				sounds[i]->setBuffer(*buffers.at(type).at(rand() % GetSoundsCountFromType(type)));
+				sounds[i]->play();
+				break;
 		}
 	}
 }
+
 
 void SoundBuffersInit(SoundBuffersMap & buffers, SoundNamesMap & sound_names) {
 	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>>(HIT, *CreateSoundBuffersVec(HIT,sound_names)));
@@ -104,7 +105,7 @@ std::vector<std::string>* CreateSoundNamesVec(SoundType type) {
 }
 
 void SoundNamesVecInit(std::vector<std::string> & names, SoundType type) {
-	int count = GetSoundsCountFromType(type);
+	size_t count = GetSoundsCountFromType(type);
 	for (size_t i = 0; i < count; i++) {
 		std::string name = SoundTypeToString(type);
 		std::stringstream number;
@@ -115,7 +116,7 @@ void SoundNamesVecInit(std::vector<std::string> & names, SoundType type) {
 }
 
 void SoundBuffersVecInit(std::vector<sf::SoundBuffer*> & buffers, std::vector<std::string> & names, SoundType type) {
-	int count = GetSoundsCountFromType(type);
+	size_t count = GetSoundsCountFromType(type);
 	for (size_t i = 0; i < count; i++) {
 		sf::SoundBuffer* buffer = new sf::SoundBuffer();
 		buffer->loadFromFile("Resourses/Sounds/" + SoundTypeToString(type) + '/' + names.at(i));

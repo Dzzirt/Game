@@ -6,20 +6,22 @@
 #include "resourses.h"
 
 
+
 struct Player {
 	Movement * movement;
 	FightLogic * fight;
 	HpBar* hp_bar;
 	Visual * visual;
 	Jump* jumping;
-
+	bool is_map_complete;
+	bool is_injured;
 };
 
 Player* CreatePlayer(Resourses & res);
 
 void PlayerInit(Player& player, Resourses & res);
 
-void PlayerUpdate(Player & player, const Level & level, const sf::Time& deltaTime);
+void PlayerUpdate(Player & player, Level & level, const sf::Time& deltaTime);
 
 void CheckGravityLogic(Jump & jump, Movement & movement, const sf::Time& deltaTime);
 
@@ -29,7 +31,7 @@ void AnimationsUpdate(Player& player);
 
 void ProcessPlayerEvents(sf::RenderWindow& window, sf::Event & event, Player & player, GameSounds & sounds, Level & level, sf::View & view);
 
-void CheckPlayerAndLevelCollision(Player& player, const Level& level);
+void CheckPlayerAndLevelCollision(Player& player, Level& level);
 
 void PlayerLevelCollision(Player & player, const Object & map_object);
 

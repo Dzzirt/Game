@@ -14,7 +14,7 @@ void FrameInit(Frame & frame, Type type, std::vector<json_spirit::Pair> & int_re
 		frame.image.loadFromFile("Resourses/Hero/hero.png");
 		frame.texture.loadFromImage(frame.image);
 		frame.sprite.setTexture(frame.texture);
-
+		frame.sprite.setColor(sf::Color::Red);
 		break;
 	case SPEARMAN:
 		frame.image.loadFromFile("Resourses/Enemy/spearman.png");

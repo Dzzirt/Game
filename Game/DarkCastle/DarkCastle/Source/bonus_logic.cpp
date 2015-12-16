@@ -15,7 +15,7 @@ void BonusLogicInit(BonusLogic& bonus_logic, Resourses & res, BonusType type, in
 	*bonus_logic.rect = GetBonusRectFromLvl(*res.lvl, type, number);
 	bonus_logic.picked_up = false;
 	bonus_logic.value = GetConfig(*res.config, "BONUS_VALUE", type);
-	bonus_logic.duration = GetConfig(*res.config, "BONUS_DURATION", type);
+	bonus_logic.duration = float(GetConfig(*res.config, "BONUS_DURATION", type));
 }
 
 sf::FloatRect GetBonusRectFromLvl(Level& lvl, BonusType type, int number) {

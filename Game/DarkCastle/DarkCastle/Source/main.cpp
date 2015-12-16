@@ -1,6 +1,8 @@
 #include "../Headers/game.h"
 using namespace sf;
 
+
+
 int main() {
 	Game* game = CreateGame();
 	Clock clock;

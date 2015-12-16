@@ -7,7 +7,6 @@
 struct Animation {
 	bool left_attack;
 	bool right_attack;
-	bool is_injured;
 	float current_attack_frame;
 	float current_move_frame;
 	float current_jump_frame;

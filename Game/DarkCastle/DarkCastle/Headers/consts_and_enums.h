@@ -4,8 +4,6 @@
 	const unsigned int WindowWidth = 800;
 	const unsigned int WindowHeight = 600;
 
-	const int PlayerInjuredY = 173;
-	const int SpearmanInjuredY = 110;
 
 	const float FallingSpeedCoef = 1.6f;
 	const float JumpingSpeedCoef = 1.3f;

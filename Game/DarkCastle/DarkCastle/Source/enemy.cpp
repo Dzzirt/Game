@@ -19,6 +19,7 @@ void EnemyInit(Enemy& enemy, Type type, Resourses & res, int number) {
 	FloatRect rect = GetEnemyRectFromLvl(*res.lvl, type, number);
 	enemy.visual = CreateVisual(type, rect, *res.int_rects);
 	enemy.is_attacked = false;
+	enemy.is_injured = false;
 }
 
 FloatRect GetEnemyRectFromLvl(Level& lvl, Type type, int number) {
@@ -41,7 +42,7 @@ int GetEnemiesCount(Level& lvl, Type type) {
 }
 
 
-void ProcessEnemiesEvents(Enemy& enemy, FloatRect& player_box) {
+void ProcessEnemyEvents(Enemy& enemy, FloatRect& player_box) {
 	Animation& anim = *enemy.visual->animation;
 	FloatRect& enemy_box = *enemy.visual->rect;
 	float enemy_box_right = enemy_box.left + enemy_box.width;
@@ -134,6 +135,7 @@ void AnimationsUpdate(Enemy& enemy) {
 	Animation& animation = *enemy.visual->animation;
 	State& state = enemy.movement->state;
 	float game_step = enemy.movement->step * TimePerFrame.asSeconds();
+	animation.frame->sprite.setColor(Color::White);
 	MoveAndStayAnimation(animation, state, enemy.type, game_step);
 	AttackAnimation(animation, enemy.type, game_step);
 }

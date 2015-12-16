@@ -6,20 +6,23 @@ Resourses* CreateResourses() {
 	return res;
 }
 
-Level* CreateLevel() {
+Level* CreateLevel(std::string map_name)
+{
 	Level* level = new Level();
-	LevelInit(*level);
+	LevelInit(*level, map_name);
 	return level;
 }
 
 void ResInit(Resourses& res) {
 	res.int_rects = GetEntitiesVector("Resourses/frames.txt");
 	res.config = GetEntitiesVector("Resourses/bonus_config.txt");
-	res.lvl = CreateLevel();
+	res.lvl = CreateLevel("map.tmx");
+	res.curr_lvl_num = 0;
 }
 
-void LevelInit(Level& level) {
-	level.LoadFromFile("Resourses/map.tmx");
+void LevelInit(Level & level, std::string map_name)
+{
+	level.LoadFromFile("Resourses/" + map_name);
 }
 
 

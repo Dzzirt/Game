@@ -12,7 +12,6 @@ void AnimationInit(Animation& animation, Type type, std::vector<json_spirit::Pai
 	animation.frame = CreateFrame(type, int_rects);
 	animation.left_attack = false;
 	animation.right_attack = false;
-	animation.is_injured = false;
 	animation.current_attack_frame = 0.f;
 	animation.current_move_frame = 0.f;
 	animation.current_jump_frame = 0.f;
@@ -49,12 +48,7 @@ void GravityAnimation(Animation& animation) {
 	Frame& frame = *animation.frame;
 	IntRect& rect = animation.frame->rect->gravity;
 	int injured_y = 0;
-	// Disable attack
 	DisableAttack(animation);
-	//
-	if (animation.is_injured) {
-		injured_y = PlayerInjuredY;
-	}
 	frame.sprite.setTextureRect(IntRect(rect.left, rect.top + injured_y, rect.width, rect.height));
 
 }
@@ -67,10 +61,7 @@ void JumpAnimation(Animation& animation, float game_step) {
 	animation.current_jump_frame += float(0.07 * game_step);
 	CheckJumpReset(animation);
 	jump_rect.left *= int(animation.current_jump_frame);
-	if (animation.is_injured) {
-		injured_y = PlayerInjuredY;
-	}
-	frame.sprite.setTextureRect(IntRect(jump_rect.left, jump_rect.top + injured_y, jump_rect.width, jump_rect.height));
+	frame.sprite.setTextureRect(jump_rect);
 }
 
 void AttackAnimation(Animation& animation, Type type, float game_step) {
@@ -78,14 +69,6 @@ void AttackAnimation(Animation& animation, Type type, float game_step) {
 	IntRect atk_rect = frame.rect->attack;
 	float& atk_frame = animation.current_attack_frame;
 	int injured_y = 0;
-	if (animation.is_injured) {
-		if (type == PLAYER) {
-			injured_y = PlayerInjuredY;
-		}
-		else if (type == SPEARMAN) {
-			injured_y = SpearmanInjuredY;
-		} 
-	}
 	if (animation.left_attack) {
 		if (type == SPEARMAN) {
 			switch (int(atk_frame)) {
@@ -115,7 +98,7 @@ void AttackAnimation(Animation& animation, Type type, float game_step) {
 			CheckAttackReset(animation);
 			atk_rect.left *= int(atk_frame);
 			FlipRectHoriz(atk_rect);
-			frame.sprite.setTextureRect(IntRect(atk_rect.left, atk_rect.top + injured_y, atk_rect.width, atk_rect.height));
+			frame.sprite.setTextureRect(atk_rect);
 		}
 	
 		if (animation.right_attack) {
@@ -141,7 +124,7 @@ void AttackAnimation(Animation& animation, Type type, float game_step) {
 				atk_frame += float(animation.anim_speed * game_step);
 				atk_rect.left *= int(atk_frame);
 				if (atk_frame < animation.max_attack_frame) {
-					frame.sprite.setTextureRect(IntRect(atk_rect.left, atk_rect.top + injured_y, atk_rect.width, atk_rect.height));
+					frame.sprite.setTextureRect(atk_rect);
 				}
 				CheckAttackReset(animation);
 			}
@@ -154,14 +137,6 @@ void MoveAndStayAnimation(Animation& animation, State state, Type type, float ga
 	IntRect stay_rect = frame.rect->stay;
 	frame.displacement = 0;
 	int injured_y = 0;
-	if (animation.is_injured) {
-		if (type == PLAYER) {
-			injured_y = PlayerInjuredY;
-		}
-		else if (type == SPEARMAN) {
-			injured_y = SpearmanInjuredY;
-		}
-	}
 	float& move_frame = animation.current_move_frame;
 	switch (state) {
 		case LEFT:
@@ -169,13 +144,13 @@ void MoveAndStayAnimation(Animation& animation, State state, Type type, float ga
 			CheckMoveReset(animation);
 			move_rect.left *= int(move_frame);
 			FlipRectHoriz(move_rect);
-			frame.sprite.setTextureRect(IntRect(move_rect.left, move_rect.top + injured_y, move_rect.width, move_rect.height));
+			frame.sprite.setTextureRect(move_rect);
 			break;
 		case RIGHT:
 			move_frame += float(animation.anim_speed * game_step);
 			CheckMoveReset(animation);
 			move_rect.left *= int(move_frame);
-			frame.sprite.setTextureRect(IntRect(move_rect.left, move_rect.top + injured_y, move_rect.width, move_rect.height));
+			frame.sprite.setTextureRect(move_rect);
 			break;
 		case NONE:
 			float& stay_frame = animation.current_stay_frame;
@@ -183,7 +158,7 @@ void MoveAndStayAnimation(Animation& animation, State state, Type type, float ga
 			CheckStayReset(animation);
 			stay_rect.left *= int(stay_frame);
 			CheckStayFlip(frame.sprite, stay_rect);
-			frame.sprite.setTextureRect(IntRect(stay_rect.left, stay_rect.top + injured_y, stay_rect.width, stay_rect.height));
+			frame.sprite.setTextureRect(stay_rect);
 			break;
 	}
 }
