@@ -9,11 +9,6 @@ typedef std::map<SoundType, std::vector<std::string>> SoundNamesMap;
 typedef std::vector<sf::Sound*> SoundsVec;
 
 
-
-
-
-
-
 SoundBuffersMap* CreateSoundBuffers(SoundNamesMap & sound_names);
 
 SoundNamesMap* CreateSoundNames();

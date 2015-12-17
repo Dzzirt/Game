@@ -10,9 +10,6 @@
 #include "resourses.h"
 
 
-
-
-
 struct Enemy {
 	Movement * movement;
 	FightLogic * fight;
@@ -23,6 +20,7 @@ struct Enemy {
 	bool is_attacked;
 	bool is_injured;
 };
+
 
 Enemy* CreateEnemy(Resourses & res, int number);
 

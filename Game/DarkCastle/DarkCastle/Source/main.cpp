@@ -1,3 +1,4 @@
+#include <vld.h>
 #include "../Headers/game.h"
 using namespace sf;
 

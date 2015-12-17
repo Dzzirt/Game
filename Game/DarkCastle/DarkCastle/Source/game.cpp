@@ -400,7 +400,7 @@ void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 
 
 void DestroyWindow(RenderWindow& window) {
-	delete &window;
+	//delete &window;
 }
 
 void DestroyEnemyList(list<Enemy*>& enemy_list) {
