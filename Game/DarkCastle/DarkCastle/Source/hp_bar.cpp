@@ -1,5 +1,5 @@
 #include "../Headers/hp_bar.h"
-
+#include "../Headers/safe_delete.h"
 
 HpBar* CreateHpBar(Type type, std::vector<json_spirit::Pair>& int_rects, float curr_hp, float max_hp) {
 	HpBar * hp = new HpBar();
@@ -92,7 +92,18 @@ void HpBarUpdate(HpBar & hp, sf::View & view, float curr_hp) {
 	visual_hp.strip_sprite.setTextureRect(sf::IntRect(0, hp_strip.top, int(hp_strip.width * health_in_percent), hp_strip.height));
 }
 
-void DestroyHpBar(HpBar & hp)
+void DestroyVisualHpBar(VisualHpBar *& visual){
+	SafeDelete(visual);
+}
+
+void DestroyLogicHpBar(LogicHpBar *& logic)
 {
-	delete &hp;
+	SafeDelete(logic);
+}
+
+void DestroyHpBar(HpBar *& hp)
+{
+	DestroyVisualHpBar(hp->visual_hp);
+	DestroyLogicHpBar(hp->logic_hp);
+	SafeDelete(hp);
 }

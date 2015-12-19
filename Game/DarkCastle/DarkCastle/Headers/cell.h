@@ -13,4 +13,4 @@ Cell* CreateCell(Bonus & bonus);
 
 void CellInit(Cell & cell, Bonus & bonus);
 
-void DestroyCell(Cell & cell);
+void DestroyCell(Cell *& cell);

@@ -14,4 +14,4 @@ CellLogic* CreateCellLogic(BonusLogic & b_logic);
 
 void CellLogicInit(CellLogic & cell_logic, BonusLogic & b_logic);
 
-void DestroyCellLogic(CellLogic & cell_logic);
+void DestroyCellLogic(CellLogic *& cell_logic);

@@ -1,4 +1,5 @@
 #include "../Headers/cell.h"
+#include "../Headers/safe_delete.h"
 
 Cell* CreateCell(Bonus & bonus) {
 	Cell * cell = new Cell();
@@ -11,8 +12,8 @@ void CellInit(Cell& cell, Bonus & bonus) {
 	cell.logic = CreateCellLogic(*bonus.bonus_logic);
 }
 
-void DestroyCell(Cell& cell) {
-	DestroyCellLogic(*cell.logic);
-	DestroyCellVisual(*cell.visual);
-	delete &cell;
+void DestroyCell(Cell *& cell) {
+		DestroyCellLogic(cell->logic);
+		DestroyCellVisual(cell->visual);
+		SafeDelete(cell);
 }

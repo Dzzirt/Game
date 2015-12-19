@@ -40,5 +40,5 @@ void AnimationsUpdate(Enemy& enemy);
 
 void CheckEnemyAndLevelCollision(Enemy & enemy, const Level & level);
 
-void DestroyEnemy(Enemy & enemy);
+void DestroyEnemy(Enemy *& enemy);
 

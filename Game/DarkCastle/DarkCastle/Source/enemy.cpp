@@ -1,6 +1,8 @@
 #include <sstream>
 #include "../Headers/enemy.h"
 #include "math.h"
+#include "../Headers/safe_delete.h"
+
 using namespace sf;
 using namespace std;
 
@@ -176,10 +178,11 @@ void CheckEnemyAndLevelCollision(Enemy& enemy, const Level& level) {
 	}
 }
 
-void DestroyEnemy(Enemy & enemy) {
-	DestroyMovement(*enemy.movement);
-	DestroyFightLogic(*enemy.fight);
-	DestroyVisual(*enemy.visual);
-	DestroyAI(*enemy.ai);
-	delete &enemy;
+void DestroyEnemy(Enemy *& enemy) {
+	DestroyMovement(enemy->movement);
+	DestroyFightLogic(enemy->fight);
+	DestroyVisual(enemy->visual);
+	DestroyAI(enemy->ai);
+	DestroyHpBar(enemy->hp_bar);
+	SafeDelete(enemy);
 }

@@ -1,5 +1,5 @@
 #include "../Headers/view.h"
-
+#include "../Headers/safe_delete.h"
 
 sf::View* CreateView() {
 	sf::View * view = new sf::View();
@@ -34,6 +34,6 @@ void ViewUpdate(sf::View& view, const Movement& movement, const Level& level, fl
 	view.setCenter(tempX, tempY);
 }
 
-void DestroyView(sf::View & view) {
-	delete &view;
+void DestroyView(sf::View *& view) {
+	SafeDelete(view);
 }

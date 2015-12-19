@@ -1,5 +1,7 @@
 #include "../Headers/movement.h"
 #include "../Headers/game_rand.h"
+#include "../Headers/safe_delete.h"
+
 
 Movement* CreateMovement(Type type) {
 	Movement* movement = new Movement();
@@ -30,9 +32,8 @@ void MovementInit(Movement & movement, Type type) {
 	}
 }
 
-void DestroyMovement(Movement & movement)
-{
-	delete &movement;
+void DestroyMovement(Movement *& movement) {
+	SafeDelete(movement);
 }
 
 void CheckMovementLogic(Movement & movement) {

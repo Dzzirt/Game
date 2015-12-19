@@ -1,4 +1,5 @@
 #include "../Headers/frame_rect.h"
+#include "../Headers/safe_delete.h"
 
 using namespace sf;
 
@@ -18,7 +19,7 @@ void FrameRectInit(FrameRects & frame_rect, Type type, std::vector<json_spirit::
 	frame_rect.gravity = GetIntRect(int_rects, entity, "GRAVITY");
 }
 
-void DestroyFrameRects(FrameRects & frame_rects)
+void DestroyFrameRects(FrameRects *& frame_rects)
 {
-	delete &frame_rects;
+	SafeDelete(frame_rects);
 }

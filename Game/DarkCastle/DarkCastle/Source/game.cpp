@@ -1,5 +1,6 @@
 #include <sstream>
 #include "../Headers/game.h"
+#include "../Headers/safe_delete.h"
 
 using namespace sf;
 using namespace std;
@@ -31,6 +32,16 @@ std::list<Bonus*>* CreateBonusList(Resourses& res) {
 std::list<DurationController*>* CreateDurationControllerVec() {
 	std::list<DurationController*>* controllers = new std::list<DurationController*>();
 	return controllers;
+}
+
+void DestroyDurationControllerVec(std::list<DurationController*> *& dur_ctrl_vec){
+	if (dur_ctrl_vec) {
+		for (DurationController* ctrl : *dur_ctrl_vec) {
+			DestroyDurationController(ctrl);
+		}
+		SafeDelete(dur_ctrl_vec);
+	}
+
 }
 
 void EnemyListInit(list<Enemy*>& enemy_list, Resourses& res, Type type) {
@@ -89,9 +100,9 @@ void ProcessEvents(Game*& game) {
 }
 
 void ChangeMap(Game &game, std::string map_name) {
-	DestroyLevel(*game.res->lvl);
-	DestroyBonusList(*game.bonus_list);
-	DestroyEnemyList(*game.enemy_list);
+	DestroyLevel(game.res->lvl);
+	DestroyBonusList(game.bonus_list);
+	DestroyEnemyList(game.enemy_list);
 	DestroyMaceTrapVec(game.mace_traps);
 	game.res->lvl = CreateLevel(map_name);
 	*game.player->visual->rect = GetPlayerRectFromLvl(*game.res->lvl);
@@ -164,7 +175,7 @@ void Update(Game& game, const Time& deltaTime) {
 	DurationControllersVecUpdate(*game.dur_ctrl_list, deltaTime);
 	for (DurationController *& ctrl : *game.dur_ctrl_list) {
 		if (CheckBonusEffectEnd(*game.player, *ctrl, *game.res->config)) {
-			DestroyDurationController(*ctrl);
+			DestroyDurationController(ctrl);
 			game.dur_ctrl_list->remove(ctrl);
 			break;
 		}
@@ -245,7 +256,7 @@ bool ÑheckingBonusEffectActivation(Game & game) {
 				break;
 			}
 			dur_ctrl_list.push_back(CreateDurationController(*items[i]->logic));
-			DestroyCell(*items[i]);
+			DestroyCell(items[i]);
 			items.erase(items.begin() + i);
 			return true;
 		}
@@ -275,7 +286,7 @@ void CheckPlayerAndEnemiesCollisions(std::list<Enemy*> & enemy_list, Player& pla
 		PlayerEnemyCollision(player, *enemy);
 		EnemyPlayerCollision(*enemy, player);
 		if (enemy->fight->is_dead) {
-			DestroyEnemy(*enemy);
+			DestroyEnemy(enemy);
 			enemy_list.remove(*iter);
 			break;
 		}
@@ -286,7 +297,7 @@ void PickUpBonus(Game &game, Bonus * bonus, list<Bonus*>::iterator iter) {
 	if (AddToItemsVec(*game.b_panel->items, *bonus)) {
 		PlaySounds(BONUS_PICK, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
 		game.bonus_list->remove(*iter);
-		DestroyBonus(*bonus);
+		DestroyBonus(bonus);
 	}
 	else {
 		bonus->bonus_logic->picked_up = false;
@@ -399,37 +410,35 @@ void EnemyPlayerCollision(const Enemy& enemy, Player& player) {
 }
 
 
-void DestroyWindow(RenderWindow& window) {
-	//delete &window;
+void DestroyWindow(sf::RenderWindow *& window) {
+	SafeDelete(window);
 }
 
-void DestroyEnemyList(list<Enemy*>& enemy_list) {
-	list<Enemy*>::iterator begin = enemy_list.begin();
-	list<Enemy*>::iterator end = enemy_list.end();
-	for (list<Enemy*>::iterator iter = begin; iter != end; ++iter) {
-		DestroyEnemy(**iter);
+void DestroyEnemyList(std::list<Enemy*> *& enemy_list) {
+	list<Enemy*>::iterator begin = enemy_list->begin();
+	list<Enemy*>::iterator end = enemy_list->end();
+	for (Enemy * enemy : *enemy_list) {
+		DestroyEnemy(enemy);
 	}
-	delete &enemy_list;
+	SafeDelete(enemy_list);
 }
 
-void DestroyBonusList(list<Bonus*>& bonus_list) {
-	for (Bonus* bonus : bonus_list) {
-		DestroyBonus(*bonus);
-	}
-	delete &bonus_list;
+void DestroyBonusList(std::list<Bonus*>*& bonus_list) {
+	for_each(bonus_list->begin(), bonus_list->end(), DestroyBonus);
+	SafeDelete(bonus_list);
 }
 
 void DestroyGame(Game*& game) {
-	DestroyWindow(*game->window);
-	DestroyLevel(*game->res->lvl);
-	DestroyPlayer(*game->player);
-	DestroyEnemyList(*game->enemy_list);
-	DestroyBonusList(*game->bonus_list);
-	DestroyResourses(*game->res);
-	DestroyBonusesPanel(*game->b_panel);
-	DestroyGameSounds(*game->game_sounds);
+	DestroyWindow(game->window);
+	DestroyPlayer(game->player);
+	DestroyEnemyList(game->enemy_list);
+	DestroyBonusList(game->bonus_list);
+	DestroyDurationControllerVec(game->dur_ctrl_list);
+	DestroyResourses(game->res);
+	DestroyBonusesPanel(game->b_panel);
+	DestroyGameSounds(game->game_sounds);
 	DestroyMaceTrapVec(game->mace_traps);
-	DestroyDieScreen(*game->die_screen);
-	delete game->view;
-	delete game;
+	DestroyDieScreen(game->die_screen);
+	DestroyView(game->view);
+	SafeDelete(game);
 }

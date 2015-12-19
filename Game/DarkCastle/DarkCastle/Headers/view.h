@@ -8,4 +8,4 @@ sf::View* CreateView();
 
 void ViewUpdate(sf::View& view, const Movement& movement, const Level& level, float displacement);
 
-void DestroyView(sf::View & view);
+void DestroyView(sf::View *& view);

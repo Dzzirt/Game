@@ -23,4 +23,4 @@ FightLogic* CreateFightLogic(Type type);
 
 void FightLogicInit(FightLogic& fight, Type type);
 
-void DestroyFightLogic(FightLogic & fight);
+void DestroyFightLogic(FightLogic *& fight);

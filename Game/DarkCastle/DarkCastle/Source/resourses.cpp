@@ -1,4 +1,5 @@
 #include "../Headers/resourses.h"
+#include "../Headers/safe_delete.h"
 
 Resourses* CreateResourses() {
 	Resourses * res = new Resourses();
@@ -25,11 +26,17 @@ void LevelInit(Level & level, std::string map_name)
 	level.LoadFromFile("Resourses/" + map_name);
 }
 
-
-void DestroyResourses(Resourses & res) {
-	delete & res;
+void DestroyEntitiesVector(std::vector<json_spirit::Pair> *& entities){
+	SafeDelete(entities);
 }
 
-void DestroyLevel(Level& level) {
-	delete &level;
+void DestroyResourses(Resourses *& res) {
+	DestroyEntitiesVector(res->config);
+	DestroyEntitiesVector(res->int_rects);
+	DestroyLevel(res->lvl);
+	SafeDelete(res);
+}
+
+void DestroyLevel(Level*& level) {
+	SafeDelete(level);
 }

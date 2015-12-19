@@ -1,5 +1,6 @@
 #include "../Headers/visual.h"
 #include "../Headers/level.hpp"
+#include "../Headers/safe_delete.h"
 
 Visual* CreateVisual(Type type, sf::FloatRect & rect, std::vector<json_spirit::Pair> & int_rects) {
 	Visual * visual = new Visual();
@@ -12,9 +13,9 @@ void VisualInit(Visual& visual, Type type, sf::FloatRect & rect, std::vector<jso
 	*visual.rect = rect;
 }
 
-void DestroyVisual(Visual& visual){
-	DestroyAnimation(*visual.animation);
-	delete visual.rect;
-	delete &visual;
+void DestroyVisual(Visual *& visual){
+		DestroyAnimation(visual->animation);
+		SafeDelete(visual->rect);
+		SafeDelete(visual);
 }
 

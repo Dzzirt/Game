@@ -1,6 +1,6 @@
 #include "../Headers/mace_trap.h"
 #include <iostream>
-
+#include "../Headers/safe_delete.h"
 
 
 MaceTrap* CreateMaceTrap() {
@@ -32,7 +32,7 @@ void MaceTrapUpdate(MaceTrap & mace_trap, const sf::Time& deltaTime) {
 }
 
 
-void DestroyMaceTrap(MaceTrap & mace_trap) {
-	delete &mace_trap;
+void DestroyMaceTrap(MaceTrap *& mace_trap) {
+	SafeDelete(mace_trap);
 }
 

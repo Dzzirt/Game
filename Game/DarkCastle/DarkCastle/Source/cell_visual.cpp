@@ -1,5 +1,6 @@
 #include "../Headers/cell_visual.h"
 #include "../Headers/bonuses_panel_const.h"
+#include "../Headers/safe_delete.h"
 
 CellVisual* CreateCellVisual(BonusVisual & b_visual) {
 	CellVisual * cell_visual = new CellVisual();
@@ -17,6 +18,6 @@ void CellVisualInit(CellVisual& cell_visual, BonusVisual & b_visual) {
 	cell_visual.sprite.setScale(CellWidth / cell_size.width, CellHeight / cell_size.height);
 }
 
-void DestroyCellVisual(CellVisual& cell_visual) {
-	delete &cell_visual;
+void DestroyCellVisual(CellVisual *& cell_visual) {
+	SafeDelete(cell_visual);
 }

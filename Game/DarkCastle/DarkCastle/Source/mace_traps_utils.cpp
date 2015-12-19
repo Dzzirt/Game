@@ -2,7 +2,6 @@
 
 
 
-
 void MaceTrapVecInit(std::vector<MaceTrap*> & mace_traps, Level & level) {
 	for (int i = 0; i < GetMaceTrapsCount(level) ; i++)
 	{
@@ -33,7 +32,7 @@ void DrawMaceTraps(std::vector<MaceTrap*> & mace_traps, sf::RenderWindow & windo
 void DestroyMaceTrapVec(std::vector<MaceTrap*> & mace_traps) {
 	for (size_t i = 0; i < mace_traps.size() ; i++)
 	{
-		DestroyMaceTrap(*mace_traps[i]);
+		DestroyMaceTrap(mace_traps[i]);
 		mace_traps.erase(mace_traps.begin() + i);
 	}
 }

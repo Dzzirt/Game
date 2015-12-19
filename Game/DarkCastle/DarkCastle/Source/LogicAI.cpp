@@ -1,5 +1,6 @@
 #include "../Headers/logic_AI.h"
 #include "../Headers/consts_and_enums.h"
+#include "../Headers/safe_delete.h"
 
 LogicAI* CreateAI(Type type) {
 	LogicAI* ai = new LogicAI();
@@ -22,6 +23,6 @@ void InitLogicAI(LogicAI & ai, Type type) {
 
 }
 
-void DestroyAI( LogicAI & ai) {
-	delete &ai;
+void DestroyAI(LogicAI *& ai) {
+	SafeDelete(ai);
 }

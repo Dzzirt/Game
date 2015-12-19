@@ -1,4 +1,5 @@
 #include "../Headers/cell_logic.h"
+#include "../Headers/safe_delete.h"
 
 CellLogic* CreateCellLogic(BonusLogic & b_logic) {
 	CellLogic * cell_logic = new CellLogic();
@@ -13,6 +14,6 @@ void CellLogicInit(CellLogic & cell_logic, BonusLogic & b_logic) {
 	cell_logic.is_activated = false;
 }
 
-void DestroyCellLogic(CellLogic& cell_logic) {
-	delete &cell_logic;
+void DestroyCellLogic(CellLogic *& cell_logic) {
+	SafeDelete(cell_logic);
 }

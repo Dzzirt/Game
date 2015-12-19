@@ -1,4 +1,5 @@
 #include "../Headers/sounds_utils.h"
+#include "../Headers/safe_delete.h"
 
 std::string SoundTypeToString(SoundType type) {
 	switch (type) {
@@ -47,7 +48,7 @@ void SoundsInit(SoundsVec & sounds) {
 
 std::string GetRandomSoundNameByType(SoundType type, const SoundNamesMap & sound_names) {
 	size_t count = GetSoundsCountFromType(type);
-	return sound_names.at(type).at(rand() % count);
+	return sound_names.at(type)->at(rand() % count);
 }
 
 unsigned int GetSoundsCountFromType(SoundType type) {
@@ -69,7 +70,7 @@ unsigned int GetSoundsCountFromType(SoundType type) {
 void PlaySounds(SoundType type, SoundsVec & sounds, SoundBuffersMap & buffers) {
 		for (size_t i = 0; i < sounds.size(); i++) {
 			if (sounds[i]->getStatus() == sf::SoundSource::Stopped) {
-				sounds[i]->setBuffer(*buffers.at(type).at(rand() % GetSoundsCountFromType(type)));
+				sounds[i]->setBuffer(*buffers.at(type)->at(rand() % GetSoundsCountFromType(type)));
 				sounds[i]->play();
 				break;
 		}
@@ -78,24 +79,24 @@ void PlaySounds(SoundType type, SoundsVec & sounds, SoundBuffersMap & buffers) {
 
 
 void SoundBuffersInit(SoundBuffersMap & buffers, SoundNamesMap & sound_names) {
-	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>>(HIT, *CreateSoundBuffersVec(HIT,sound_names)));
-	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>>(MISS, *CreateSoundBuffersVec(MISS, sound_names)));
-	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>>(BONUS_PICK, *CreateSoundBuffersVec(BONUS_PICK, sound_names)));
-	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>>(JUMP, *CreateSoundBuffersVec(JUMP, sound_names)));
-	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>>(GET_HIT, *CreateSoundBuffersVec(GET_HIT, sound_names)));
+	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>*>(HIT, CreateSoundBuffersVec(HIT,sound_names)));
+	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>*>(MISS, CreateSoundBuffersVec(MISS, sound_names)));
+	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>*>(BONUS_PICK, CreateSoundBuffersVec(BONUS_PICK, sound_names)));
+	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>*>(JUMP, CreateSoundBuffersVec(JUMP, sound_names)));
+	buffers.insert(std::pair<SoundType, std::vector<sf::SoundBuffer*>*>(GET_HIT, CreateSoundBuffersVec(GET_HIT, sound_names)));
 }
 
 void SoundNamesMapInit(SoundNamesMap & sound_names) {
-	sound_names.insert(std::pair<SoundType, std::vector<std::string>>(HIT, *CreateSoundNamesVec(HIT)));
-	sound_names.insert(std::pair<SoundType, std::vector<std::string>>(MISS, *CreateSoundNamesVec(MISS)));
-	sound_names.insert(std::pair<SoundType, std::vector<std::string>>(BONUS_PICK, *CreateSoundNamesVec(BONUS_PICK)));
-	sound_names.insert(std::pair<SoundType, std::vector<std::string>>(JUMP, *CreateSoundNamesVec(JUMP)));
-	sound_names.insert(std::pair<SoundType, std::vector<std::string>>(GET_HIT, *CreateSoundNamesVec(GET_HIT)));
+	sound_names.insert(std::pair<SoundType, std::vector<std::string>*>(HIT, CreateSoundNamesVec(HIT)));
+	sound_names.insert(std::pair<SoundType, std::vector<std::string>*>(MISS, CreateSoundNamesVec(MISS)));
+	sound_names.insert(std::pair<SoundType, std::vector<std::string>*>(BONUS_PICK, CreateSoundNamesVec(BONUS_PICK)));
+	sound_names.insert(std::pair<SoundType, std::vector<std::string>*>(JUMP, CreateSoundNamesVec(JUMP)));
+	sound_names.insert(std::pair<SoundType, std::vector<std::string>*>(GET_HIT, CreateSoundNamesVec(GET_HIT)));
 }
 
 std::vector<sf::SoundBuffer*>* CreateSoundBuffersVec(SoundType type, SoundNamesMap & sound_names) {
 	std::vector<sf::SoundBuffer*>* buffers = new std::vector<sf::SoundBuffer*>();
-	SoundBuffersVecInit(*buffers, sound_names.at(type),  type);
+	SoundBuffersVecInit(*buffers, *sound_names.at(type),  type);
 	return buffers;
 }
 std::vector<std::string>* CreateSoundNamesVec(SoundType type) {
@@ -124,27 +125,38 @@ void SoundBuffersVecInit(std::vector<sf::SoundBuffer*> & buffers, std::vector<st
 	}
 }
 
-void DestroySoundBuffersVec(std::vector<sf::SoundBuffer*> & buffers) {
-	for (size_t i = 0; i < buffers.size(); i++) {
-		delete buffers[i];
+void DestroySoundBuffersVec(std::vector<sf::SoundBuffer*> *& buffers) {
+	for (size_t i = 0; i < buffers->size(); i++) {
+		SafeDelete(buffers[0][i]);
 	}
+	SafeDelete(buffers);
 }
 
-void DestroySoundBuffers(SoundBuffersMap & buffers) {
-	DestroySoundBuffersVec(buffers.at(HIT));
-	DestroySoundBuffersVec(buffers.at(MISS));
-	DestroySoundBuffersVec(buffers.at(BONUS_PICK));
-	DestroySoundBuffersVec(buffers.at(JUMP));
-	delete &buffers;
+void DestroySoundNamesVec(std::vector<std::string> *& names) {
+	SafeDelete(names);
 }
 
-void DestroySoundsNames(SoundNamesMap& names) {
-	delete &names;
+void DestroySoundBuffers(SoundBuffersMap *& buffers) {
+	DestroySoundBuffersVec(buffers->at(HIT));
+	DestroySoundBuffersVec(buffers->at(MISS));
+	DestroySoundBuffersVec(buffers->at(BONUS_PICK));
+	DestroySoundBuffersVec(buffers->at(JUMP));
+	DestroySoundBuffersVec(buffers->at(GET_HIT));
+	SafeDelete(buffers);
 }
 
-void DestroySounds(SoundsVec& sounds) {
-	for (sf::Sound * sound : sounds) {
-		delete sound;
+void DestroySoundsNames(SoundNamesMap *& names) {
+	DestroySoundNamesVec(names->at(HIT));
+	DestroySoundNamesVec(names->at(MISS));
+	DestroySoundNamesVec(names->at(BONUS_PICK));
+	DestroySoundNamesVec(names->at(JUMP));
+	DestroySoundNamesVec(names->at(GET_HIT));
+	SafeDelete(names);
+}
+
+void DestroySounds(SoundsVec *& sounds) {
+	for (sf::Sound * sound : *sounds) {
+		SafeDelete(sound);
 	}
-	delete &sounds;
+	SafeDelete(sounds);
 }

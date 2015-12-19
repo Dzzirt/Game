@@ -1,5 +1,6 @@
 #include "../Headers/player.h"
 #include <boost/bind/bind.hpp>
+#include "../Headers/safe_delete.h"
 
 using namespace sf;
 using namespace std;
@@ -178,10 +179,11 @@ void ProcessPlayerEvents(RenderWindow& window, Event& event, Player& player, Gam
 
 }
 
-void DestroyPlayer(Player& player) {
-	DestroyFightLogic(*player.fight);
-	DestroyMovement(*player.movement);
-	DestroyJump(*player.jumping);
-	DestroyVisual(*player.visual);
-	delete &player;
+void DestroyPlayer(Player*& player) {
+	DestroyFightLogic(player->fight);
+	DestroyMovement(player->movement);
+	DestroyJump(player->jumping);
+	DestroyVisual(player->visual);
+	DestroyHpBar(player->hp_bar);
+	SafeDelete(player);
 }

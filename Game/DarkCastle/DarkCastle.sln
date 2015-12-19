@@ -1,26 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DarkCastle", "DarkCastle\DarkCastle.vcxproj", "{5A982F92-74D3-4141-868F-6AD0E9AFC51F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DarkCastle", "DarkCastle\DarkCastle.vcxproj", "{EA1F2AAD-BBC9-4FFC-AFBA-99F9BA8393CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5A982F92-74D3-4141-868F-6AD0E9AFC51F}.Debug|x64.ActiveCfg = Debug|x64
-		{5A982F92-74D3-4141-868F-6AD0E9AFC51F}.Debug|x64.Build.0 = Debug|x64
-		{5A982F92-74D3-4141-868F-6AD0E9AFC51F}.Debug|x86.ActiveCfg = Debug|Win32
-		{5A982F92-74D3-4141-868F-6AD0E9AFC51F}.Debug|x86.Build.0 = Debug|Win32
-		{5A982F92-74D3-4141-868F-6AD0E9AFC51F}.Release|x64.ActiveCfg = Release|x64
-		{5A982F92-74D3-4141-868F-6AD0E9AFC51F}.Release|x64.Build.0 = Release|x64
-		{5A982F92-74D3-4141-868F-6AD0E9AFC51F}.Release|x86.ActiveCfg = Release|Win32
-		{5A982F92-74D3-4141-868F-6AD0E9AFC51F}.Release|x86.Build.0 = Release|Win32
+		{EA1F2AAD-BBC9-4FFC-AFBA-99F9BA8393CC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EA1F2AAD-BBC9-4FFC-AFBA-99F9BA8393CC}.Debug|Win32.Build.0 = Debug|Win32
+		{EA1F2AAD-BBC9-4FFC-AFBA-99F9BA8393CC}.Release|Win32.ActiveCfg = Release|Win32
+		{EA1F2AAD-BBC9-4FFC-AFBA-99F9BA8393CC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

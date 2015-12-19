@@ -20,4 +20,4 @@ LogicAI* CreateAI(Type type);
 
 void InitLogicAI(LogicAI & ai, Type type);
 
-void DestroyAI(LogicAI & ai);
+void DestroyAI(LogicAI *& ai);

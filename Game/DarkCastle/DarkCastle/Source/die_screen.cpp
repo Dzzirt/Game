@@ -1,5 +1,5 @@
 #include "../Headers/die_screen.h"
-
+#include "../Headers/safe_delete.h"
 
 
 DieScreen* CreateDieScreen() {
@@ -17,6 +17,6 @@ void DrawDieScreen(DieScreen & screen, sf::RenderWindow & window) {
 	window.draw(screen.sprite);
 }
 
-void DestroyDieScreen(DieScreen & die_screen) {
-	delete &die_screen;
+void DestroyDieScreen(DieScreen *& die_screen) {
+	SafeDelete(die_screen);
 }

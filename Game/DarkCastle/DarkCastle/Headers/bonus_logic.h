@@ -21,4 +21,4 @@ void BonusLogicInit(BonusLogic & bonus_logic, Resourses & res, BonusType type, i
 
 sf::FloatRect GetBonusRectFromLvl(Level& lvl, BonusType type, int number);
 
-void DestroyBonusLogic(BonusLogic & bonus_logic);
+void DestroyBonusLogic(BonusLogic *& bonus_logic);

@@ -1,6 +1,5 @@
 #include  "../Headers/game_rand.h"
 
-
 State GetRandomDir(State first, State second) {
 	return rand() % 2 ? LEFT : RIGHT;
 }

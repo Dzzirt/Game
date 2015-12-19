@@ -1,4 +1,6 @@
 #include "../Headers/duration_controller.h"
+#include "../Headers/safe_delete.h"
+
 
 DurationController* CreateDurationController(CellLogic & cell_logic) {
 	DurationController* ctrl = new DurationController();
@@ -16,6 +18,6 @@ void DuratonControllerUpdate(DurationController& ctrl, const sf::Time& deltaTime
 	ctrl.curr_elapsed_time += deltaTime.asSeconds();
 }
 
-void DestroyDurationController(DurationController& ctrl) {
-	delete &ctrl;
+void DestroyDurationController(DurationController *& ctrl) {
+	SafeDelete(ctrl);
 }

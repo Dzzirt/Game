@@ -35,4 +35,4 @@ void CheckPlayerAndLevelCollision(Player& player, Level& level);
 
 void PlayerLevelCollision(Player & player, const Object & map_object);
 
-void DestroyPlayer(Player& player);
+void DestroyPlayer(Player*& player);

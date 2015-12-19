@@ -15,4 +15,4 @@ BonusVisual* CreateBonusVisual(BonusType type, std::vector<json_spirit::Pair> & 
 
 void BonusVisualInit(BonusVisual & bonus_visual, BonusType type, std::vector<json_spirit::Pair> & int_rects);
 
-void DestroyBonusVisual(BonusVisual & bonus_visual);
+void DestroyBonusVisual(BonusVisual *& bonus_visual);

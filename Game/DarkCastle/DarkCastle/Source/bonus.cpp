@@ -1,5 +1,5 @@
 #include "../Headers/bonus.h"
-
+#include "../Headers/safe_delete.h"
 
 
 Bonus* CreateBonus(Resourses & res, BonusType type, int number) {
@@ -26,10 +26,10 @@ void BonusInit(Bonus& bonus, Resourses & res, BonusType type, int number) {
 	bonus.bonus_visual->sprite.setPosition(bonus.bonus_logic->rect->left, bonus.bonus_logic->rect->top);
 }
 
-void DestroyBonus(Bonus& bonus) {
-	DestroyBonusVisual(*bonus.bonus_visual);
-	DestroyBonusLogic(*bonus.bonus_logic);
-	delete &bonus;
+void DestroyBonus(Bonus *& bonus) {
+	DestroyBonusVisual(bonus->bonus_visual);
+	DestroyBonusLogic(bonus->bonus_logic);
+	SafeDelete(bonus);
 }
 
 void BonusUpdate(Bonus & bonus, const sf::Time& deltaTime) {

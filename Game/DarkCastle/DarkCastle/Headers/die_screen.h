@@ -12,4 +12,4 @@ void DieScreenInit(DieScreen & screen);
 
 void DrawDieScreen(DieScreen & screen, sf::RenderWindow & window);
 
-void DestroyDieScreen(DieScreen & die_screen);
+void DestroyDieScreen(DieScreen *& die_screen);

@@ -17,6 +17,6 @@ MaceTrap* CreateMaceTrap();
 
 void MaceTrapInit(MaceTrap & mace_trap);
 
-void DestroyMaceTrap(MaceTrap & mace_trap);
+void DestroyMaceTrap(MaceTrap *& mace_trap);
 
 void MaceTrapUpdate(MaceTrap & mace_trap, const sf::Time& deltaTime);

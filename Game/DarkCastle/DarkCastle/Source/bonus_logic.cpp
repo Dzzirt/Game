@@ -1,5 +1,6 @@
 #include "../Headers/bonus_logic.h"
 #include "../Headers/using_json.h"
+#include "../Headers/safe_delete.h"
 
 BonusLogic* CreateBonusLogic(BonusType type, Resourses & res, int number) {
 	BonusLogic * logic = new BonusLogic();
@@ -25,7 +26,7 @@ sf::FloatRect GetBonusRectFromLvl(Level& lvl, BonusType type, int number) {
 	return lvl.GetObject(bonus_type + str_number.str()).rect;
 }
 
-void DestroyBonusLogic(BonusLogic& bonus_logic) {
-	delete bonus_logic.rect;
-	delete &bonus_logic;
+void DestroyBonusLogic(BonusLogic *& bonus_logic) {
+	SafeDelete(bonus_logic->rect);
+	SafeDelete(bonus_logic);
 }

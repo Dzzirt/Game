@@ -1,5 +1,5 @@
 #include "../Headers/animation.h"
-
+#include "../Headers/safe_delete.h"
 using namespace sf;
 
 Animation* CreateAnimation(Type type, std::vector<json_spirit::Pair> & int_rects) {
@@ -16,6 +16,7 @@ void AnimationInit(Animation& animation, Type type, std::vector<json_spirit::Pai
 	animation.current_move_frame = 0.f;
 	animation.current_jump_frame = 0.f;
 	animation.current_stay_frame = 0.f;
+
 	switch (type) {
 		case PLAYER:
 			animation.anim_speed = 0.07f;
@@ -39,9 +40,9 @@ void AnimationInit(Animation& animation, Type type, std::vector<json_spirit::Pai
 	}
 }
 
-void DestroyAnimation(Animation& animation) {
-	DestroyFrame(*animation.frame);
-	delete &animation;
+void DestroyAnimation(Animation *& animation) {
+	DestroyFrame(animation->frame);
+	SafeDelete(animation);
 }
 
 void GravityAnimation(Animation& animation) {

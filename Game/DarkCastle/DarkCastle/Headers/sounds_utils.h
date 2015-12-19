@@ -4,8 +4,8 @@
 #include "sound_enums.h"
 #include <sstream>
 
-typedef std::map<SoundType, std::vector<sf::SoundBuffer*>> SoundBuffersMap;
-typedef std::map<SoundType, std::vector<std::string>> SoundNamesMap;
+typedef std::map<SoundType, std::vector<sf::SoundBuffer*>*> SoundBuffersMap;
+typedef std::map<SoundType, std::vector<std::string>*> SoundNamesMap;
 typedef std::vector<sf::Sound*> SoundsVec;
 
 
@@ -31,13 +31,15 @@ std::vector<std::string>* CreateSoundNamesVec(SoundType type);
 
 void SoundNamesVecInit(std::vector<std::string> & names, SoundType type);
 
-void DestroySoundBuffers(SoundBuffersMap & buffers);
+void DestroySoundBuffers(SoundBuffersMap *& buffers);
 
-void DestroySoundBuffersVec(std::vector<sf::SoundBuffer*> & buffers);
+void DestroySoundBuffersVec(std::vector<sf::SoundBuffer*> *& buffers);
 
-void DestroySoundsNames(SoundNamesMap & names);
+void DestroySoundNamesVec(std::vector<std::string> *& names);
 
-void DestroySounds(SoundsVec & sounds);
+void DestroySoundsNames(SoundNamesMap *& names);
+
+void DestroySounds(SoundsVec *& sounds);
 
 
 unsigned int GetSoundsCountFromType(SoundType type);

@@ -1,5 +1,7 @@
 #include "../Headers/consts_and_enums.h"
 #include "../Headers/fight_logic.h"
+#include "../Headers/safe_delete.h"
+
 
 FightLogic* CreateFightLogic(Type type) {
 	FightLogic * fight = new FightLogic();
@@ -28,7 +30,6 @@ void FightLogicInit(FightLogic& fight, Type type) {
 	fight.is_dead = false;
 }
 
-void DestroyFightLogic(FightLogic & fight)
-{
-	delete &fight;
+void DestroyFightLogic(FightLogic *& fight) {
+	SafeDelete(fight);
 }

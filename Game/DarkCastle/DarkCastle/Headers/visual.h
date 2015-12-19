@@ -13,4 +13,4 @@ Visual* CreateVisual(Type type, sf::FloatRect & rect, std::vector<json_spirit::P
 
 void VisualInit(Visual & visual, Type type, sf::FloatRect & rect, std::vector<json_spirit::Pair> & int_rects);
 
-void DestroyVisual(Visual & visual);
+void DestroyVisual(Visual *& visual);

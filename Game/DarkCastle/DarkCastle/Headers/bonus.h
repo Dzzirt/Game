@@ -19,4 +19,4 @@ void BonusUpdate(Bonus & bonus, const sf::Time& deltaTime);
 
 int GetBonusesCount(Level& lvl, BonusType type);
 
-void DestroyBonus(Bonus & bonus);
+void DestroyBonus(Bonus *& bonus);

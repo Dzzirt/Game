@@ -42,6 +42,8 @@ std::list<Bonus*>* CreateBonusList(Resourses & res);
 std::list<DurationController*>* CreateDurationControllerVec();
 
 
+void DestroyDurationControllerVec(std::list<DurationController*> *& dur_ctrl_vec);
+
 void GameInit(Game& game);
 
 void BonusListInit(std::list<Bonus*>& bonus_list, Resourses & res, BonusType type);
@@ -98,8 +100,8 @@ void EnemyPlayerCollision(const Enemy& enemy, Player& player);
 
 void DestroyGame(Game*& game);
 
-void DestroyWindow(sf::RenderWindow& window);
+void DestroyWindow(sf::RenderWindow *& window);
 
-void DestroyBonusList(std::list<Bonus*>& bonus_list);
+void DestroyBonusList(std::list<Bonus*>*& bonus_list);
 
-void DestroyEnemyList(std::list<Enemy*>& enemy_list);
+void DestroyEnemyList(std::list<Enemy*> *& enemy_list);

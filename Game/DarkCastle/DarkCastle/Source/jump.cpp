@@ -1,4 +1,5 @@
 #include "../Headers/jump.h"
+#include "../Headers/safe_delete.h"
 
 Jump* CreateJump(Type type) {
 	Jump * jump = new Jump();
@@ -13,9 +14,8 @@ void JumpingInit(Jump & jump, Type type) {
 	jump.max_jump = 75.f;
 }
 
-void DestroyJump(Jump & jump)
-{
-	delete &jump;
+void DestroyJump(Jump *& jump) {
+	SafeDelete(jump);
 }
 
 void CheckJumpLogic(Jump& jump, Movement& movement, Animation& animation) {

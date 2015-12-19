@@ -1,4 +1,5 @@
 #include "../Headers/bonuses_panel.h"
+#include "../Headers/safe_delete.h"
 
 using namespace sf;
 
@@ -20,6 +21,13 @@ std::vector<Cell*>* CreateItemsVec() {
 	std::vector<Cell*>* items = new std::vector<Cell*>();
 	items->reserve(3);
 	return items;
+}
+
+void DestroyItemsVec(std::vector<Cell*> *& items) {
+	for (Cell* cell : *items) {
+		DestroyCell(cell);
+	}
+	SafeDelete(items);
 }
 
 bool AddToItemsVec(std::vector<Cell*> & items, Bonus & bonus) {
@@ -66,10 +74,7 @@ void ProcessPanelEvents(BonusesPanel& panel) {
 	}
 }
 
-void DestroyBonusesPanel(BonusesPanel& panel) {
-	delete &panel;
-}
-
-void DestroyPanelCells(std::vector<Bonus*>& items) {
-	
+void DestroyBonusesPanel(BonusesPanel *& panel) {
+	DestroyItemsVec(panel->items);
+	SafeDelete(panel);
 }

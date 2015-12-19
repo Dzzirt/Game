@@ -18,7 +18,9 @@ std::vector<Cell*>* CreateItemsVec();
 
 bool AddToItemsVec(std::vector<Cell*> & items, Bonus & bonus);
 
-void DestroyBonusesPanel(BonusesPanel & panel);
+void DestroyItemsVec(std::vector<Cell*> *& items); 
+
+void DestroyBonusesPanel(BonusesPanel *& panel);
 
 void BonusesPanelUpdate(BonusesPanel & panel, sf::View view);
 

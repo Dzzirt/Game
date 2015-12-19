@@ -1,4 +1,5 @@
 #include "../Headers/bonus_visual.h"
+#include "../Headers/safe_delete.h"
 
 BonusVisual* CreateBonusVisual(BonusType type, std::vector<json_spirit::Pair> & int_rects) {
 	BonusVisual* visual = new BonusVisual();
@@ -15,6 +16,6 @@ void BonusVisualInit(BonusVisual& bonus_visual, BonusType type, std::vector<json
 	bonus_visual.sprite.setTextureRect(bonus_visual.sprite_rect);
 }
 
-void DestroyBonusVisual(BonusVisual& bonus_visual) {
-	delete &bonus_visual;
+void DestroyBonusVisual(BonusVisual *& bonus_visual) {
+	SafeDelete(bonus_visual);
 }

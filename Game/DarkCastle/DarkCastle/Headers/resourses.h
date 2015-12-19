@@ -18,6 +18,8 @@ void ResInit(Resourses & res);
 
 void LevelInit(Level & level, std::string map_name);
 
-void DestroyLevel(Level& level);
+void DestroyEntitiesVector(std::vector<json_spirit::Pair> *& entities);
 
-void DestroyResourses(Resourses & res);
+void DestroyLevel(Level*& level);
+
+void DestroyResourses(Resourses *& res);

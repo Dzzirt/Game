@@ -37,4 +37,8 @@ void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type, float curr
 
 void HpBarUpdate(HpBar & hp, sf::View & view, float curr_hp);
 
-void DestroyHpBar(HpBar & hp);
+void DestroyVisualHpBar(VisualHpBar *& visual);
+
+void DestroyLogicHpBar(LogicHpBar *& logic);
+
+void DestroyHpBar(HpBar *& hp);

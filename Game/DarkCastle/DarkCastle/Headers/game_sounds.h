@@ -14,4 +14,4 @@ GameSounds* CreateGameSounds();
 
 void GameSoundsInit(GameSounds & game_sounds);
 
-void DestroyGameSounds(GameSounds & game_sounds);
+void DestroyGameSounds(GameSounds *& game_sounds);

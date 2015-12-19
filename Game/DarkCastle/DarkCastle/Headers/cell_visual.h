@@ -13,4 +13,4 @@ CellVisual* CreateCellVisual(BonusVisual & b_visual);
 
 void CellVisualInit(CellVisual & cell_visual, BonusVisual & b_visual);
 
-void DestroyCellVisual(CellVisual & cell_visual);
+void DestroyCellVisual(CellVisual *& cell_visual);
