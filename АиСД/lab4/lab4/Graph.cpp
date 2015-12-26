@@ -3,18 +3,34 @@
 using namespace std;
 
 
-typedef std::list<std::vector<int>> Paths;
+typedef std::vector<std::vector<int>> Paths;
 
-Graph::Graph(const std::string & fileName, int vertCount)
+Graph::Graph(const std::string & physEffects, const std::string & physElements, int vertCount)
 {
 	mVertCount = vertCount;
 	Create();
-	Fill(fileName);
+	Fill(physEffects, physElements);
+	LoadVertexNamesFromFile(physElements);
 }
 
-void Graph::PrintPaths(size_t start, size_t end)
+void Graph::LoadVertexNamesFromFile(const string & fileName)
 {
-	std::list<std::vector<int>> paths;
+	ifstream in(fileName);
+	while (!in.eof())
+	{
+		string currentLine;
+		getline(in, currentLine);
+		std::vector<string> splited;
+		boost::split(splited, currentLine, boost::is_any_of(":"));
+		int key = stoi(splited[0]) - 1;
+		string value = splited[1];
+		mVertexes.insert(std::pair<int, string>(key, value));
+	}
+}
+
+void Graph::FindAndSavePath(size_t start, size_t end, std::string & output)
+{
+	std::vector<std::vector<int>> paths;
 	std::vector<int> path;
 	DFS(path, start, end, paths);
 	if (paths.size() != 0)
@@ -23,17 +39,9 @@ void Graph::PrintPaths(size_t start, size_t end)
 		{
 			return (i.size() < j.size());
 		};
-		paths.sort(bySize);
-		auto print = [](int vertex)
-		{
-			cout << vertex << " ";
-		};
-		auto printAll = [&](const vector<int> & vec)
-		{
-			for_each(vec.begin(), vec.end(), print);
-			cout << endl;
-		};
-		for_each(paths.begin(), paths.end(), printAll);
+		sort(paths.begin(), paths.end(), bySize);
+		GenerateReport(paths, output);
+		cout << "Отчет успешно сгенерирован!";
 	}
 	else
 	{
@@ -41,20 +49,46 @@ void Graph::PrintPaths(size_t start, size_t end)
 	}
 }
 
-void Graph::DFS(std::vector<int> &path, size_t & start, size_t end, std::list<std::vector<int>> &paths)
+void Graph::GenerateReport(std::vector<std::vector<int>> &paths, std::string & output)
+{
+	ofstream out(output, std::ios_base::trunc);
+	for (size_t i = 0; i < paths.size(); i++)
+	{
+		out << "--------" << endl;
+		out << "Цепочка : " << i << endl;
+		for (size_t j = 1; j < paths[i].size(); j++){
+			out << endl;
+			out << "Звено : " << j << endl;
+			out << paths[i][j - 1];
+			out << " ";
+			out << mVertexes.at(paths[i][j - 1]);
+			out << " -> ";
+			out << paths[i][j];
+			out << " ";
+			out << mVertexes.at(paths[i][j]);
+			out << endl;
+			out << endl;
+			out << "Эффекты :" << endl;
+			Cell * cell = mMatrix[paths[i][j - 1] - 1][paths[i][j] - 1];
+			for_each(cell->mPhysPhen.begin(), cell->mPhysPhen.end(), [&](string * eff)
+			{
+				out << *eff << endl;
+			});
+		}
+	}
+	out.close();
+}
+
+void Graph::DFS(std::vector<int> &path, size_t & start, size_t end, Paths &paths)
 {
 	path.push_back(start + 1);
-	visitedVert[start] = true;
-	for (unsigned int r = 0; r < mMatrix.size(); r++){
+	mVisitedVert[start] = true;
+	for (size_t r = 0; r < mMatrix.size(); r++){
 		Cell * cell = mMatrix[start][r];
-		if ((cell->isLinked) && (!visitedVert[r])){
+		if ((cell->isLinked) && (!mVisitedVert[r])){
 			if (r == end)
 			{
 				path.push_back(end + 1);
-				if (path.size() > 6)
-				{
-					break;
-				}
 				paths.push_back(path);
 			}
 			else
@@ -66,9 +100,9 @@ void Graph::DFS(std::vector<int> &path, size_t & start, size_t end, std::list<st
 	}
 }
 
-void Graph::Fill(const std::string & fileName)
+void Graph::Fill(const std::string & physEffects, const std::string & physElements)
 {
-	ifstream in(fileName);
+	ifstream in(physEffects);
 	while (!in.eof())
 	{
 		string currentLine;
@@ -88,7 +122,7 @@ void Graph::Create()
 		vector<Cell*> cells;
 		cells.reserve(50);
 		mMatrix.push_back(cells);
-		visitedVert.push_back(false);
+		mVisitedVert.push_back(false);
 		for (int j = 0; j < mVertCount; j++)
 		{
 			mMatrix[i].push_back(new Cell());

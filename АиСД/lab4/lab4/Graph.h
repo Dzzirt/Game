@@ -3,21 +3,26 @@
 #include "fstream"
 #include "iostream"
 #include "string"
+#include "map"
 #include "boost/algorithm/string.hpp"
 
-typedef std::list<std::vector<int>> Paths;
+typedef std::vector<std::vector<int>> Paths;
 
 struct Graph{
-	Graph(const std::string & fileName, int vertCount);
+	Graph(const std::string & physEffects, const std::string & physElements, int vertCount);
 	~Graph();
-	void PrintPaths(size_t start, size_t end);
+	void FindAndSavePath(size_t start, size_t end, std::string & output);
+
+	void GenerateReport(std::vector<std::vector<int>> &paths, std::string & output);
 
 private:
+	std::map<int, std::string> mVertexes;
 	std::vector<std::vector<Cell*>> mMatrix;
-	std::vector<bool> visitedVert;
+	std::vector<bool> mVisitedVert;
 	int mVertCount;
 
-	void DFS(std::vector<int> &path, size_t & start, size_t end, std::list<std::vector<int>> &paths);
-	void Fill(const std::string & fileName);
+	void LoadVertexNamesFromFile(const std::string & fileName);
+	void DFS(std::vector<int> &path, size_t & start, size_t end, Paths &paths);
+	void Fill(const std::string & physEffects, const std::string & physElements);
 	void Create();
 };
