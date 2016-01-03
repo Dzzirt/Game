@@ -17,9 +17,7 @@ int GetMaceTrapsCount(Level& lvl) {
 }
 
 sf::Vector2f GetMaceTrapPosFromLvl(Level & level, int number) {
-	std::stringstream mace_num;
-	mace_num << number;
-	sf::FloatRect rect = level.GetObject("MACE_TRAP" + mace_num.str()).rect;
+	sf::FloatRect rect = level.GetObject("MACE_TRAP" + std::to_string(number)).rect;
 	return sf::Vector2f(rect.left, rect.top);
 }
 
@@ -30,9 +28,6 @@ void DrawMaceTraps(std::vector<MaceTrap*> & mace_traps, sf::RenderWindow & windo
 }
 
 void DestroyMaceTrapVec(std::vector<MaceTrap*> & mace_traps) {
-	for (size_t i = 0; i < mace_traps.size() ; i++)
-	{
-		DestroyMaceTrap(mace_traps[i]);
-		mace_traps.erase(mace_traps.begin() + i);
-	}
+	for_each(mace_traps.begin(), mace_traps.end(), DestroyMaceTrap);
+	mace_traps.clear();
 }

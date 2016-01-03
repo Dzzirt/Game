@@ -85,7 +85,7 @@ bool CheckBonusEffectEnd(Player & player, DurationController & ctrl, std::vector
 
 void CheckPlayerAndEnemiesCollisions(std::list<Enemy*> & enemy_list, Player& player);
 
-void PickUpBonus(Game &game, Bonus * bonus, std::list<Bonus*>::iterator iter);
+void PickUpBonus(Game &game, std::list<Bonus*>::iterator iter);
 
 void CheckDynamicObjCollisions(Game& game);
 

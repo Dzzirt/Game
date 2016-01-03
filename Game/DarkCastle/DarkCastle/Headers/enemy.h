@@ -34,11 +34,11 @@ void ProcessCollision(Enemy & enemy, const Object & map_object);
 
 void ProcessEnemyEvents(Enemy& enemy, sf::FloatRect & player_box);
 
-void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level& level);
+void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, Level& level);
 
 void AnimationsUpdate(Enemy& enemy);
 
-void CheckEnemyAndLevelCollision(Enemy & enemy, const Level & level);
+void CheckEnemyAndLevelCollision(Enemy & enemy, Level & level);
 
 void DestroyEnemy(Enemy *& enemy);
 

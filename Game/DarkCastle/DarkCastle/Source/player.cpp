@@ -28,10 +28,14 @@ void PlayerInit(Player& player, Resourses& res) {
 }
 
 void CheckPlayerAndLevelCollision(Player& player, Level& level) {
-	vector<Object> map_objects = level.GetAllObjects();
-	for (size_t i = 0; i < map_objects.size(); i++) {
-		PlayerLevelCollision(player, map_objects[i]);
+	vector<Object> * map_objects = level.GetAllObjects();
+	for (auto & obj : *map_objects)
+	{
+		PlayerLevelCollision(player, obj);
 	}
+	/*for (size_t i = 0; i < map_objects->size(); i++) {
+		
+	}*/
 }
 
 void PlayerLevelCollision(Player & player, const Object & map_object) {
@@ -165,13 +169,13 @@ void ProcessPlayerEvents(RenderWindow& window, Event& event, Player& player, Gam
 		int map_width = level.width * level.tileWidth;
 		cout << map_height / float(event.size.height * event.size.height / WindowHeight) << endl;
 		if (map_height < map_width) {
-			if (unsigned int(map_height) < event.size.height) {
+			if (unsigned(map_height) < event.size.height) {
 				view.zoom(map_height / float(event.size.height));
 			}
 		}
 		else {
-			if (unsigned int(map_width) < event.size.width) {
-				view.zoom(unsigned int(map_width) / float(event.size.width));
+			if (unsigned(map_width) < event.size.width) {
+				view.zoom(unsigned(map_width) / float(event.size.width));
 			}
 		}
 

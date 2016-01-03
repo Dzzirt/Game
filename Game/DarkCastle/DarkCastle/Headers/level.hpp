@@ -41,7 +41,7 @@ public:
 	std::vector<Object> Level::GetMatchObjects(int from, int to, std::string name);
     Object GetObject(std::string name);
     std::vector<Object> GetObjects(std::string name);
-	std::vector<Object> GetAllObjects()const;
+		std::vector<Object> * GetAllObjects();
     void Draw(sf::RenderWindow &window);
 	sf::Vector2i GetTileSize();
 

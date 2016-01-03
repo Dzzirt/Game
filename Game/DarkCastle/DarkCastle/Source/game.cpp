@@ -293,8 +293,9 @@ void CheckPlayerAndEnemiesCollisions(std::list<Enemy*> & enemy_list, Player& pla
 	}
 }
 
-void PickUpBonus(Game &game, Bonus * bonus, list<Bonus*>::iterator iter) {
-	if (AddToItemsVec(*game.b_panel->items, *bonus)) {
+void PickUpBonus(Game &game, std::list<Bonus*>::iterator iter) {
+	Bonus * bonus = *iter;
+	if (AddToItemsVec(*game.b_panel->items, **iter)) {
 		PlaySounds(BONUS_PICK, *game.game_sounds->sounds, *game.game_sounds->sound_buffers);
 		game.bonus_list->remove(*iter);
 		DestroyBonus(bonus);
@@ -306,7 +307,6 @@ void PickUpBonus(Game &game, Bonus * bonus, list<Bonus*>::iterator iter) {
 
 void CheckDynamicObjCollisions(Game& game) {
 	Player& player = *game.player;
-	vector<Object> map_objects = game.res->lvl->GetAllObjects();
 	for (Bonus * bonus : *game.bonus_list) {
 		CheckPlayerBonusCollision(player, *bonus);
 	}
@@ -315,7 +315,7 @@ void CheckDynamicObjCollisions(Game& game) {
 	for (list<Bonus*>::iterator iter = bonus_list_begin; iter != bonus_list_end; ++iter) {
 		Bonus * bonus = *iter;
 		if (bonus->bonus_logic->picked_up) {
-			PickUpBonus(game, bonus, iter);
+			PickUpBonus(game, iter);
 			break;
 		}
 	}
@@ -415,11 +415,7 @@ void DestroyWindow(sf::RenderWindow *& window) {
 }
 
 void DestroyEnemyList(std::list<Enemy*> *& enemy_list) {
-	list<Enemy*>::iterator begin = enemy_list->begin();
-	list<Enemy*>::iterator end = enemy_list->end();
-	for (Enemy * enemy : *enemy_list) {
-		DestroyEnemy(enemy);
-	}
+	for_each(enemy_list->begin(), enemy_list->end(), DestroyEnemy);
 	SafeDelete(enemy_list);
 }
 

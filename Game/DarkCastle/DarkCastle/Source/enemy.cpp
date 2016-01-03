@@ -84,7 +84,7 @@ void ProcessEnemyEvents(Enemy& enemy, FloatRect& player_box) {
 	}
 }
 
-void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, const Level& level) {
+void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, Level& level) {
 	Movement& movement = *enemy.movement;
 	Animation& animation = *enemy.visual->animation;
 	sf::FloatRect& enemy_rect = *enemy.visual->rect;
@@ -171,11 +171,15 @@ void ProcessCollision(Enemy& enemy, const Object& map_object) {
 	}
 }
 
-void CheckEnemyAndLevelCollision(Enemy& enemy, const Level& level) {
-	vector<Object> map_objects = level.GetAllObjects();
-	for (size_t i = 0; i < map_objects.size(); i++) {
-		ProcessCollision(enemy, map_objects[i]);
+void CheckEnemyAndLevelCollision(Enemy& enemy, Level& level) {
+	vector<Object> * map_objects = level.GetAllObjects();
+	for (auto & obj : *map_objects)
+	{
+		ProcessCollision(enemy, obj);
 	}
+	/*for (size_t i = 0; i < map_objects.size(); i++) {
+		
+	}*/
 }
 
 void DestroyEnemy(Enemy *& enemy) {
