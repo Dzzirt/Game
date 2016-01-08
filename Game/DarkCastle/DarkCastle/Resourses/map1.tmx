@@ -14,7 +14,7 @@
   <object id="16" name="solid" x="1280" y="320" width="48" height="32"/>
   <object id="17" name="solid" x="912" y="176" width="80" height="16"/>
   <object id="18" name="solid" x="1328" y="464" width="16" height="16"/>
-  <object id="20" name="trap" x="512" y="608" width="48" height="16"/>
+  <object id="20" name="trap" x="464" y="612" width="48" height="12"/>
   <object id="28" name="solid" x="1376" y="400" width="16" height="16"/>
   <object id="29" name="solid" x="0" y="624" width="1600" height="15.5198"/>
   <object id="32" name="SPEARMAN1" x="1071.58" y="284.659" width="14" height="36"/>
@@ -32,11 +32,11 @@
   <object id="48" name="solid" x="496" y="304" width="64" height="16"/>
   <object id="50" name="SPEARMAN5" x="519.375" y="268.708" width="14" height="36"/>
   <object id="81" name="solid" x="0" y="0" width="16" height="624"/>
-  <object id="82" name="trap" x="560" y="608" width="32" height="16"/>
-  <object id="83" name="trap" x="640" y="608" width="32" height="16"/>
-  <object id="84" name="trap" x="720" y="608" width="32" height="16"/>
-  <object id="85" name="trap" x="880" y="608" width="32" height="16"/>
-  <object id="86" name="trap" x="800" y="608" width="32" height="16"/>
+  <object id="82" name="trap" x="560" y="611.75" width="32" height="12.25"/>
+  <object id="83" name="trap" x="640" y="610.75" width="32" height="13.25"/>
+  <object id="84" name="trap" x="720" y="611.5" width="32" height="12.5"/>
+  <object id="85" name="trap" x="880" y="612.75" width="32" height="11.25"/>
+  <object id="86" name="trap" x="800" y="612.75" width="32" height="11.25"/>
   <object id="87" name="trap" x="1312" y="608" width="128" height="16"/>
   <object id="88" name="HP_REGEN1" x="1140.67" y="576.667" width="28" height="28"/>
   <object id="89" name="SPEARMAN6" x="969.432" y="588.659" width="14" height="36"/>
@@ -54,7 +54,7 @@
   <object id="108" name="solid" x="752" y="608" width="48" height="16.5"/>
   <object id="110" name="solid" x="672.114" y="607.205" width="47.886" height="16.5"/>
   <object id="112" name="solid" x="592" y="608" width="48" height="16.5"/>
-  <object id="114" name="solid" x="510.659" y="608.841" width="49.341" height="16.5"/>
+  <object id="114" name="solid" x="512" y="608" width="49.341" height="16.5"/>
   <object id="115" name="solid" x="448" y="607.75" width="16.432" height="16.5"/>
  </objectgroup>
  <layer name="main" width="100" height="60">

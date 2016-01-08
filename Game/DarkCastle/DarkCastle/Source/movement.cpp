@@ -22,7 +22,7 @@ void MovementInit(Movement & movement, Type type) {
 		movement.step = 150;
 		break;
 	case SPEARMAN:
-		movement.state = GetRandomDir(LEFT, RIGHT);
+		movement.state = GetRandomOf(LEFT, RIGHT);
 		movement.step = 110;
 		break;
 	case SWORDSMAN:

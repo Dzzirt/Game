@@ -12,6 +12,14 @@ void MaceTrapVecInit(std::vector<MaceTrap*> & mace_traps, Level & level) {
 	}
 }
 
+void MaceTrapsVecUpdate(std::vector<MaceTrap*> & traps, const sf::Time& deltaTime)
+{
+	for (MaceTrap* trap : traps)
+	{
+		MaceTrapUpdate(*trap, deltaTime);
+	}
+}
+
 int GetMaceTrapsCount(Level& lvl) {
 		return lvl.GetMatchObjects(0, 9, "MACE_TRAP").size();
 }

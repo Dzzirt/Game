@@ -33,9 +33,6 @@ void CheckPlayerAndLevelCollision(Player& player, Level& level) {
 	{
 		PlayerLevelCollision(player, obj);
 	}
-	/*for (size_t i = 0; i < map_objects->size(); i++) {
-		
-	}*/
 }
 
 void PlayerLevelCollision(Player & player, const Object & map_object) {
@@ -127,7 +124,7 @@ void CheckGravityLogic(Jump& jump, Movement& movement, const sf::Time& deltaTime
 	}
 }
 
-void ProcessPlayerEvents(RenderWindow& window, Event& event, Player& player, GameSounds& game_sounds, Level& level, View& view) {
+void ProcessPlayerEvents(RenderWindow& window, Player& player, GameSounds& game_sounds, View& view) {
 	Jump& jump = *player.jumping;
 	Movement& movement = *player.movement;
 	Animation& animation = *player.visual->animation;
@@ -160,27 +157,15 @@ void ProcessPlayerEvents(RenderWindow& window, Event& event, Player& player, Gam
 		}
 
 	}
-	if (event.type == Event::Closed) {
-		window.close();
-	}
-	else if (event.type == Event::Resized) {
-		view.setSize(float(event.size.width), float(event.size.height));
-		int map_height = level.height * level.tileHeight;
-		int map_width = level.width * level.tileWidth;
-		cout << map_height / float(event.size.height * event.size.height / WindowHeight) << endl;
-		if (map_height < map_width) {
-			if (unsigned(map_height) < event.size.height) {
-				view.zoom(map_height / float(event.size.height));
-			}
-		}
-		else {
-			if (unsigned(map_width) < event.size.width) {
-				view.zoom(unsigned(map_width) / float(event.size.width));
-			}
-		}
+}
 
-	}
-
+void DrawPlayer(Player & player, RenderWindow &window)
+{
+	VisualHpBar& player_hp = *player.hp_bar->visual_hp;
+	Sprite& player_sprite = player.visual->animation->frame->sprite;
+	window.draw(player_sprite);
+	window.draw(player_hp.bar_sprite);
+	window.draw(player_hp.strip_sprite);
 }
 
 void DestroyPlayer(Player*& player) {

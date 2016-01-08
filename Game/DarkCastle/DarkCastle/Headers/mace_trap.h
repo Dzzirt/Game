@@ -3,6 +3,8 @@
 
 const float MaceTrapDamage = 30.f;
 const float MaceTrapSpeed = 3.f;
+const float DecreaseMaceSize = 20.f;
+const float DisplaceMace = 20.f;
 
 struct MaceTrap {
   sf::Texture texture;

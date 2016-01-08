@@ -29,10 +29,12 @@ sf::FloatRect GetPlayerRectFromLvl(Level & lvl);
 
 void AnimationsUpdate(Player& player);
 
-void ProcessPlayerEvents(sf::RenderWindow& window, sf::Event & event, Player & player, GameSounds & sounds, Level & level, sf::View & view);
+void ProcessPlayerEvents(sf::RenderWindow& window,Player & player, GameSounds & sounds, sf::View & view);
 
 void CheckPlayerAndLevelCollision(Player& player, Level& level);
 
 void PlayerLevelCollision(Player & player, const Object & map_object);
+
+void DrawPlayer(Player & player, sf::RenderWindow &window);
 
 void DestroyPlayer(Player*& player);

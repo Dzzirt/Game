@@ -16,7 +16,7 @@ void InitLogicAI(LogicAI & ai, Type type) {
 	switch (type) {
 	case SPEARMAN:
 		ai.max_distance = float(GetRandomInt(20, 50));
-		ai.max_stay_time = GetRandomFloat(0, 5);
+		ai.max_stay_time = GetRandomFloat(1, 5, 1);
 	default:
 		break;
 	}

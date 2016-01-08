@@ -4,11 +4,9 @@
 #include <sstream>
 
 
-const float DecreaseMaceSize = 20.f;
-
-const float DisplaceMace = 20.f;
-
 void MaceTrapVecInit(std::vector<MaceTrap*> & mace_traps, Level & level);
+
+void MaceTrapsVecUpdate(std::vector<MaceTrap*> & traps, const sf::Time& deltaTime);
 
 int GetMaceTrapsCount(Level& lvl);
 
