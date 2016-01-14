@@ -17,6 +17,8 @@ struct Animation {
 	float max_stay_frame;
 	float anim_speed;
 	float anim_stay_speed;
+	sf::IntRect current_attack_rect;
+	int atk_rect_pack_num;
 	Frame * frame;
 };
 
@@ -46,6 +48,6 @@ void CheckStayReset(Animation& animation);
 
 void FlipRectHoriz(sf::IntRect & rect);
 
-void CheckStayFlip(sf::Sprite & sprite, sf::IntRect & rect);
+void CheckStayFlip(sf::Sprite & sprite, sf::IntRect & rect, Type type, float & displacement);
 
 

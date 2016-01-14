@@ -118,6 +118,6 @@ void EnemyPlayerCollision(const Enemy& enemy, Player& player)
 	}
 	else
 	{
-		enemy_damage = CEnemyDamage;
+		enemy_damage = CSpearmanDamage;
 	}
 }

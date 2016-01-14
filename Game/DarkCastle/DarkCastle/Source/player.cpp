@@ -51,6 +51,9 @@ void PlayerLevelCollision(Player & player, const Object & map_object) {
 				player.fight->is_dead = true;
 			}
 		}
+		else if (map_object.name == "deadly_trap") {
+			player.fight->is_dead = true;
+		}
 		else if (map_object.name == "solid") {
 			bool bottom_collision = player_rect.top + player_rect.height - 5 < map_object.rect.top;
 			bool upper_collision = player_rect.top + 5 > map_object.rect.top + map_object.rect.height;

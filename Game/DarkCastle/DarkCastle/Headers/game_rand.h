@@ -5,7 +5,7 @@
 State GetRandomOf(State first, State second);
 
 // Returns value in range [from, to]
-// 'from' and 'to' must be more than 0
+// 'from' and 'to' must be >= 0
 int GetRandomInt(int from, int to);
 
 // Returns value in range [from, to] to 'precision' signs

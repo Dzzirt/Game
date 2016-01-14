@@ -38,10 +38,15 @@ void VisualHpBarInit(VisualHpBar & hp, Type type, std::vector<json_spirit::Pair>
 		hp.strip_sprite.setRotation(-90);
 		hp.bar_sprite.setRotation(-90);
 		break;
+	case JELLY_BOSS:
+		hp.bar_texture.loadFromFile("Resourses/Enemy/boss_jelly_hp.png");
+		hp.bar_rect = GetIntRect(int_rects, "BOSS_JELLY_HP", "HP_BAR");
+		hp.strip_rect = GetIntRect(int_rects, "BOSS_JELLY_HP", "HP_STRIP");
+		break;
 	default:
 		hp.bar_texture.loadFromFile("Resourses/Enemy/enemy_hp.png");
 		hp.bar_rect = GetIntRect(int_rects, "BASIC_ENEMY_HP", "HP_BAR");
-		hp.strip_rect = GetIntRect(int_rects, "BASIC_ENEMY_HP", "HP_STRIP");	
+		hp.strip_rect = GetIntRect(int_rects, "BASIC_ENEMY_HP", "HP_STRIP");
 		break;
 	}
 	hp.bar_sprite.setTexture(hp.bar_texture);
@@ -51,25 +56,33 @@ void VisualHpBarInit(VisualHpBar & hp, Type type, std::vector<json_spirit::Pair>
 
 }
 
-void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type, float curr_hp) {
+void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type, float curr_hp, sf::View & view) {
 	VisualHpBar & visual_hp = *hp.visual_hp;
 	LogicHpBar & logic_hp = *hp.logic_hp;
 	logic_hp.health_points = curr_hp;
 	sf::IntRect & hp_strip = visual_hp.strip_rect;
-	switch (type) {
-	case SPEARMAN:
-		visual_hp.bar_sprite.setPosition(rect_for_place.left + (rect_for_place.width / 2.f), rect_for_place.top - 10.f);
-		visual_hp.bar_sprite.setOrigin(visual_hp.bar_texture.getSize().x / 2.f, 0);
-		break;
-	default:
-		break;
-	}
-	float health_in_percent = logic_hp.health_points / logic_hp.max_health_points;
 	sf::FloatRect bar_bounds = visual_hp.bar_sprite.getGlobalBounds();
 	sf::FloatRect strip_bounds = visual_hp.strip_sprite.getGlobalBounds();
 	float max_strip_width = float(visual_hp.strip_rect.width);
-	float border_width = (bar_bounds.width - max_strip_width) / 2.f;
-	float border_height = (bar_bounds.height - strip_bounds.height) / 2.f;
+	float border_width;
+	float border_height;
+	if (type == JELLY_BOSS) {
+		visual_hp.bar_sprite.setPosition(view.getCenter().x, view.getCenter().y - 250);
+		bar_bounds = visual_hp.bar_sprite.getGlobalBounds();
+		strip_bounds = visual_hp.strip_sprite.getGlobalBounds();
+		border_width = 24;
+		border_height = 3;
+	}
+	else
+	{
+		visual_hp.bar_sprite.setPosition(rect_for_place.left + (rect_for_place.width / 2.f), rect_for_place.top - 10.f);
+		bar_bounds = visual_hp.bar_sprite.getGlobalBounds();
+		strip_bounds = visual_hp.strip_sprite.getGlobalBounds();
+		border_width = (bar_bounds.width - max_strip_width) / 2.f;
+		border_height = (bar_bounds.height - strip_bounds.height) / 2.f;
+	}
+	visual_hp.bar_sprite.setOrigin(visual_hp.bar_texture.getSize().x / 2.f, 0);
+	float health_in_percent = logic_hp.health_points / logic_hp.max_health_points;
 	visual_hp.strip_sprite.setPosition(bar_bounds.left + border_width, bar_bounds.top + border_height);
 	visual_hp.strip_sprite.setTextureRect(sf::IntRect(hp_strip.left, hp_strip.top, int(hp_strip.width * health_in_percent), hp_strip.height));
 }

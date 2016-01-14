@@ -1,5 +1,6 @@
 #include "../Headers/animation.h"
 #include "../Headers/safe_delete.h"
+#include "../Headers/game_rand.h"
 using namespace sf;
 
 Animation* CreateAnimation(Type type, std::vector<json_spirit::Pair> & int_rects) {
@@ -16,10 +17,13 @@ void AnimationInit(Animation& animation, Type type, std::vector<json_spirit::Pai
 	animation.current_move_frame = 0.f;
 	animation.current_jump_frame = 0.f;
 	animation.current_stay_frame = 0.f;
+	FrameRects & rects = *animation.frame->rect;
+	animation.atk_rect_pack_num = GetRandomInt(0, rects.attack_rects.size() - 1);
+	animation.current_attack_rect = rects.attack_rects[animation.atk_rect_pack_num];
 
 	switch (type) {
 		case PLAYER:
-			animation.anim_speed = 0.07f;
+			animation.anim_speed = 0.06f;
 			animation.anim_stay_speed = 0.014f;
 			animation.max_attack_frame = 6.f;
 			animation.max_move_frame = 8.f;
@@ -33,7 +37,19 @@ void AnimationInit(Animation& animation, Type type, std::vector<json_spirit::Pai
 			animation.max_jump_frame = 0.f;
 			animation.max_stay_frame = 0.f;
 			break;
-		case SWORDSMAN:
+		case JELLY_BOSS:
+			animation.anim_speed = 0.05f;
+			animation.max_attack_frame = 6.f;
+			animation.max_move_frame = 12.f;
+			animation.max_jump_frame = 0.f;
+			animation.max_stay_frame = 0.f;
+			break;
+		case JELLY:
+			animation.anim_speed = 0.05f;
+			animation.max_attack_frame = 6.f;
+			animation.max_move_frame = 12.f;
+			animation.max_jump_frame = 0.f;
+			animation.max_stay_frame = 0.f;
 			break;
 		default:
 			break;
@@ -67,8 +83,8 @@ void JumpAnimation(Animation& animation, float game_step) {
 
 void AttackAnimation(Animation& animation, Type type, float game_step) {
 	Frame& frame = *animation.frame;
-	IntRect atk_rect = frame.rect->attack;
 	float& atk_frame = animation.current_attack_frame;
+	sf::IntRect atk_rect = animation.current_attack_rect;
 	int injured_y = 0;
 	if (animation.left_attack) {
 		if (type == SPEARMAN) {
@@ -79,9 +95,7 @@ void AttackAnimation(Animation& animation, Type type, float game_step) {
 				break;
 			case 2: frame.displacement = -5 - 7;
 				break;
-			case 3:
-
-				frame.displacement = -3 - 7;
+			case 3: frame.displacement = -3 - 7;
 				break;
 			case 4: frame.displacement = 0 - 7;
 				break;
@@ -91,15 +105,33 @@ void AttackAnimation(Animation& animation, Type type, float game_step) {
 				break;
 			}
 		}
-			if (type == PLAYER) {
-				frame.displacement = -45;
+		else if (type == JELLY_BOSS )
+		{
+			
+			if (animation.atk_rect_pack_num == 0) {
+				frame.displacement = -72;
 			}
-			animation.right_attack = false;
-			atk_frame += float(animation.anim_speed * game_step);
-			CheckAttackReset(animation);
-			atk_rect.left *= int(atk_frame);
-			FlipRectHoriz(atk_rect);
-			frame.sprite.setTextureRect(atk_rect);
+			if (animation.atk_rect_pack_num == 1) {
+				frame.displacement = -50;
+			}
+			if (animation.atk_rect_pack_num == 2) {
+				frame.displacement = -48;
+			}
+
+		}
+		else if (type == JELLY)
+		{
+				frame.displacement = -50;
+		}
+		else if (type == PLAYER) {
+			frame.displacement = -45;
+		}
+		animation.right_attack = false;
+		atk_frame += float(animation.anim_speed * game_step);
+		CheckAttackReset(animation);
+		atk_rect.left *= int(atk_frame);
+		FlipRectHoriz(atk_rect);
+		frame.sprite.setTextureRect(atk_rect);
 		}
 	
 		if (animation.right_attack) {
@@ -158,7 +190,7 @@ void MoveAndStayAnimation(Animation& animation, State state, Type type, float ga
 			stay_frame += float(animation.anim_stay_speed * game_step);
 			CheckStayReset(animation);
 			stay_rect.left *= int(stay_frame);
-			CheckStayFlip(frame.sprite, stay_rect);
+			CheckStayFlip(frame.sprite, stay_rect, type, frame.displacement);
 			frame.sprite.setTextureRect(stay_rect);
 			break;
 	}
@@ -181,6 +213,9 @@ void CheckAttackReset(Animation& animation) {
 		animation.left_attack = false;
 		animation.right_attack = false;
 		animation.current_attack_frame -= animation.max_attack_frame;
+		FrameRects & rects = *animation.frame->rect;
+		animation.atk_rect_pack_num = GetRandomInt(0, rects.attack_rects.size() - 1);
+		animation.current_attack_rect = rects.attack_rects[animation.atk_rect_pack_num];
 	}
 }
 
@@ -201,8 +236,12 @@ void FlipRectHoriz(sf::IntRect& rect) {
 	rect.width *= -1;
 }
 
-void CheckStayFlip(Sprite& sprite, IntRect& rect) {
+void CheckStayFlip(sf::Sprite & sprite, sf::IntRect & rect, Type type, float & displacement) {
 	if (sprite.getTextureRect().width < 0) {
+		if (type == JELLY)
+		{
+			displacement = -30;
+		}
 		FlipRectHoriz(rect);
 	}
 }

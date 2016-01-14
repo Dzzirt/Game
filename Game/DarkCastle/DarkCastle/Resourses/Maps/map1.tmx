@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="60" tilewidth="16" tileheight="16" nextobjectid="116">
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" tilecount="1044">
-  <image source="Resourses/tiles.png" width="474" height="586"/>
+  <image source="Resourses/Maps/tiles.png" width="474" height="586"/>
  </tileset>
  <objectgroup name="objects">
   <object id="5" name="player" x="35.2121" y="579.515" width="34" height="41"/>

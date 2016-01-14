@@ -8,13 +8,15 @@
 #include "bonus_list_utils.h"
 #include "collision_utils.h"
 #include "duration_vec_utils.h"
-#include "../Headers/main_menu.h"
+#include "main_menu.h"
+#include "win_screen.h"
 
 enum GameState
 {
 	MAIN_MENU,
 	PLAY,
-	END_GAME
+	DEAD,
+	WIN
 };
 
 struct Game {
@@ -27,10 +29,11 @@ struct Game {
 	std::list<Enemy*> * enemy_list;
 	std::list<Bonus*> * bonus_list;
 	std::list<DurationController*> * dur_ctrl_list;
-	sf::RenderWindow * window;
 	DieScreen * die_screen;
 	sf::View* view;
 	MainMenu menu;
+	WinScreen * win_screen;
+
 };
 
 
@@ -38,13 +41,11 @@ Game* CreateGame();
 
 void RestartGame(Game *& game);
 
-void ProcessGameEvents(Game & game, sf::Event & event);
-
-sf::RenderWindow* CreateRenderWindow();
+void ProcessGameEvents(Game & game, sf::Event & event, sf::RenderWindow & window);
 
 void GameInit(Game& game);
 
-void ProcessEvents(Game *& game);
+void ProcessEvents(Game *& game, sf::RenderWindow & window);
 
 void ChangeMap(Game &game, std::string map_name);
 
@@ -54,7 +55,7 @@ void WoundsCheck(Game &game);
 
 void Update(Game& game, const sf::Time& deltaTime);
 
-void Render(Game & game);
+void Render(Game & game, sf::RenderWindow & window);
 
 bool ÑheckingBonusEffectActivation(Game & game);
 
@@ -66,4 +67,3 @@ void CheckDynamicObjCollisions(Game& game);
 
 void DestroyGame(Game*& game);
 
-void DestroyWindow(sf::RenderWindow *& window);

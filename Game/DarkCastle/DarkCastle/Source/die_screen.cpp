@@ -9,7 +9,7 @@ DieScreen* CreateDieScreen() {
 }
 
 void DieScreenInit(DieScreen & screen) {
-	screen.texture.loadFromFile("Resourses/die_msg.png");
+	screen.texture.loadFromFile("Resourses/Screens/die_msg.png");
 	screen.sprite.setTexture(screen.texture);
 }
 

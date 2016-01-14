@@ -10,8 +10,10 @@ inline std::string TypeToString(Type type) {
 			return "PLAYER";
 		case SPEARMAN:
 			return "SPEARMAN";
-		case SWORDSMAN:
-			return "SWORDSMAN";
+		case JELLY_BOSS:
+			return "JELLY_BOSS";
+		case JELLY:
+			return "JELLY";
 		default:
 			return "INVALID ENUM";
 	}

@@ -23,7 +23,8 @@
 	enum Type {
 		PLAYER,
 		SPEARMAN,
-		SWORDSMAN
+		JELLY,
+		JELLY_BOSS
 	};
 
 	enum BonusType {

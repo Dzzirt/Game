@@ -25,7 +25,13 @@ void MovementInit(Movement & movement, Type type) {
 		movement.state = GetRandomOf(LEFT, RIGHT);
 		movement.step = 110;
 		break;
-	case SWORDSMAN:
+	case JELLY_BOSS:
+		movement.state = GetRandomOf(LEFT, RIGHT);
+		movement.step = 140;
+		break;
+	case JELLY:
+		movement.state = GetRandomOf(LEFT, RIGHT);
+		movement.step = 120;
 		break;
 	default:
 		break;

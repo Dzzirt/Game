@@ -11,17 +11,12 @@ Game* CreateGame() {
 	return game;
 }
 
-RenderWindow* CreateRenderWindow() {
-	return new RenderWindow(VideoMode(WindowWidth, WindowHeight), "Dark Castle");
-}
-
 void GameInit(Game& game) {
 	game.state = MAIN_MENU;
 	game.menu.button.handler = [&game]()
 	{
 		game.state = PLAY;
 	};
-	game.window = CreateRenderWindow();
 	game.view = CreateView();
 	game.res = CreateResourses();
 	game.player = CreatePlayer(*game.res);
@@ -31,6 +26,7 @@ void GameInit(Game& game) {
 	game.dur_ctrl_list = CreateDurationControllerVec();
 	game.game_sounds = CreateGameSounds();
 	game.die_screen = CreateDieScreen();
+	game.win_screen = CreateWinScreen();
 	MaceTrapVecInit(game.mace_traps, *game.res->lvl);
 }
 
@@ -39,9 +35,8 @@ void RestartGame(Game *& game) {
 	game = CreateGame();
 }
 
-void ProcessGameEvents(Game & game, sf::Event & event)
+void ProcessGameEvents(Game & game, sf::Event & event, RenderWindow & window)
 {
-	RenderWindow& window = *game.window;
 	Level & level = *game.res->lvl;
 	View & view = *game.view;
 	if (event.type == Event::Closed)
@@ -68,32 +63,41 @@ void ProcessGameEvents(Game & game, sf::Event & event)
 				view.zoom(unsigned(map_width) / float(event.size.width));
 			}
 		}
-
 	}
 }
 
-void ProcessEvents(Game*& game)
+void ProcessEvents(Game *& game, RenderWindow & window)
 {
-	RenderWindow& window = *game->window;
 	Event event;
 	if (game->state == PLAY) {
 		ProcessEnemyListEvents(*game->enemy_list, *game->player->visual->rect);
+		if (game->player->fight->is_dead)
+		{
+			game->state = DEAD;
+		}
+		else if (game->res->lvl->GetAllObjects()->size() == 0)
+		{
+			game->state = WIN;
+		}
 	}
 	while (window.pollEvent(event))
 	{
-		ProcessGameEvents(*game, event);
+		ProcessGameEvents(*game, event, window);
 		if (game->state == PLAY)
 		{
 			ProcessPlayerEvents(window, *game->player, *game->game_sounds, *game->view);
 			ProcessPanelEvents(*game->b_panel);
-			if (Keyboard::isKeyPressed(Keyboard::R) && game->player->fight->is_dead)
-			{
-				RestartGame(game);
-			}
 		}
 		else if (game->state == MAIN_MENU)
 		{
 			game->menu.ProcessEvents(event);
+		}
+		else if (game->state == DEAD || game->state == WIN)
+		{
+			if (Keyboard::isKeyPressed(Keyboard::R))
+			{
+				RestartGame(game);
+			}
 		}
 	}
 }
@@ -103,7 +107,14 @@ void ChangeMap(Game &game, std::string map_name) {
 	DestroyBonusList(game.bonus_list);
 	DestroyEnemyList(game.enemy_list);
 	DestroyMaceTrapVec(game.mace_traps);
-	game.res->lvl = CreateLevel(map_name);
+	if (map_name == "map3.tmx")
+	{
+		game.game_sounds->bg_sound.openFromFile("Resourses/Sounds/bg_peacefull.ogg");
+		game.game_sounds->bg_sound.setLoop(true);
+		game.game_sounds->bg_sound.setVolume(BGMusicVolume);
+		game.game_sounds->bg_sound.play();
+	}
+	game.res->lvl = CreateLevel("Resourses/Maps/" + map_name);
 	*game.player->visual->rect = GetPlayerRectFromLvl(*game.res->lvl);
 	game.enemy_list = CreateEnemyList(*game.res);
 	game.bonus_list = CreateBonusList(*game.res);
@@ -148,7 +159,7 @@ void Update(Game& game, const Time& deltaTime) {
 		ÑheckingBonusEffectActivation(game);
 		MaceTrapsVecUpdate(game.mace_traps, TimePerFrame);
 		BonusListUpdate(*game.bonus_list, deltaTime);
-		EnemyListUpdate(*game.enemy_list, *game.res->lvl, deltaTime);
+		EnemyListUpdate(*game.enemy_list, *game.res->lvl, deltaTime, *game.view);
 		DurationControllersVecUpdate(*game.dur_ctrl_list, deltaTime);
 		for (DurationController *& ctrl : *game.dur_ctrl_list)
 		{
@@ -164,19 +175,10 @@ void Update(Game& game, const Time& deltaTime) {
 	}
 }
 
-void Render(Game& game) {
-	RenderWindow& window = *game.window;
+void Render(Game & game, RenderWindow & window) {
 	window.clear();
 	if (game.state == PLAY)
 	{
-		if (game.player->fight->is_dead)
-		{
-			game.view->setCenter(WindowWidth / 2.f, WindowHeight / 2.f);
-			window.setView(*game.view);
-			DrawDieScreen(*game.die_screen, window);
-		}
-		else
-		{
 			game.res->lvl->Draw(window);
 			window.setView(*game.view);
 			DrawBonuses(*game.bonus_list, window);
@@ -184,11 +186,22 @@ void Render(Game& game) {
 			DrawEnemies(*game.enemy_list, window);
 			DrawBonusesPanel(*game.b_panel, window);
 			DrawMaceTraps(game.mace_traps, window);
-		}
 	}
 	else if (game.state == MAIN_MENU)
 	{
 		game.menu.Draw(window);
+	}
+	else if (game.state == DEAD)
+	{
+		game.view->setCenter(WindowWidth / 2.f, WindowHeight / 2.f);
+		window.setView(*game.view);
+		DrawDieScreen(*game.die_screen, window);
+	}
+	else if (game.state == WIN)
+	{
+		game.view->setCenter(WindowWidth / 2.f, WindowHeight / 2.f);
+		window.setView(*game.view);
+		DrawWinScreen(*game.win_screen, window);
 	}
 	window.display();
 }
@@ -273,12 +286,7 @@ void CheckDynamicObjCollisions(Game& game) {
 
 }
 
-void DestroyWindow(sf::RenderWindow *& window) {
-	SafeDelete(window);
-}
-
 void DestroyGame(Game*& game) {
-	DestroyWindow(game->window);
 	DestroyPlayer(game->player);
 	DestroyEnemyList(game->enemy_list);
 	DestroyBonusList(game->bonus_list);

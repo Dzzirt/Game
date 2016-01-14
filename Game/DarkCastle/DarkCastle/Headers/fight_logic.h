@@ -6,7 +6,9 @@ const float CPlayerDamage = 15.f;
 const float BPlayerDamage = 30.f;
 const float APlayerDamage = 45.f;
 
-const float CEnemyDamage = 10.f;
+const float CSpearmanDamage = 10.f;
+const float CJellyDamage = 5.f;
+const float CJellyBossDamage = 20.f;
 const float BEnemyDamage = 20.f;
 const float AEnemyDamage = 30.f;
 

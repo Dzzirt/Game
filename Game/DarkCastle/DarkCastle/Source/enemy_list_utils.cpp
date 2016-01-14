@@ -9,7 +9,7 @@ void EnemyListInit(list<Enemy*>& enemy_list, Resourses& res, Type type)
 	int enemies_count = GetEnemiesCount(*res.lvl, type);
 	for (int i = 0; i < enemies_count; i++)
 	{
-		Enemy* enemy = CreateEnemy(res, i);
+		Enemy* enemy = CreateEnemy(res, i, type);
 		enemy_list.push_back(enemy);
 	}
 }
@@ -18,6 +18,8 @@ std::list<Enemy*>* CreateEnemyList(Resourses & res)
 {
 	std::list<Enemy*>* list = new std::list<Enemy*>();
 	EnemyListInit(*list, res, SPEARMAN);
+	EnemyListInit(*list, res, JELLY);
+	EnemyListInit(*list, res, JELLY_BOSS);
 	return list;
 }
 
@@ -32,11 +34,11 @@ void ProcessEnemyListEvents(std::list<Enemy*> & enemy_list, sf::FloatRect & play
 	}
 }
 
-void EnemyListUpdate(std::list<Enemy*> & enemy_list, Level & level, const Time& deltaTime)
+void EnemyListUpdate(std::list<Enemy*> & enemy_list, Level & level, const sf::Time& deltaTime, sf::View & view)
 {
 	for (Enemy * enemy : enemy_list)
 	{
-		EnemyUpdate(*enemy, deltaTime, level);
+		EnemyUpdate(*enemy, deltaTime, level, view);
 	}
 }
 
@@ -48,8 +50,8 @@ void DrawEnemies(std::list<Enemy*> & enemies, RenderWindow &window)
 		VisualHpBar& enemy_hp = *enemy->hp_bar->visual_hp;
 		Sprite& enemy_sprite = enemy->visual->animation->frame->sprite;
 		window.draw(enemy_sprite);
-		window.draw(enemy_hp.bar_sprite);
 		window.draw(enemy_hp.strip_sprite);
+		window.draw(enemy_hp.bar_sprite);
 	}
 }
 

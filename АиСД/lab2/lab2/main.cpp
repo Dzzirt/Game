@@ -32,7 +32,8 @@ int main()
 		}
 		else if (operators.find_first_of(post[i])!= string::npos)
 		{
-			if (stack.getSize() > 1) {
+			if (stack.getSize() > 1)
+			{
 				have_op = true;
 				string second = stack.getData();
 				stack.pop();
@@ -41,24 +42,37 @@ int main()
 				string result = "(" + first + post[i] + second + ")";
 				stack.push(result);
 			}
-			else {
-				cout << "Неверно заданное выражение: " << stack.getData() << " -> " << post[i] << " <- " + post.substr(i, post.length() - i);
+			else
+			{
+				cout << "В выражении найдены лишние операторы" << endl;
 				needToPrint = false;
 				break;
 			}
-			
-
+		}
+		else
+		{
+			cout << "Не корректная запись выражения!" << endl;
+			cout << "Пример корректного выражения: ab+" << endl;
+			needToPrint = false;
+			break;
 		}
 	}
-	if (stack.getSize() > 1) {
-		string err = stack.getData();
-		stack.pop();
-		string exp = stack.getData();
-		cout << "Неверно заданное выражение: " << stack.getData() << " -> " << err << " <- ";
-	}
-	if (needToPrint && have_op) {
-		cout << "Результат перевода: ";
-		stack.print();
+	if (needToPrint) {
+		if (stack.getSize() > 1)
+		{
+			cout << "Не достаточно оператора(-ов): ";
+			while (stack.getSize() != 1)
+			{
+				cout << stack.getData() << "_";
+				stack.pop();
+			}
+			cout << stack.getData() << endl;
+		}
+		else
+		{
+			cout << "Результат перевода: ";
+			stack.print();
+		}
 	}
 	return 0;
 }

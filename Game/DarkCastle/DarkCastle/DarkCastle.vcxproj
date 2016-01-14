@@ -59,7 +59,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Programing\Libs\SFML13\SFML-2.3.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;sfml-main-d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -75,18 +75,19 @@
       <AdditionalIncludeDirectories>C:\Programing\Libs\SFML13\SFML-2.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Programing\Libs\SFML13\SFML-2.3.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-main-d.lib;</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Headers\win_screen.h" />
     <ClCompile Include="Libs\json_spirit\json_spirit_reader.cpp" />
     <ClCompile Include="Libs\json_spirit\json_spirit_value.cpp" />
     <ClCompile Include="Libs\json_spirit\json_spirit_writer.cpp" />
@@ -130,6 +131,8 @@
     <ClCompile Include="Source\sounds_utils.cpp" />
     <ClCompile Include="Source\view.cpp" />
     <ClCompile Include="Source\visual.cpp" />
+    <ClCompile Include="Source\window_utils.cpp" />
+    <ClCompile Include="Source\win_screen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\animation.h" />
@@ -172,6 +175,7 @@
     <ClInclude Include="Headers\using_json.h" />
     <ClInclude Include="Headers\view.h" />
     <ClInclude Include="Headers\visual.h" />
+    <ClInclude Include="Headers\window_utils.h" />
     <ClInclude Include="Libs\json_spirit\json_spirit.h" />
     <ClInclude Include="Libs\json_spirit\json_spirit_error_position.h" />
     <ClInclude Include="Libs\json_spirit\json_spirit_reader.h" />

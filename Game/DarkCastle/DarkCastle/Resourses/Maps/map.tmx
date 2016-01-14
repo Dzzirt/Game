@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="40" tilewidth="16" tileheight="16" nextobjectid="56">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="40" tilewidth="16" tileheight="16" nextobjectid="57">
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" tilecount="1044">
-  <image source="Resourses/tiles.png" width="474" height="586"/>
+  <image source="Resourses/Maps/tiles.png" width="474" height="586"/>
  </tileset>
  <layer name="main" width="100" height="40">
   <data>
@@ -8048,8 +8048,6 @@
   <object id="48" name="solid" x="688" y="96" width="48" height="16"/>
   <object id="49" name="solid" x="496" y="160" width="32" height="16"/>
   <object id="50" name="SPEARMAN5" x="224" y="220" width="14" height="36"/>
-  <object id="51" name="fire0" x="416" y="150.333" width="128" height="128"/>
-  <object id="53" name="fire1" x="531" y="150" width="128" height="128"/>
   <object id="54" name="MACE_TRAP0" x="477.958" y="276.416" width="41" height="93"/>
  </objectgroup>
 </map>

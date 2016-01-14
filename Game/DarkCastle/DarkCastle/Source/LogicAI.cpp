@@ -17,6 +17,12 @@ void InitLogicAI(LogicAI & ai, Type type) {
 	case SPEARMAN:
 		ai.max_distance = float(GetRandomInt(20, 50));
 		ai.max_stay_time = GetRandomFloat(1, 5, 1);
+	case JELLY_BOSS:
+		ai.max_distance = float(GetRandomInt(20, 70));
+		ai.max_stay_time = GetRandomFloat(1, 10, 1);
+	case JELLY:
+		ai.max_distance = float(GetRandomInt(50, 100));
+		ai.max_stay_time = GetRandomFloat(1, 7, 1);
 	default:
 		break;
 	}

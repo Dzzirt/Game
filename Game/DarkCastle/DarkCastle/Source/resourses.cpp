@@ -15,15 +15,15 @@ Level* CreateLevel(std::string map_name)
 }
 
 void ResInit(Resourses& res) {
-	res.int_rects = GetEntitiesVector("Resourses/frames.txt");
-	res.config = GetEntitiesVector("Resourses/bonus_config.txt");
-	res.lvl = CreateLevel("map.tmx");
+	res.int_rects = GetEntitiesVector("Resourses/JSON/frames.txt");
+	res.config = GetEntitiesVector("Resourses/JSON/bonus_config.txt");
+	res.lvl = CreateLevel("Resourses/Maps/map.tmx");
 	res.curr_lvl_num = 0;
 }
 
 void LevelInit(Level & level, std::string map_name)
 {
-	level.LoadFromFile("Resourses/" + map_name);
+	level.LoadFromFile(map_name);
 }
 
 void DestroyEntitiesVector(std::vector<json_spirit::Pair> *& entities){

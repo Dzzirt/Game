@@ -6,9 +6,9 @@
 using namespace sf;
 using namespace std;
 
-Enemy* CreateEnemy(Resourses & res, int number) {
+Enemy* CreateEnemy(Resourses & res, int number, Type type) {
 	Enemy * enemy = new Enemy();
-	EnemyInit(*enemy, SPEARMAN, res, number);
+	EnemyInit(*enemy, type, res, number);
 	return enemy;
 }
 
@@ -35,8 +35,10 @@ int GetEnemiesCount(Level& lvl, Type type) {
 	switch (type) {
 		case SPEARMAN:
 			return lvl.GetMatchObjects(0, 8, "SPEARMAN").size();
-		case SWORDSMAN:
-			return lvl.GetMatchObjects(0, 9, "SWORDMAN").size();
+		case JELLY_BOSS:
+			return lvl.GetMatchObjects(0, 10, "JELLY_BOSS").size();
+		case JELLY:
+			return lvl.GetMatchObjects(0, 5, "JELLY").size();
 		default:
 			break;
 	}
@@ -84,7 +86,7 @@ void ProcessEnemyEvents(Enemy& enemy, FloatRect& player_box) {
 	}
 }
 
-void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, Level& level) {
+void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, Level& level, sf::View & view) {
 	Movement& movement = *enemy.movement;
 	Animation& animation = *enemy.visual->animation;
 	sf::FloatRect& enemy_rect = *enemy.visual->rect;
@@ -102,8 +104,9 @@ void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, Level& level) {
 	animation.frame->sprite.setOrigin(0, animation.frame->sprite.getGlobalBounds().height);
 	animation.frame->sprite.setPosition(movement.x_pos, movement.y_pos);
 
-	sf::FloatRect & enemy_bound = *enemy.visual->rect;
-	HpBarUpdate(*enemy.hp_bar, enemy_bound, SPEARMAN, enemy.fight->health_points);
+	sf::FloatRect enemy_bound = *enemy.visual->rect;
+//	enemy_bound.left += animation.frame->displacement;
+	HpBarUpdate(*enemy.hp_bar, enemy_bound, enemy.type, enemy.fight->health_points, view);
 	//===================================================================================
 	LogicAI & ai = *enemy.ai;
 	if (movement.state == NONE) {

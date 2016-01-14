@@ -33,7 +33,7 @@ void LogicHpBarInit(LogicHpBar& hp, float curr_hp, float max_hp);
 
 void VisualHpBarInit(VisualHpBar & hp, Type type, std::vector<json_spirit::Pair>& int_rects);
 
-void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type, float curr_hp);
+void HpBarUpdate(HpBar & hp, sf::FloatRect rect_for_place, Type type, float curr_hp, sf::View & view);
 
 void HpBarUpdate(HpBar & hp, sf::View & view, float curr_hp);
 

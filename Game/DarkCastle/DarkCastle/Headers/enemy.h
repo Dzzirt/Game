@@ -22,7 +22,7 @@ struct Enemy {
 };
 
 
-Enemy* CreateEnemy(Resourses & res, int number);
+Enemy* CreateEnemy(Resourses & res, int number, Type type);
 
 void EnemyInit(Enemy& enemy, Type type, Resourses & res, int number);
 
@@ -34,7 +34,7 @@ void ProcessCollision(Enemy & enemy, const Object & map_object);
 
 void ProcessEnemyEvents(Enemy& enemy, sf::FloatRect & player_box);
 
-void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, Level& level);
+void EnemyUpdate(Enemy& enemy, const sf::Time& deltaTime, Level& level, sf::View & view);
 
 void AnimationsUpdate(Enemy& enemy);
 
